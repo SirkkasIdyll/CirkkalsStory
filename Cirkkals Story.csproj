@@ -1,0 +1,35 @@
+<Project Sdk="Godot.NET.Sdk/4.4.1">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <RootNamespace>CS</RootNamespace>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Folder Include="Scenes\" />
+    <Folder Include="Scenes\UI\" />
+    <Folder Include="Scripts\Mobs\Skills\" />
+    <Folder Include="Scripts\Mobs\Spells\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Remove=".godot\mono\temp\obj\Debug\**" />
+    <Compile Remove=".godot\mono\temp\obj\**" />
+    <Compile Remove=".godot\mono\temp\**" />
+    <Compile Remove=".godot\mono\**" />
+    <Compile Remove=".godot\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Remove=".godot\mono\temp\obj\Debug\**" />
+    <EmbeddedResource Remove=".godot\mono\temp\obj\**" />
+    <EmbeddedResource Remove=".godot\mono\temp\**" />
+    <EmbeddedResource Remove=".godot\mono\**" />
+    <EmbeddedResource Remove=".godot\**" />
+  </ItemGroup>
+</Project>

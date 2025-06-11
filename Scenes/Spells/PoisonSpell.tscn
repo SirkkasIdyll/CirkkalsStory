@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://bm8mqwefllany"]
+
+[ext_resource type="Script" uid="uid://v012qc7i0fby" path="res://Scripts/Components/Magic/SpellComponent.cs" id="1_6b34l"]
+[ext_resource type="Script" uid="uid://bjy3jur5ey1oq" path="res://Scripts/Components/Damage/DamageOverTimeComponent.cs" id="2_64pu7"]
+[ext_resource type="Script" uid="uid://b222l6g0eflwr" path="res://Scripts/Components/Magic/ManaCostComponent.cs" id="3_64pu7"]
+
+[node name="PoisonSpell" type="Node2D"]
+script = ExtResource("1_6b34l")
+
+[node name="DamageOverTimeComponent" type="Node2D" parent="."]
+script = ExtResource("2_64pu7")
+Damage = 3
+Turns = 3
+StacksDuration = true
+
+[node name="ManaCostComponent" type="Node2D" parent="."]
+script = ExtResource("3_64pu7")
+ManaCost = 5

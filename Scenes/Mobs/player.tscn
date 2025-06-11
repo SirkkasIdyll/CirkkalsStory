@@ -1,0 +1,155 @@
+[gd_scene load_steps=23 format=3 uid="uid://cv4mrw0nd0ho5"]
+
+[ext_resource type="Texture2D" uid="uid://ejtkhic7cb50" path="res://Resources/Sprites/PC Computer - Ragnarok Online - Gold Poring.png" id="1_v5t36"]
+[ext_resource type="Script" uid="uid://ppjg2eciopc8" path="res://Scripts/Components/Description/NameComponent.cs" id="2_cvnsp"]
+[ext_resource type="Script" uid="uid://cg5qkkm7tx2dx" path="res://Scripts/Components/Damageable/HitBoxComponent.cs" id="2_y73r6"]
+[ext_resource type="Script" uid="uid://cw63klnljs463" path="res://Scripts/Components/Damageable/HealthComponent.cs" id="3_vgqql"]
+[ext_resource type="Script" uid="uid://pd7w380tkd0u" path="res://Scripts/Components/Damageable/DamageableComponent.cs" id="4_fkybt"]
+[ext_resource type="Script" uid="uid://bsydnvgac5ggj" path="res://Scripts/Components/Magic/ManaComponent.cs" id="4_vmnvr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pbnxc"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(0, 0, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2gla"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(60, 0, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oo0bh"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(120, 0, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c3ik6"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(180, 0, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v5t36"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(7, 211, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y73r6"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(67, 211, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1v0ul"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(0, 60, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jh4mi"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(60, 60, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_47cbg"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(120, 60, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0b4wu"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(180, 60, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gimlj"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(240, 60, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_le1af"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(300, 60, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0tlor"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(360, 60, 60, 60)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eygqy"]
+atlas = ExtResource("1_v5t36")
+region = Rect2(420, 60, 60, 60)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_04pru"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pbnxc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2gla")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oo0bh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c3ik6")
+}],
+"loop": true,
+"name": &"default",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v5t36")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y73r6")
+}],
+"loop": true,
+"name": &"hurt",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1v0ul")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jh4mi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_47cbg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0b4wu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gimlj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_le1af")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0tlor")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eygqy")
+}],
+"loop": true,
+"name": &"move",
+"speed": 8.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f60y1"]
+radius = 12.5
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(-1, 1)
+sprite_frames = SubResource("SpriteFrames_04pru")
+autoplay = "default"
+
+[node name="HitBoxComponent" type="CollisionShape2D" parent="."]
+position = Vector2(0, 3)
+shape = SubResource("CircleShape2D_f60y1")
+script = ExtResource("2_y73r6")
+
+[node name="NameComponent" type="Node2D" parent="."]
+script = ExtResource("2_cvnsp")
+
+[node name="HealthComponent" type="Node2D" parent="."]
+script = ExtResource("3_vgqql")
+MaxHealth = 50
+Health = 50
+
+[node name="DamageableComponent" type="Node2D" parent="."]
+script = ExtResource("4_fkybt")
+
+[node name="ManaComponent" type="Node2D" parent="."]
+script = ExtResource("4_vmnvr")
+MaxMana = 9999
+Mana = 9999
