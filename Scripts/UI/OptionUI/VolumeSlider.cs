@@ -8,14 +8,15 @@ public partial class VolumeSlider : HSlider
 	[Export] private AudioStreamPlayer2D _selectSound; // Sound that plays when volume is changed
 	[Export] private string _audioBusName = "Master"; // Which audio bus the slider should control
 	[Export] private ResetButton _resetButton;
-	[Export(PropertyHint.Range, "0,100")] private int _defaultVolume = 100;
+	[Export(PropertyHint.Range, "0,100")] private int _defaultVolume = 80;
 	
-	private int _audioBusIndex;
-	private int _initialVolume;
+	private int _audioBusIndex; // for manipulating the volume level of a specific bus
+	private ConfigData _configData;
 	
 	public override void _Ready()
 	{
-		SetToDefaultVolume();
+		_configData.Section = "Volume";
+		_configData.Key = _audioBusName;
 		_audioBusIndex = AudioServer.GetBusIndex(_audioBusName);
 		
 		TooltipText = $"{Value} / {MaxValue}";
@@ -35,26 +36,32 @@ public partial class VolumeSlider : HSlider
 	private void OnMouseExited()
 	{
 		SetDefaultCursorShape(CursorShape.Arrow);
-	}	
+	}
 	
 	private void OnResetButton()
 	{
-		SetToDefaultVolume();
+		Value = _defaultVolume;
 	}
 
 	private void OnValueChanged(double value)
 	{
 		TooltipText = $"{Value} / {MaxValue}";
 		_valueLabel.Text = $"{Value}";
-		if (!_selectSound.Playing)
+		if (!_selectSound.Playing && IsVisibleInTree())
 			_selectSound.Playing = true;
 		
-		AudioServer.SetBusVolumeLinear(_audioBusIndex, (float) value / 100);
+		_configData.Value = (int) value;
+		AudioServer.SetBusVolumeLinear(_audioBusIndex, (float) value / 100); // audioBus value
 	}
 
-	private void SetToDefaultVolume()
+	private void AddToConfig(ConfigFile config)
 	{
-		Value = _defaultVolume;
-		AudioServer.SetBusVolumeLinear(_audioBusIndex, (float) _defaultVolume / 100);
+		GD.Print(_configData.Value);
+		config.SetValue(_configData.Section, _configData.Key, _configData.Value);
+	}
+
+	private void LoadConfig(ConfigFile config)
+	{
+		Value = (int) config.GetValue(_configData.Section, _configData.Key, _defaultVolume);
 	}
 }

@@ -28,6 +28,10 @@ window/size/viewport_height=1080
 
 project/assembly_name="Cirkkals Story"
 
+[global_group]
+
+config_options="Stuff like volume, resolution, button maps, etc."
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
