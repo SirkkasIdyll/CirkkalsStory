@@ -11,10 +11,8 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Folder Include="Scenes\" />
-    <Folder Include="Scenes\UI\" />
-    <Folder Include="Scripts\Mobs\Skills\" />
-    <Folder Include="Scripts\Mobs\Spells\" />
+    <Folder Include="Components\" />
+    <Folder Include="Nodes\" />
   </ItemGroup>
   
   <ItemGroup>
@@ -31,5 +29,9 @@
     <EmbeddedResource Remove=".godot\mono\temp\**" />
     <EmbeddedResource Remove=".godot\mono\**" />
     <EmbeddedResource Remove=".godot\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Content Include="README.md" />
   </ItemGroup>
 </Project>
