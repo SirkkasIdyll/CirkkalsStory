@@ -1,0 +1,106 @@
+[gd_scene load_steps=6 format=3 uid="uid://cvv8otsc37cqg"]
+
+[ext_resource type="PackedScene" uid="uid://cv4mrw0nd0ho5" path="res://Nodes/Mobs/PlayerNode.tscn" id="1_yc7gu"]
+[ext_resource type="PackedScene" uid="uid://dsdls4s1jmcmb" path="res://Nodes/Mobs/GoblinNode.tscn" id="2_vbgdj"]
+[ext_resource type="PackedScene" uid="uid://dxcp063mrk6rf" path="res://Nodes/Battle/NameAndHealthBarScene.tscn" id="3_abq4k"]
+[ext_resource type="Script" uid="uid://qa8j06unyhdw" path="res://Nodes/Battle/CombatUserActionsItemListSystem.cs" id="4_xuplv"]
+[ext_resource type="PackedScene" uid="uid://byc6u3b0pbhv7" path="res://Nodes/Battle/SkillSelectionScene.tscn" id="5_8eql1"]
+
+[node name="CombatScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 500.0
+offset_right = 500.0
+grow_vertical = 2
+
+[node name="Player" parent="AspectRatioContainer" instance=ExtResource("1_yc7gu")]
+scale = Vector2(4, 4)
+
+[node name="AspectRatioContainer2" type="AspectRatioContainer" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_right = -500.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="Goblin" parent="AspectRatioContainer2" instance=ExtResource("2_vbgdj")]
+scale = Vector2(4, 4)
+
+[node name="NameAndHealthBar" parent="." node_paths=PackedStringArray("_mob") instance=ExtResource("3_abq4k")]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 350.0
+offset_top = 160.0
+offset_right = 650.0
+offset_bottom = 245.0
+grow_vertical = 2
+_mob = NodePath("../AspectRatioContainer/Player")
+metadata/_edit_use_anchors_ = true
+
+[node name="NameAndHealthBar2" parent="." node_paths=PackedStringArray("_mob") instance=ExtResource("3_abq4k")]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -650.0
+offset_top = 160.0
+offset_right = -350.0
+offset_bottom = 245.0
+grow_horizontal = 0
+grow_vertical = 2
+_mob = NodePath("../AspectRatioContainer2/Goblin")
+metadata/_edit_use_anchors_ = true
+
+[node name="ItemList" type="ItemList" parent="." node_paths=PackedStringArray("_skillScene", "_activePlayer")]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -62.0
+offset_top = -380.0
+offset_right = 93.0
+offset_bottom = -225.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 32
+allow_search = false
+auto_width = true
+auto_height = true
+item_count = 3
+item_0/text = "Skills"
+item_1/text = "Spells"
+item_2/text = "Flee"
+script = ExtResource("4_xuplv")
+_skillScene = NodePath("../SkillScene")
+_activePlayer = NodePath("../AspectRatioContainer/Player")
+metadata/_edit_use_anchors_ = true
+
+[node name="SkillScene" parent="." instance=ExtResource("5_8eql1")]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
