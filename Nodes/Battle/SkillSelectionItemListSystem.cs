@@ -24,6 +24,5 @@ public partial class SkillSelectionItemListSystem : ItemList
 
 	private void OnItemSelected(long index)
 	{
-		
 	}
 }

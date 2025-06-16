@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://byc6u3b0pbhv7"]
 
 [ext_resource type="Script" uid="uid://mmj6ni5ar10p" path="res://Nodes/Battle/SkillSelectionSceneSystem.cs" id="1_35ol7"]
-[ext_resource type="Script" uid="uid://de7c8wtv4jj50" path="res://Nodes/Battle/SkillList.cs" id="2_7xfxj"]
+[ext_resource type="Script" uid="uid://dq1ouambyht2m" path="res://Nodes/Battle/SkillSelectionItemListSystem.cs" id="2_35ol7"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vvobs"]
 
@@ -34,13 +34,17 @@ theme_override_constants/separation = 15
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_vvobs")
 
-[node name="ItemList" type="ItemList" parent="HBoxContainer/PanelContainer"]
+[node name="ItemList" type="ItemList" parent="HBoxContainer/PanelContainer" node_paths=PackedStringArray("_skillName", "_skillEffect", "_skillEffect2", "_skillDescription")]
 layout_mode = 2
 auto_width = true
 auto_height = true
 item_count = 1
 item_0/text = "FIRE BALL"
-script = ExtResource("2_7xfxj")
+script = ExtResource("2_35ol7")
+_skillName = NodePath("../../PanelContainer2/MarginContainer/VBoxContainer/SkillName")
+_skillEffect = NodePath("../../PanelContainer2/MarginContainer/VBoxContainer/Control/SkillEffect")
+_skillEffect2 = NodePath("../../PanelContainer2/MarginContainer/VBoxContainer/Control/SkillEffect2")
+_skillDescription = NodePath("../../PanelContainer2/MarginContainer/VBoxContainer/SkillDescription")
 
 [node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer"]
 layout_mode = 2

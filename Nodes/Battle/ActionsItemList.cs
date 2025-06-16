@@ -2,7 +2,7 @@ using Godot;
 
 namespace CS.Nodes.Battle;
 
-public partial class CombatUserActionsItemListSystem : ItemList
+public partial class ActionsItemList : ItemList
 {
 	private const double ReappearAfterTimeDefault = 0.5;
 	private double _reappearAfterTime = 0.5;

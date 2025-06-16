@@ -1,3 +1,4 @@
+using CS.Components;
 using CS.Components.Damageable;
 using CS.Components.Description;
 using Godot;
@@ -15,10 +16,10 @@ public partial class NameAndHealthBarSceneSystem : BoxContainer
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		var nameComponent = _mob.GetNodeOrNull<DescriptionComponent>("NameComponent");
-		var healthComponent = _mob.GetNodeOrNull<HealthComponent>("HealthComponent");
+		ComponentSystem.GetComponent<DescriptionComponent>(_mob, out var descriptionComponent);
+		ComponentSystem.GetComponent<HealthComponent>(_mob, out var healthComponent);
 
-		_mobName.Text = nameComponent != null ? nameComponent.DisplayName : _invalidName;
+		_mobName.Text = descriptionComponent != null ? descriptionComponent.DisplayName : _invalidName;
 		if (healthComponent != null)
 		{
 			_mobHpBar.MaxValue = healthComponent.MaxHealth;

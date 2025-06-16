@@ -14,7 +14,5 @@ public partial class SkillSelectionSceneSystem : Control
 	
 	private void OnVisibilityChanged()
 	{
-		var skillNodes = player.FindChildren("", "", false);
-		GD.Print(skillNodes.Count);
 	}
 }

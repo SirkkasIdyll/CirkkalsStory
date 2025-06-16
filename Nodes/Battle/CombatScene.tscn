@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://cv4mrw0nd0ho5" path="res://Nodes/Mobs/PlayerNode.tscn" id="1_yc7gu"]
 [ext_resource type="PackedScene" uid="uid://dsdls4s1jmcmb" path="res://Nodes/Mobs/GoblinNode.tscn" id="2_vbgdj"]
 [ext_resource type="PackedScene" uid="uid://dxcp063mrk6rf" path="res://Nodes/Battle/NameAndHealthBarScene.tscn" id="3_abq4k"]
-[ext_resource type="Script" uid="uid://qa8j06unyhdw" path="res://Nodes/Battle/CombatUserActionsItemListSystem.cs" id="4_xuplv"]
+[ext_resource type="Script" uid="uid://bhhr883stvbqt" path="res://Nodes/Battle/ActionsItemList.cs" id="4_yc7gu"]
 [ext_resource type="PackedScene" uid="uid://byc6u3b0pbhv7" path="res://Nodes/Battle/SkillSelectionScene.tscn" id="5_8eql1"]
 
 [node name="CombatScene" type="Control"]
@@ -70,7 +70,7 @@ grow_vertical = 2
 _mob = NodePath("../AspectRatioContainer2/Goblin")
 metadata/_edit_use_anchors_ = true
 
-[node name="ItemList" type="ItemList" parent="." node_paths=PackedStringArray("_skillScene", "_activePlayer")]
+[node name="ActionsItemList" type="ItemList" parent="." node_paths=PackedStringArray("_skillScene", "_activePlayer")]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -91,7 +91,7 @@ item_count = 3
 item_0/text = "Skills"
 item_1/text = "Spells"
 item_2/text = "Flee"
-script = ExtResource("4_xuplv")
+script = ExtResource("4_yc7gu")
 _skillScene = NodePath("../SkillScene")
 _activePlayer = NodePath("../AspectRatioContainer/Player")
 metadata/_edit_use_anchors_ = true

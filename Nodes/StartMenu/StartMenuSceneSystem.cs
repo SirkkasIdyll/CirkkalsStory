@@ -20,8 +20,8 @@ public partial class StartMenuSceneSystem : AspectRatioContainer
 	
 	private void OnStartGameSelected()
 	{
-		var battle = GD.Load<PackedScene>("res://Scenes/Battle/battle_scene.tscn");
-		var uiLayer = GetNode<CanvasLayer>("/root/MainGameScene/CanvasLayerForUI");
+		var battle = GD.Load<PackedScene>("res://Nodes/Battle/CombatScene.tscn");
+		var uiLayer = GetNode<CanvasLayer>("/root/MainScene/CanvasLayer");
 		uiLayer.AddChild(battle.Instantiate());
 		Visible = false;
 		_loopingStartMenuMusic.Playing = false;

@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0vguook7mtct"]
+
+[ext_resource type="Script" uid="uid://cdmq4tmjv06mo" path="res://Nodes/Skills/Manager/SkillManagerSceneSystem.cs" id="1_76d6c"]
+[ext_resource type="PackedScene" uid="uid://bcl3uv3eqr6k6" path="res://Nodes/Skills/SlimeTackleScene.tscn" id="2_euwpv"]
+
+[node name="SkillManagerScene" type="Node2D"]
+script = ExtResource("1_76d6c")
+
+[node name="SlimeTackle" parent="." instance=ExtResource("2_euwpv")]
