@@ -4,10 +4,10 @@ namespace CS.Nodes.Battle;
 
 public partial class SkillSelectionItemListSystem : ItemList
 {
-	[Export] private Label _skillName;
-	[Export] private Label _skillEffect;
-	[Export] private Label _skillEffect2;
-	[Export] private Label _skillDescription;
+	[Export] private Label? _skillName;
+	[Export] private Label? _skillEffect;
+	[Export] private Label? _skillEffect2;
+	[Export] private Label? _skillDescription;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()

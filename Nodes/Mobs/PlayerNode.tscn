@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://cv4mrw0nd0ho5"]
+[gd_scene load_steps=24 format=3 uid="uid://cv4mrw0nd0ho5"]
 
 [ext_resource type="Texture2D" uid="uid://ejtkhic7cb50" path="res://Resources/Sprites/PC Computer - Ragnarok Online - Gold Poring.png" id="1_v5t36"]
 [ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="2_6yyy1"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://cw63klnljs463" path="res://Components/Damageable/HealthComponent.cs" id="3_vgqql"]
 [ext_resource type="Script" uid="uid://pd7w380tkd0u" path="res://Components/Damageable/DamageableComponent.cs" id="4_fkybt"]
 [ext_resource type="Script" uid="uid://bsydnvgac5ggj" path="res://Components/Magic/ManaComponent.cs" id="4_vmnvr"]
+[ext_resource type="Script" uid="uid://ds5cey7oyak3s" path="res://Components/Skills/SkillListComponent.cs" id="7_6yyy1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pbnxc"]
 atlas = ExtResource("1_v5t36")
@@ -152,3 +153,7 @@ script = ExtResource("4_fkybt")
 script = ExtResource("4_vmnvr")
 MaxMana = 9999
 Mana = 9999
+
+[node name="SkillListComponent" type="Node2D" parent="."]
+script = ExtResource("7_6yyy1")
+SkillList = Array[String](["Slime Tackle"])

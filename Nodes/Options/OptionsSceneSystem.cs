@@ -7,14 +7,13 @@ public partial class OptionsSceneSystem : AspectRatioContainer
 {
 	public const string ConfigFilePath = "user://config_options.cfg";
 
-	[Export] private StartMenuSceneSystem _startMenu;
-	[Export] private AudioStreamPlayer2D _cancelSound;
-	private ConfigFile _configFile;
+	[Export] private StartMenuSceneSystem? _startMenu;
+	[Export] private AudioStreamPlayer2D? _cancelSound;
+	private ConfigFile _configFile = new ConfigFile();
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		_configFile = new ConfigFile();
 		var error = _configFile.Load(ConfigFilePath);
 		var configNodes = GetTree().GetNodesInGroup("config_options");
 		foreach (var node in configNodes)
@@ -38,9 +37,14 @@ public partial class OptionsSceneSystem : AspectRatioContainer
 	{
 		if (@event.IsActionPressed("ui_cancel") && Visible)
 		{
-			_startMenu.Visible = true;
 			Visible = false;
-			_cancelSound.Playing = true;
+
+			if (_startMenu != null)
+				_startMenu.Visible = true;
+
+			if (_cancelSound != null)
+				_cancelSound.Playing = true;
+			
 			GetViewport().SetInputAsHandled();
 			
 			var configNodes = GetTree().GetNodesInGroup("config_options");

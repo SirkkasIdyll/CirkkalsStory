@@ -7,7 +7,7 @@ public partial class ResetButtonSystem : Button
 	[Signal]
 	public delegate void OptionsResetEventHandler();
 
-	[Export] private AudioStreamPlayer2D _cancelSound;
+	[Export] private AudioStreamPlayer2D? _cancelSound;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -20,7 +20,9 @@ public partial class ResetButtonSystem : Button
 	private void OnPressed()
 	{
 		EmitSignal(SignalName.OptionsReset);
-		_cancelSound.Playing = true;
+		
+		if (_cancelSound != null)
+			_cancelSound.Playing = true;
 	}
 	
 	private void OnMouseEntered()

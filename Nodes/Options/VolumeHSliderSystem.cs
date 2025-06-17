@@ -4,10 +4,10 @@ namespace CS.Nodes.Options;
 
 public partial class VolumeHSliderSystem : HSlider
 {
-	[Export] private Label _valueLabel; // Label that shows the current volume level
-	[Export] private AudioStreamPlayer2D _selectSound; // Sound that plays when volume is changed
+	[Export] private Label? _valueLabel; // Label that shows the current volume level
+	[Export] private AudioStreamPlayer2D? _selectSound; // Sound that plays when volume is changed
 	[Export] private string _audioBusName = "Master"; // Which audio bus the slider should control
-	[Export] private ResetButtonSystem _resetButton;
+	[Export] private ResetButtonSystem? _resetButton;
 	[Export(PropertyHint.Range, "0,100")] private int _defaultVolume = 80;
 	
 	private int _audioBusIndex; // for manipulating the volume level of a specific bus
@@ -20,12 +20,14 @@ public partial class VolumeHSliderSystem : HSlider
 		_audioBusIndex = AudioServer.GetBusIndex(_audioBusName);
 		
 		TooltipText = $"{Value} / {MaxValue}";
-		_valueLabel.Text = $"{Value}";
-		
+		if (_valueLabel != null)
+			_valueLabel.Text = $"{Value}";
+
 		MouseEntered += OnMouseEntered;
 		MouseExited += OnMouseExited;
 		ValueChanged += OnValueChanged;
-		_resetButton.OptionsReset += OnResetButton;
+		if (_resetButton != null)
+			_resetButton.OptionsReset += OnResetButton;
 	}
 	
 	private void OnMouseEntered()
@@ -46,9 +48,12 @@ public partial class VolumeHSliderSystem : HSlider
 	private void OnValueChanged(double value)
 	{
 		TooltipText = $"{Value} / {MaxValue}";
-		_valueLabel.Text = $"{Value}";
-		if (!_selectSound.Playing && IsVisibleInTree())
-			_selectSound.Playing = true;
+		if (_valueLabel != null)
+			_valueLabel.Text = $"{Value}";
+		
+		if (_selectSound != null)
+			if (!_selectSound.Playing && IsVisibleInTree())
+				_selectSound.Playing = true;
 		
 		_configData.Value = (int) value;
 		AudioServer.SetBusVolumeLinear(_audioBusIndex, (float) value / 100); // audioBus value

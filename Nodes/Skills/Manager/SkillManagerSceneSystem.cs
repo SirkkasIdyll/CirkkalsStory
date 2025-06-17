@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using CS.Components;
 using CS.Components.Description;
 using CS.Components.Skills;
@@ -15,13 +16,10 @@ public partial class SkillManagerSceneSystem : Node2D
 	{
 		LoadAllSkills();
 	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
-	
     
+	/// <summary>
+	/// Loads all skills into the skill repository. Skill details can be retrieved from the skill repository.
+	/// </summary>
 	private void LoadAllSkills()
 	{
 		var children = GetChildren();
@@ -30,12 +28,19 @@ public partial class SkillManagerSceneSystem : Node2D
 			if (!ComponentSystem.HasComponent<SkillComponent>(child))
 				continue;
 			
-			if (ComponentSystem.GetComponent<DescriptionComponent>(child, out var descriptionComponent) && descriptionComponent != null)
+			if (ComponentSystem.TryGetComponent<DescriptionComponent>(child, out var descriptionComponent) && descriptionComponent != null)
 				_skillRepository.Add(descriptionComponent.DisplayName, child);
 		}
 	}
-    
-	public void AddSkill(string name)
+
+	/// <summary>
+	/// Attempts to return the skill node if it exists in the skill repository
+	/// </summary>
+	/// <param name="name">The name of the skill to retrieve</param>
+	/// <param name="skill">The node containing the skill and all its child components</param>
+	/// <returns>True if skill found, false if skill not found</returns>
+	public bool TryGetSkill(string name, [NotNullWhen(true)] out Node? skill)
 	{
+		return _skillRepository.TryGetValue(name, out skill);
 	}
 }

@@ -6,16 +6,21 @@ namespace CS.Nodes.StartMenu;
 
 public partial class StartMenuSceneSystem : AspectRatioContainer
 {
-	[Export] private LoopingAudioStreamPlayer2DSystem _loopingStartMenuMusic;
-	[Export] private StartMenuItemListSystem _startMenuItemList;
-	[Export] private OptionsSceneSystem _options;
+	[Export] private LoopingAudioStreamPlayer2DSystem? _loopingStartMenuMusic;
+	[Export] private StartMenuItemListSystem? _startMenuItemList;
+	[Export] private OptionsSceneSystem? _options;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		_loopingStartMenuMusic.Playing = true;
-		_startMenuItemList.StartGameSelected += OnStartGameSelected;
-		_startMenuItemList.OptionsSelected += OnOptionsSelected;
+		if (_loopingStartMenuMusic != null)
+			_loopingStartMenuMusic.Playing = true;
+
+		if (_startMenuItemList != null)
+		{
+			_startMenuItemList.StartGameSelected += OnStartGameSelected;
+			_startMenuItemList.OptionsSelected += OnOptionsSelected;
+		}
 	}
 	
 	private void OnStartGameSelected()
@@ -24,12 +29,16 @@ public partial class StartMenuSceneSystem : AspectRatioContainer
 		var uiLayer = GetNode<CanvasLayer>("/root/MainScene/CanvasLayer");
 		uiLayer.AddChild(battle.Instantiate());
 		Visible = false;
-		_loopingStartMenuMusic.Playing = false;
+
+		if (_loopingStartMenuMusic != null)
+			_loopingStartMenuMusic.Playing = false;
 	}
 
 	private void OnOptionsSelected()
 	{
 		Visible = false;
-		_options.Visible = true;
+		
+		if (_options != null)
+			_options.Visible = true;
 	}
 }

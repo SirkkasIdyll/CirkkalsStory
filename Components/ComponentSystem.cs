@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using System.Diagnostics.CodeAnalysis;
+using Godot;
 
 namespace CS.Components;
 
@@ -28,7 +29,7 @@ public static partial class ComponentSystem
     /// <param name="node">Mob, skill, whatever</param>
     /// <param name="component">The component if found, null otherwise</param>
     /// <returns>True if component was found, false if otherwise</returns>
-    public static bool GetComponent<T>(Node node, out T? component)
+    public static bool TryGetComponent<T>(Node node, [NotNullWhen(true)] out T? component)
     {
         var children = node.GetChildren();
         
