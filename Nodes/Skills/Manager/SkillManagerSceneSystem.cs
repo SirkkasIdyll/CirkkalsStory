@@ -28,7 +28,7 @@ public partial class SkillManagerSceneSystem : Node2D
 			if (!ComponentSystem.HasComponent<SkillComponent>(child))
 				continue;
 			
-			if (ComponentSystem.TryGetComponent<DescriptionComponent>(child, out var descriptionComponent) && descriptionComponent != null)
+			if (ComponentSystem.TryGetComponent<DescriptionComponent>(child, out var descriptionComponent))
 				_skillRepository.Add(descriptionComponent.DisplayName, child);
 		}
 	}
