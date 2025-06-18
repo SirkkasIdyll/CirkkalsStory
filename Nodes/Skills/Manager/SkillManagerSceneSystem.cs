@@ -43,4 +43,14 @@ public partial class SkillManagerSceneSystem : Node2D
 	{
 		return _skillRepository.TryGetValue(name, out skill);
 	}
+
+	/// <summary>
+	/// Checks if the skill exists in the repository
+	/// </summary>
+	/// <param name="name">The name of the skill</param>
+	/// <returns>True if skill found, false if skill not found</returns>
+	public bool SkillExists(string name)
+	{
+		return _skillRepository.ContainsKey(name);
+	}
 }
