@@ -142,9 +142,11 @@ radius = 12.5
 [node name="Goblin" type="CharacterBody2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
 sprite_frames = SubResource("SpriteFrames_6xelw")
 
 [node name="HitBoxComponent" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, 3)
 shape = SubResource("CircleShape2D_h8k8e")
 script = ExtResource("2_1ydkj")

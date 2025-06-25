@@ -11,6 +11,7 @@ This is a small project I'm working on to familiarize myself with the Godot engi
 - Add summaries for all classes and all properties even if they seem obvious. Make your intention known, otherwise no one will know.
 - Use if statements to return as early as possible to reduce nesting complexity later on.
 - Delete unused template functions like Ready() and Process().
+- Parents use signal from children, then call functions from their children to update them. Children do not ever need to be aware of their parents.
 
 ### Naming Practices
 

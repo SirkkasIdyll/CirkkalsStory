@@ -130,6 +130,7 @@ radius = 12.5
 [node name="CharacterBody2D" type="CharacterBody2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
 scale = Vector2(-1, 1)
 sprite_frames = SubResource("SpriteFrames_04pru")
 
@@ -137,6 +138,7 @@ sprite_frames = SubResource("SpriteFrames_04pru")
 script = ExtResource("2_6yyy1")
 
 [node name="HitBoxComponent" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, 3)
 shape = SubResource("CircleShape2D_f60y1")
 script = ExtResource("2_y73r6")
@@ -156,4 +158,4 @@ Mana = 9999
 
 [node name="MobComponent" type="Node2D" parent="."]
 script = ExtResource("7_6yyy1")
-Skills = Array[String](["Slime Tackle"])
+Skills = Array[String](["Slime Tackle", "Bleeding Slash"])

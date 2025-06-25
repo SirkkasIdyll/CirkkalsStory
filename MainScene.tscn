@@ -1,29 +1,30 @@
-[gd_scene load_steps=6 format=3 uid="uid://wgqqcbvm2nn0"]
+[gd_scene load_steps=8 format=3 uid="uid://wgqqcbvm2nn0"]
 
 [ext_resource type="Script" uid="uid://y4pka5ydh2ue" path="res://MainSceneSystem.cs" id="1_j2ntn"]
-[ext_resource type="Texture2D" uid="uid://6fjlqradq67h" path="res://Resources/Screenshot 2025-06-02 140607.png" id="2_6004i"]
+[ext_resource type="PackedScene" uid="uid://detfedhbicpnq" path="res://Nodes/EscapeMenu/EscapeMenuScene.tscn" id="2_a814b"]
 [ext_resource type="PackedScene" uid="uid://b0vguook7mtct" path="res://Nodes/Skills/Manager/SkillManagerScene.tscn" id="2_rf2cd"]
 [ext_resource type="PackedScene" uid="uid://bj83w83rrsasl" path="res://Nodes/StartMenu/StartMenuScene.tscn" id="3_cd713"]
 [ext_resource type="PackedScene" uid="uid://ixse28vqndr0" path="res://Nodes/Options/OptionsScene.tscn" id="4_da86c"]
+[ext_resource type="PackedScene" uid="uid://cvv8otsc37cqg" path="res://Nodes/Combat/CombatScene.tscn" id="4_rf2cd"]
+[ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="7_5crlr"]
 
-[node name="MainScene" type="Node2D"]
+[node name="MainScene" type="Node2D" node_paths=PackedStringArray("_canvasLayer")]
 script = ExtResource("1_j2ntn")
+_escapeMenuSceneSystem = ExtResource("2_a814b")
+_canvasLayer = NodePath("CanvasLayer")
 
 [node name="SkillManagerScene" parent="." instance=ExtResource("2_rf2cd")]
 
-[node name="BackgroundTextureRect" type="TextureRect" parent="."]
-offset_left = -75.0
-offset_top = -35.0
-offset_right = 2031.0
-offset_bottom = 1158.0
-texture = ExtResource("2_6004i")
-metadata/_edit_lock_ = true
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="StartMenu" parent="CanvasLayer" node_paths=PackedStringArray("_options") instance=ExtResource("3_cd713")]
-_options = NodePath("../Options")
+[node name="StartMenu" parent="CanvasLayer" node_paths=PackedStringArray("_bgmPlayer", "_optionsScene") instance=ExtResource("3_cd713")]
+_bgmPlayer = NodePath("../../BGMAudioStreamPlayer2D")
+_newGameScene = ExtResource("4_rf2cd")
+_optionsScene = NodePath("../Options")
 
-[node name="Options" parent="CanvasLayer" node_paths=PackedStringArray("_startMenu") instance=ExtResource("4_da86c")]
+[node name="Options" parent="CanvasLayer" instance=ExtResource("4_da86c")]
 visible = false
-_startMenu = NodePath("../StartMenu")
+
+[node name="BGMAudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+bus = &"Music"
+script = ExtResource("7_5crlr")

@@ -12,6 +12,6 @@ public partial class LoopingAudioStreamPlayer2DSystem : AudioStreamPlayer2D
 
 	private void OnFinished()
 	{
-		Playing = true;
+		Play();
 	}
 }

@@ -9,7 +9,7 @@ public partial class HealthComponent : Node2D
     /// Positive changes indicate healing, negative changes indicate damage
     /// </summary>
     [Signal]
-    public delegate void HealthAlteredEventHandler(int amount);
+    public delegate void HealthAlteredEventHandler(int amount, int result);
     
     private int _healthCap = 9999;
     private int _maxHealth;
@@ -34,5 +34,11 @@ public partial class HealthComponent : Node2D
     {
         get => _health;
         set => _health = Math.Clamp(value, 0, _maxHealth);
+    }
+
+    public void AlterHealth(int amount)
+    {
+        Health += amount;
+        EmitSignalHealthAltered(amount, Health);
     }
 }

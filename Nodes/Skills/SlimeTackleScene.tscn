@@ -1,19 +1,23 @@
-[gd_scene load_steps=4 format=3 uid="uid://bcl3uv3eqr6k6"]
+[gd_scene load_steps=5 format=3 uid="uid://bcl3uv3eqr6k6"]
 
 [ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="2_8ekv3"]
 [ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="3_fgiam"]
 [ext_resource type="Script" uid="uid://bo8urbmvfmp8c" path="res://Components/Skills/SkillComponent.cs" id="3_hg1jg"]
+[ext_resource type="Script" uid="uid://cmvfomctvourc" path="res://Components/Damageable/TargetingComponent.cs" id="4_8ekv3"]
 
 [node name="SlimeTackle" type="Node2D"]
+
+[node name="DamageComponent" type="Node2D" parent="."]
+script = ExtResource("3_fgiam")
+Damage = 15
 
 [node name="DescriptionComponent" type="Node2D" parent="."]
 script = ExtResource("2_8ekv3")
 DisplayName = "Slime Tackle"
 Description = "A body slam that hits the enemy with all the slimy little force you can muster."
 
-[node name="DamageComponent" type="Node2D" parent="."]
-script = ExtResource("3_fgiam")
-Damage = 5
-
 [node name="SkillComponent" type="Node2D" parent="."]
 script = ExtResource("3_hg1jg")
+
+[node name="TargetingComponent" type="Node2D" parent="."]
+script = ExtResource("4_8ekv3")

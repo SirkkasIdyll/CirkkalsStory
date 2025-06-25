@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using CS.Components.Damageable;
+using Godot;
 
 namespace CS.Components.Damage;
 
@@ -11,4 +12,15 @@ public partial class DamageComponent : Node2D
     /// The amount of damage dealt
     /// </summary>
     [Export] public int Damage;
+
+    public void ApplyEffect(Node2D target)
+    {
+        if (ComponentSystem.TryGetComponent<HealthComponent>(target, out var targetHealthComponent))
+            targetHealthComponent.AlterHealth(-Damage);
+    }
+
+    public string DescribeEffect()
+    {
+        return $"Damage: {Damage}";
+    }
 }

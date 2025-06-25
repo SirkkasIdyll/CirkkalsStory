@@ -7,6 +7,9 @@ using Godot.Collections;
 
 namespace CS.Nodes.Skills.Manager;
 
+/// <summary>
+/// Add newly created skills to the SkillManagerScene to make it available for use in-game.
+/// </summary>
 public partial class SkillManagerSceneSystem : Node2D
 {
 	private Dictionary<string, Node> _skillRepository = [];

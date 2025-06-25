@@ -2,7 +2,7 @@ using Godot;
 
 namespace CS.Nodes.StartMenu;
 
-public partial class StartMenuItemListSystem : ItemList
+public partial class UNUSEDITEMLIST : ItemList
 {
 	[Export] private AudioStreamPlayer2D? _selectSound;
 	[Export] private AudioStreamPlayer2D? _confirmSound;

@@ -2,9 +2,9 @@ using Godot;
 
 namespace CS.Nodes.Options;
 
-public partial class ResetButtonSystem : Button
+public partial class BackButtonSystem : Button
 {
-	[Export] private AudioStreamPlayer2D? _cancelSound;
+	[Export] private AudioStreamPlayer2D? _confirmSound;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -16,9 +16,9 @@ public partial class ResetButtonSystem : Button
 
 	private void OnPressed()
 	{
-		_cancelSound?.Play();
+		_confirmSound?.Play();
 	}
-	
+
 	private void OnMouseEntered()
 	{
 		SetDefaultCursorShape(CursorShape.PointingHand);
