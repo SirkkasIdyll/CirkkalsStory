@@ -1,61 +1,148 @@
-[gd_scene load_steps=8 format=3 uid="uid://bj83w83rrsasl"]
+[gd_scene load_steps=13 format=3 uid="uid://bj83w83rrsasl"]
 
 [ext_resource type="Script" uid="uid://xcjnsxni4kmh" path="res://Nodes/StartMenu/StartMenuSceneSystem.cs" id="1_3kyvb"]
-[ext_resource type="Theme" uid="uid://dfuys3he85agm" path="res://Resources/Themes/StartMenu.tres" id="1_juhg0"]
-[ext_resource type="Script" uid="uid://ics1ykejwgl2" path="res://Nodes/StartMenu/StartMenuItemListSystem.cs" id="2_2ybwg"]
-[ext_resource type="AudioStream" uid="uid://cohh3s4236s88" path="res://Resources/Sounds/menu_select_slime_v2.wav" id="4_3kyvb"]
-[ext_resource type="AudioStream" uid="uid://h3en4ypoixve" path="res://Resources/Sounds/menu_confirm_slime_v2.wav" id="5_fa70d"]
-[ext_resource type="AudioStream" uid="uid://b5pccx1e83cas" path="res://Resources/Sounds/31-Just-a-Friendly-Chorus-FULL-SM434.wav" id="6_fa70d"]
-[ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="7_loh3u"]
+[ext_resource type="Theme" uid="uid://bofxw0bub14i4" path="res://Resources/Themes/default.tres" id="1_3wqj7"]
+[ext_resource type="Texture2D" uid="uid://5wlhd3jecq0l" path="res://Resources/placeholder_title.png" id="1_loh3u"]
+[ext_resource type="AudioStream" uid="uid://cawpht33ubjnc" path="res://Resources/Sounds/Hopeless - Full.wav" id="4_loh3u"]
+[ext_resource type="Script" uid="uid://eqdhcwgxruv4" path="res://Nodes/StartMenu/ButtonSystem__NewGame.cs" id="4_um421"]
+[ext_resource type="PackedScene" uid="uid://djj4j1dplagri" path="res://Nodes/Utility/SpacerScene.tscn" id="5_3wqj7"]
+[ext_resource type="Script" uid="uid://cu2t0tel18f8h" path="res://Nodes/StartMenu/ButtonSystem__Continue.cs" id="5_y5p2d"]
+[ext_resource type="Script" uid="uid://t6hvwsqkyi3e" path="res://Nodes/StartMenu/ButtonSystem__Options.cs" id="6_3wqj7"]
+[ext_resource type="Script" uid="uid://cl0jvv6yo4tgm" path="res://Nodes/StartMenu/ButtonSystem__Achievements.cs" id="7_wiokm"]
+[ext_resource type="Script" uid="uid://da2th3dxl7jqn" path="res://Nodes/StartMenu/ButtonSystem__Quit.cs" id="8_crur5"]
+[ext_resource type="PackedScene" uid="uid://u5dek0y50dkv" path="res://Nodes/Audio/SFX/SelectSound.tscn" id="11_cuka8"]
+[ext_resource type="PackedScene" uid="uid://ce3ae83fe0k65" path="res://Nodes/Audio/SFX/ConfirmSound.tscn" id="12_y5p2d"]
 
-[node name="StartMenu" type="AspectRatioContainer" node_paths=PackedStringArray("_loopingStartMenuMusic", "_startMenuItemList")]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
+[node name="StartMenu" type="Control" node_paths=PackedStringArray("_newGame", "_continue", "_options", "_achievements", "_quit")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -70.0
-offset_top = -354.0
-offset_right = 70.0
 grow_horizontal = 2
-grow_vertical = 0
+grow_vertical = 2
+theme = ExtResource("1_3wqj7")
 script = ExtResource("1_3kyvb")
-_loopingStartMenuMusic = NodePath("StartMenuMusic")
-_startMenuItemList = NodePath("MarginContainer/StartMenuItemList")
+_bgm = ExtResource("4_loh3u")
+_newGame = NodePath("MarginContainer2/VBoxContainer/HBoxContainer/New Game")
+_continue = NodePath("MarginContainer2/VBoxContainer/HBoxContainer/Continue")
+_options = NodePath("MarginContainer2/VBoxContainer/HBoxContainer2/Options")
+_achievements = NodePath("MarginContainer2/VBoxContainer/HBoxContainer2/Achievements")
+_quit = NodePath("MarginContainer2/VBoxContainer/HBoxContainer2/Quit")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="TitleBackgroundImage" type="TextureRect" parent="."]
 layout_mode = 2
-theme_override_constants/margin_bottom = 150
+offset_right = 1280.0
+offset_bottom = 720.0
+texture = ExtResource("1_loh3u")
+metadata/_edit_lock_ = true
 
-[node name="StartMenuItemList" type="ItemList" parent="MarginContainer" node_paths=PackedStringArray("_selectSound", "_confirmSound")]
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 124
+theme_override_constants/margin_top = 320
+theme_override_constants/margin_right = 124
+theme_override_constants/margin_bottom = 140
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer2"]
 layout_mode = 2
-theme = ExtResource("1_juhg0")
-allow_search = false
-auto_width = true
-auto_height = true
-item_count = 4
-same_column_width = true
-icon_mode = 0
-item_0/text = "Start"
-item_1/text = "Continue"
-item_1/selectable = false
-item_1/disabled = true
-item_2/text = "Options"
-item_3/text = "Quit"
-script = ExtResource("2_2ybwg")
-_selectSound = NodePath("../SelectSound")
-_confirmSound = NodePath("../ConfirmSound")
+theme_override_constants/separation = 60
 
-[node name="SelectSound" type="AudioStreamPlayer2D" parent="MarginContainer"]
-stream = ExtResource("4_3kyvb")
-bus = &"SFX"
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/VBoxContainer"]
+layout_mode = 2
 
-[node name="ConfirmSound" type="AudioStreamPlayer2D" parent="MarginContainer"]
-stream = ExtResource("5_fa70d")
-bus = &"SFX"
+[node name="New Game" type="Button" parent="MarginContainer2/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("_selectSound", "_confirmSound")]
+layout_mode = 2
+focus_neighbor_left = NodePath("../../HBoxContainer2/Quit")
+focus_neighbor_top = NodePath("../../HBoxContainer2/Options")
+focus_neighbor_right = NodePath("../Continue")
+focus_neighbor_bottom = NodePath("../../HBoxContainer2/Options")
+focus_next = NodePath("../Continue")
+focus_previous = NodePath("../../HBoxContainer2/Quit")
+theme_type_variation = &"ButtonLarge"
+text = "New Game"
+script = ExtResource("4_um421")
+_selectSound = NodePath("../../../../SelectSound")
+_confirmSound = NodePath("../../../../ConfirmSound")
 
-[node name="StartMenuMusic" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("6_fa70d")
-volume_db = -10.0
-bus = &"Music"
-script = ExtResource("7_loh3u")
+[node name="Spacer" parent="MarginContainer2/VBoxContainer/HBoxContainer" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="Continue" type="Button" parent="MarginContainer2/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("_selectSound", "_confirmSound")]
+layout_mode = 2
+focus_neighbor_left = NodePath("../New Game")
+focus_neighbor_top = NodePath("../../HBoxContainer2/Quit")
+focus_neighbor_right = NodePath("../../HBoxContainer2/Options")
+focus_neighbor_bottom = NodePath("../../HBoxContainer2/Quit")
+focus_next = NodePath("../../HBoxContainer2/Options")
+focus_previous = NodePath("../New Game")
+theme_type_variation = &"ButtonLarge"
+text = "Continue"
+script = ExtResource("5_y5p2d")
+_selectSound = NodePath("../../../../SelectSound")
+_confirmSound = NodePath("../../../../ConfirmSound")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacer" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="Options" type="Button" parent="MarginContainer2/VBoxContainer/HBoxContainer2" node_paths=PackedStringArray("_selectSound", "_confirmSound")]
+layout_mode = 2
+focus_neighbor_left = NodePath("../../HBoxContainer/Continue")
+focus_neighbor_top = NodePath("../../HBoxContainer/New Game")
+focus_neighbor_right = NodePath("../Achievements")
+focus_neighbor_bottom = NodePath("../../HBoxContainer/New Game")
+focus_next = NodePath("../Achievements")
+focus_previous = NodePath("../../HBoxContainer/Continue")
+theme_type_variation = &"ButtonMedium"
+text = "Options"
+script = ExtResource("6_3wqj7")
+_selectSound = NodePath("../../../../SelectSound")
+_confirmSound = NodePath("../../../../ConfirmSound")
+
+[node name="Spacer2" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="Achievements" type="Button" parent="MarginContainer2/VBoxContainer/HBoxContainer2" node_paths=PackedStringArray("_selectSound", "_confirmSound")]
+layout_mode = 2
+focus_neighbor_left = NodePath("../Options")
+focus_neighbor_top = NodePath("../../HBoxContainer/Continue")
+focus_neighbor_right = NodePath("../Quit")
+focus_neighbor_bottom = NodePath("../../HBoxContainer/Continue")
+focus_next = NodePath("../Quit")
+focus_previous = NodePath("../Options")
+theme_type_variation = &"ButtonMedium"
+text = "Achievements"
+script = ExtResource("7_wiokm")
+_selectSound = NodePath("../../../../SelectSound")
+_confirmSound = NodePath("../../../../ConfirmSound")
+
+[node name="Spacer3" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="Quit" type="Button" parent="MarginContainer2/VBoxContainer/HBoxContainer2" node_paths=PackedStringArray("_selectSound", "_confirmSound")]
+layout_mode = 2
+focus_neighbor_left = NodePath("../Achievements")
+focus_neighbor_top = NodePath("../../HBoxContainer/Continue")
+focus_neighbor_right = NodePath("../../HBoxContainer/New Game")
+focus_neighbor_bottom = NodePath("../../HBoxContainer/Continue")
+focus_next = NodePath("../../HBoxContainer/New Game")
+focus_previous = NodePath("../Achievements")
+theme_type_variation = &"ButtonMedium"
+text = "Quit"
+script = ExtResource("8_crur5")
+_selectSound = NodePath("../../../../SelectSound")
+_confirmSound = NodePath("../../../../ConfirmSound")
+
+[node name="Spacer4" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="ConfirmSound" parent="." instance=ExtResource("12_y5p2d")]
+
+[node name="SelectSound" parent="." instance=ExtResource("11_cuka8")]

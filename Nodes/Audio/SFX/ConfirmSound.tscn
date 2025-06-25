@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ce3ae83fe0k65"]
+
+[ext_resource type="AudioStream" uid="uid://h3en4ypoixve" path="res://Resources/Sounds/menu_confirm_slime_v2.wav" id="1_6d0vy"]
+
+[node name="ConfirmSound" type="AudioStreamPlayer2D"]
+stream = ExtResource("1_6d0vy")
+bus = &"SFX"

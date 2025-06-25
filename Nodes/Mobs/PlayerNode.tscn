@@ -1,12 +1,12 @@
 [gd_scene load_steps=24 format=3 uid="uid://cv4mrw0nd0ho5"]
 
 [ext_resource type="Texture2D" uid="uid://ejtkhic7cb50" path="res://Resources/Sprites/PC Computer - Ragnarok Online - Gold Poring.png" id="1_v5t36"]
-[ext_resource type="Script" uid="uid://ppjg2eciopc8" path="res://Components/Description/NameComponent.cs" id="2_cvnsp"]
+[ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="2_6yyy1"]
 [ext_resource type="Script" uid="uid://cg5qkkm7tx2dx" path="res://Components/Damageable/HitBoxComponent.cs" id="2_y73r6"]
 [ext_resource type="Script" uid="uid://cw63klnljs463" path="res://Components/Damageable/HealthComponent.cs" id="3_vgqql"]
 [ext_resource type="Script" uid="uid://pd7w380tkd0u" path="res://Components/Damageable/DamageableComponent.cs" id="4_fkybt"]
 [ext_resource type="Script" uid="uid://bsydnvgac5ggj" path="res://Components/Magic/ManaComponent.cs" id="4_vmnvr"]
-[ext_resource type="PackedScene" uid="uid://bcl3uv3eqr6k6" path="res://Nodes/Skills/SlimeTackleNode.tscn" id="7_y73r6"]
+[ext_resource type="Script" uid="uid://bj3d36tnhyffx" path="res://Components/Mob/MobComponent.cs" id="7_6yyy1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pbnxc"]
 atlas = ExtResource("1_v5t36")
@@ -130,16 +130,18 @@ radius = 12.5
 [node name="CharacterBody2D" type="CharacterBody2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
 scale = Vector2(-1, 1)
 sprite_frames = SubResource("SpriteFrames_04pru")
 
+[node name="DescriptionComponent" type="Node2D" parent="."]
+script = ExtResource("2_6yyy1")
+
 [node name="HitBoxComponent" type="CollisionShape2D" parent="."]
+visible = false
 position = Vector2(0, 3)
 shape = SubResource("CircleShape2D_f60y1")
 script = ExtResource("2_y73r6")
-
-[node name="NameComponent" type="Node2D" parent="."]
-script = ExtResource("2_cvnsp")
 
 [node name="HealthComponent" type="Node2D" parent="."]
 script = ExtResource("3_vgqql")
@@ -154,4 +156,6 @@ script = ExtResource("4_vmnvr")
 MaxMana = 9999
 Mana = 9999
 
-[node name="SlimeTackle" parent="." instance=ExtResource("7_y73r6")]
+[node name="MobComponent" type="Node2D" parent="."]
+script = ExtResource("7_6yyy1")
+Skills = Array[String](["Slime Tackle", "Bleeding Slash"])

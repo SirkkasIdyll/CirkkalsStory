@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://bpthgm81l4ap7"]
+
+[ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="1_j45vb"]
+[ext_resource type="Script" uid="uid://bjy3jur5ey1oq" path="res://Components/Damage/DamageOverTimeComponent.cs" id="2_uxeh1"]
+[ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="3_8xmuw"]
+[ext_resource type="Script" uid="uid://bo8urbmvfmp8c" path="res://Components/Skills/SkillComponent.cs" id="4_p5p5g"]
+[ext_resource type="Script" uid="uid://cmvfomctvourc" path="res://Components/Damageable/TargetingComponent.cs" id="5_q1ux5"]
+
+[node name="BleedingSlash" type="Node2D"]
+
+[node name="DamageComponent" type="Node2D" parent="."]
+script = ExtResource("1_j45vb")
+Damage = 5
+
+[node name="DamageOverTimeComponent" type="Node2D" parent="."]
+script = ExtResource("2_uxeh1")
+Damage = 5
+Turns = 5
+
+[node name="DescriptionComponent" type="Node2D" parent="."]
+script = ExtResource("3_8xmuw")
+DisplayName = "Bleeding Slash"
+Description = "A swiping attack aimed at the enemy's most vulnerable spots, causing them to take damage for several turns."
+
+[node name="SkillComponent" type="Node2D" parent="."]
+script = ExtResource("4_p5p5g")
+
+[node name="TargetingComponent" type="Node2D" parent="."]
+script = ExtResource("5_q1ux5")

@@ -6,10 +6,12 @@ This is a small project I'm working on to familiarize myself with the Godot engi
 
 ### Coding Practices
 
-- Arrange properties and functions in alphabetical order.
+- Don't use LINQ.
+- Arrange properties and functions in alphabetical order. This lessens organizational ambiguity and makes it easier to find specific code.
 - Add summaries for all classes and all properties even if they seem obvious. Make your intention known, otherwise no one will know.
 - Use if statements to return as early as possible to reduce nesting complexity later on.
 - Delete unused template functions like Ready() and Process().
+- Parents use signal from children, then call functions from their children to update them. Children do not ever need to be aware of their parents.
 
 ### Naming Practices
 
@@ -33,12 +35,3 @@ DO THIS
 
 DON'T DO THIS
 > - VolumeSystem.cs
-
-#### Nodes (Non-visible to player)
-DO THIS
-> - PoisonSpellNode.tscn
-> - PoisonSpellNodeSystem.cs
-
-DON'T DO THIS
-> - Poison.tscn
-> - PoisonSystem.cs

@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://u5dek0y50dkv"]
+
+[ext_resource type="AudioStream" uid="uid://cohh3s4236s88" path="res://Resources/Sounds/menu_select_slime_v2.wav" id="1_if4pl"]
+[ext_resource type="Script" uid="uid://b31av732wqlh2" path="res://Nodes/Audio/FluctuatingAudioStreamPlayer2DSystem.cs" id="2_q1mmv"]
+
+[node name="SelectSound" type="AudioStreamPlayer2D"]
+stream = ExtResource("1_if4pl")
+bus = &"SFX"
+script = ExtResource("2_q1mmv")

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dxcp063mrk6rf"]
 
-[ext_resource type="Script" uid="uid://c0btfu1axulsx" path="res://Nodes/Battle/NameAndHealthBarSceneSystem.cs" id="1_lsnnc"]
+[ext_resource type="Script" uid="uid://c0btfu1axulsx" path="res://Nodes/Combat/NameAndHealthBarSceneSystem.cs" id="1_lsnnc"]
 [ext_resource type="Theme" uid="uid://bd0ayw2bkpg2q" path="res://Resources/Themes/BattleName.tres" id="2_ia1m5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vq1uj"]

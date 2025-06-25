@@ -1,20 +1,51 @@
-using CS.Nodes.StartMenu;
 using Godot;
 
 namespace CS.Nodes.Options;
 
-public partial class OptionsSceneSystem : AspectRatioContainer
+/// <summary>
+/// Responsible for managing user options on game load and afterward
+/// </summary>
+public partial class OptionsSceneSystem : Control
 {
-	public const string ConfigFilePath = "user://config_options.cfg";
-
-	[Export] private StartMenuSceneSystem _startMenu;
-	[Export] private AudioStreamPlayer2D _cancelSound;
-	private ConfigFile _configFile;
+	private const string ConfigFilePath = "user://config_options.cfg";
+	private ConfigFile _configFile = new();
+	public Control? PreviousScene;
+	
+	[ExportCategory("Owned")]
+	[Export] private AudioStreamPlayer2D? _cancelSound;
+	[Export] private BackButtonSystem? _backButton;
+	[Export] private ResetButtonSystem? _resetButton;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		_configFile = new ConfigFile();
+		if (_backButton != null)
+			_backButton.Pressed += OnBackButtonPressed;
+		
+		if (_resetButton != null)
+			_resetButton.Pressed += OnResetButtonPressed;
+		
+		LoadConfigs();
+	}
+	
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		if (@event.IsActionPressed("ui_cancel") && IsVisibleInTree())
+		{
+			SetVisible(false);
+			PreviousScene?.SetVisible(true);
+			_cancelSound?.Play();
+			GetViewport().SetInputAsHandled();
+		}
+	}
+
+	/// <summary>
+	/// Gets the nodes in the config_options group
+	/// Loads configs from the <see cref="ConfigFilePath"/>
+	/// Saves the values reported by nodes in the config_options group, which ends up saving defaults for missing configs
+	/// </summary>
+	private void LoadConfigs()
+	{
 		var error = _configFile.Load(ConfigFilePath);
 		var configNodes = GetTree().GetNodesInGroup("config_options");
 		foreach (var node in configNodes)
@@ -29,52 +60,47 @@ public partial class OptionsSceneSystem : AspectRatioContainer
 		_configFile.Save(ConfigFilePath);
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	private void OnBackButtonPressed()
 	{
-	}
-
-	public override void _UnhandledInput(InputEvent @event)
-	{
-		if (@event.IsActionPressed("ui_cancel") && Visible)
-		{
-			_startMenu.Visible = true;
-			Visible = false;
-			_cancelSound.Playing = true;
-			GetViewport().SetInputAsHandled();
-			
-			var configNodes = GetTree().GetNodesInGroup("config_options");
-			foreach (var node in configNodes)
-			{
-				if (node.HasMethod("AddToConfig"))
-					node.Call("AddToConfig", _configFile);
-			}
+		if (PreviousScene == null)
+			return;
 		
-			_configFile.Save(ConfigFilePath);
-		}
+		SetVisible(false);
+		PreviousScene.SetVisible(true);
+		SaveConfigs();
 	}
-}
-
-/// <summary>
-/// </summary>
-/// <param name="section">General category to store under</param>
-/// <param name="key">Specific key to reference</param>
-/// <param name="value">What information is relevant to store</param>
-struct ConfigData(string section, string key, Variant value)
-{
-	/// <summary>
-	/// What section to save the settings in
-	/// </summary>
-	public string Section = section;
 
 	/// <summary>
-	/// What name to save the setting under
+	/// Sets each option in the node group to their default value then saves their values to the config file
 	/// </summary>
-	public string Key = key;
+	private void OnResetButtonPressed()
+	{
+		var configNodes = GetTree().GetNodesInGroup("config_options");
+		foreach (var node in configNodes)
+		{
+			if (node.HasMethod("LoadConfig"))
+				node.Call("ResetToDefault");
+			
+			if (node.HasMethod("AddToConfig"))
+				node.Call("AddToConfig", _configFile);
+		}
+		
+		_configFile.Save(ConfigFilePath);
+	}
 
 	/// <summary>
-	/// What information to save
-	/// Because this is a variant type, the value will need to be type-hinted when loaded
+	/// Gets the nodes in the config_options group
+	/// Saves the values reported by nodes in the config_options group, which ends up saving defaults for missing configs
 	/// </summary>
-	public Variant Value = value;
+	private void SaveConfigs()
+	{
+		var configNodes = GetTree().GetNodesInGroup("config_options");
+		foreach (var node in configNodes)
+		{
+			if (node.HasMethod("AddToConfig"))
+				node.Call("AddToConfig", _configFile);
+		}
+		
+		_configFile.Save(ConfigFilePath);
+	}
 }

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://can0cu6eda7p"]
+
+[ext_resource type="AudioStream" uid="uid://cc8qu0r1b51yk" path="res://Resources/Sounds/menu_cancel_slime_v2.wav" id="1_7f85m"]
+
+[node name="CancelSound" type="AudioStreamPlayer2D"]
+stream = ExtResource("1_7f85m")
+bus = &"SFX"

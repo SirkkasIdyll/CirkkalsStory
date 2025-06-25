@@ -2,10 +2,10 @@ using Godot;
 
 namespace CS.Nodes.StartMenu;
 
-public partial class StartMenuItemListSystem : ItemList
+public partial class UNUSEDITEMLIST : ItemList
 {
-	[Export] private AudioStreamPlayer2D _selectSound;
-	[Export] private AudioStreamPlayer2D _confirmSound;
+	[Export] private AudioStreamPlayer2D? _selectSound;
+	[Export] private AudioStreamPlayer2D? _confirmSound;
 	
 	[Signal]
 	public delegate void StartGameSelectedEventHandler();
@@ -32,7 +32,8 @@ public partial class StartMenuItemListSystem : ItemList
 	
 	private void OnItemActivated(long index)
 	{
-		_confirmSound.Playing = true;
+		if (_confirmSound != null)
+			_confirmSound.Playing = true;
 
 		if (index == 0)
 			EmitSignal(SignalName.StartGameSelected);
@@ -61,8 +62,10 @@ public partial class StartMenuItemListSystem : ItemList
 		// Prevents select sound from being played on top of the confirmation sound if user clicked with mouse button
 		if (Input.IsMouseButtonPressed(MouseButton.Left))
 			return;
+
+		if (_selectSound != null)
+			_selectSound.Playing = true;
 		
-		_selectSound.Playing = true;
 		Tween tween = CreateTween();
 		Callable callable = new Callable(this, MethodName.change_to_color);
 		tween.TweenMethod(callable, new Color((float) 0.732, (float) 0.744, (float) 0.748), new Color(1, 1, 1), 0.15f);
