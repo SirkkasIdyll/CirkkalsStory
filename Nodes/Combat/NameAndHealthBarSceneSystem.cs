@@ -14,6 +14,43 @@ public partial class NameAndHealthBarSceneSystem : BoxContainer
 	[Export] private Label? _mobName;
 	[Export] private ProgressBar? _mobHpBar;
 	[Export] private Label? _mobHpBarNumbers;
+	[Export] private Button? _target;
+
+	[Signal]
+	public delegate void TargetChosenEventHandler(Node mob);
+
+	[Signal]
+	public delegate void MobDiedEventHandler(Node mob);
+
+	public override void _Ready()
+	{
+		if (_target != null)
+			_target.Pressed += OnTargetPressed;
+	}
+
+	private void OnHealthAltered(int amount, int result)
+	{
+		if (_mob == null)
+			return;
+		
+		if (!ComponentSystem.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
+		{
+			GD.PrintErr("Mob has no health component\n" + System.Environment.StackTrace);
+			return;
+		}
+		
+		_mobHpBar?.SetValue(healthComponent.Health);
+		_mobHpBarNumbers?.SetText($"{healthComponent.Health} / {healthComponent.MaxHealth}");
+		
+		if (healthComponent.Health == 0)
+			EmitSignalMobDied(_mob);
+	}
+	
+	private void OnTargetPressed()
+	{
+		EmitSignalTargetChosen(_mob);
+		_target?.SetVisible(false);
+	}
 
 	public void SetMob(Node mob)
 	{
@@ -35,5 +72,16 @@ public partial class NameAndHealthBarSceneSystem : BoxContainer
 		_mobHpBar?.SetMax(healthComponent.MaxHealth);
 		_mobHpBar?.SetValue(healthComponent.Health);
 		_mobHpBarNumbers?.SetText($"{healthComponent.Health} / {healthComponent.MaxHealth}");
+		healthComponent.HealthAltered += OnHealthAltered;
+	}
+
+	public void ShowTargetButton()
+	{
+		_target?.SetVisible(true);
+	}
+
+	public void HideTargetButton()
+	{
+		_target?.SetVisible(false);
 	}
 }

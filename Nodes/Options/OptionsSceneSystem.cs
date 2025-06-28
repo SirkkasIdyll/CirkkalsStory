@@ -19,6 +19,11 @@ public partial class OptionsSceneSystem : Control
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		if (_cancelSound == null ||
+		    _backButton == null ||
+		    _resetButton == null)
+			GD.PrintErr("Owned property is null\n" + System.Environment.StackTrace);
+		
 		if (_backButton != null)
 			_backButton.Pressed += OnBackButtonPressed;
 		
@@ -32,10 +37,7 @@ public partial class OptionsSceneSystem : Control
 	{
 		if (@event.IsActionPressed("ui_cancel") && IsVisibleInTree())
 		{
-			SetVisible(false);
-			PreviousScene?.SetVisible(true);
-			_cancelSound?.Play();
-			GetViewport().SetInputAsHandled();
+			OnBackButtonPressed();
 		}
 	}
 
@@ -65,6 +67,7 @@ public partial class OptionsSceneSystem : Control
 		if (PreviousScene == null)
 			return;
 		
+		_cancelSound?.Play();
 		SetVisible(false);
 		PreviousScene.SetVisible(true);
 		SaveConfigs();

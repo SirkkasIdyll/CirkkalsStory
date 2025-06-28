@@ -31,8 +31,9 @@ public partial class DamageOverTimeComponent : Node2D
     /// </summary>
     [Export] public int Turns;
     
-    public void ApplyEffect(Node2D target)
+    public void ApplyCombatEffect(Node target)
     {
+        
     }
 
     public string DescribeEffect()

@@ -15,7 +15,7 @@ bg_color = Color(0.157274, 0.157274, 0.157274, 1)
 
 [sub_resource type="Theme" id="Theme_xxbee"]
 
-[node name="Options" type="Control" node_paths=PackedStringArray("_backButton", "_resetButton")]
+[node name="Options" type="Control" node_paths=PackedStringArray("_cancelSound", "_backButton", "_resetButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,6 +24,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_3vvh7")
 script = ExtResource("2_e4vkv")
+_cancelSound = NodePath("CancelSound")
 _backButton = NodePath("PanelContainer/MarginContainer2/HBoxContainer/BackButton")
 _resetButton = NodePath("PanelContainer/MarginContainer2/HBoxContainer/ResetButton")
 

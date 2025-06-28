@@ -13,6 +13,7 @@
   
   <ItemGroup>
     <Folder Include="Nodes\" />
+    <Folder Include="Nodes\Combat\TurnManager\" />
   </ItemGroup>
   
   <ItemGroup>

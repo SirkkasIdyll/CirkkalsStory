@@ -13,7 +13,7 @@ public partial class DamageComponent : Node2D
     /// </summary>
     [Export] public int Damage;
 
-    public void ApplyEffect(Node2D target)
+    public void ApplyCombatEffect(Node target)
     {
         if (ComponentSystem.TryGetComponent<HealthComponent>(target, out var targetHealthComponent))
             targetHealthComponent.AlterHealth(-Damage);

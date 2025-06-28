@@ -5,8 +5,9 @@ namespace CS.Nodes.StartMenu;
 
 public partial class ButtonSystem__NewGame : Button
 {
-    [Export] private FluctuatingAudioStreamPlayer2DSystem? _selectSound;
+    [ExportCategory("Instantiated")]
     [Export] private AudioStreamPlayer2D? _confirmSound;
+    [Export] private FluctuatingAudioStreamPlayer2DSystem? _selectSound;
     
     [Signal]
     public delegate void EscapePressedEventHandler();

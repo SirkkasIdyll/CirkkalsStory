@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bj83w83rrsasl"]
+[gd_scene load_steps=14 format=3 uid="uid://bj83w83rrsasl"]
 
 [ext_resource type="Script" uid="uid://xcjnsxni4kmh" path="res://Nodes/StartMenu/StartMenuSceneSystem.cs" id="1_3kyvb"]
 [ext_resource type="Theme" uid="uid://bofxw0bub14i4" path="res://Resources/Themes/default.tres" id="1_3wqj7"]
@@ -11,9 +11,10 @@
 [ext_resource type="Script" uid="uid://cl0jvv6yo4tgm" path="res://Nodes/StartMenu/ButtonSystem__Achievements.cs" id="7_wiokm"]
 [ext_resource type="Script" uid="uid://da2th3dxl7jqn" path="res://Nodes/StartMenu/ButtonSystem__Quit.cs" id="8_crur5"]
 [ext_resource type="PackedScene" uid="uid://u5dek0y50dkv" path="res://Nodes/Audio/SFX/SelectSound.tscn" id="11_cuka8"]
+[ext_resource type="PackedScene" uid="uid://can0cu6eda7p" path="res://Nodes/Audio/SFX/CancelSound.tscn" id="11_y5p2d"]
 [ext_resource type="PackedScene" uid="uid://ce3ae83fe0k65" path="res://Nodes/Audio/SFX/ConfirmSound.tscn" id="12_y5p2d"]
 
-[node name="StartMenu" type="Control" node_paths=PackedStringArray("_newGame", "_continue", "_options", "_achievements", "_quit")]
+[node name="StartMenu" type="Control" node_paths=PackedStringArray("_cancelSound", "_newGame", "_continue", "_options", "_achievements", "_quit")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,6 +24,7 @@ grow_vertical = 2
 theme = ExtResource("1_3wqj7")
 script = ExtResource("1_3kyvb")
 _bgm = ExtResource("4_loh3u")
+_cancelSound = NodePath("CancelSound")
 _newGame = NodePath("MarginContainer2/VBoxContainer/HBoxContainer/New Game")
 _continue = NodePath("MarginContainer2/VBoxContainer/HBoxContainer/Continue")
 _options = NodePath("MarginContainer2/VBoxContainer/HBoxContainer2/Options")
@@ -142,6 +144,8 @@ _confirmSound = NodePath("../../../../ConfirmSound")
 
 [node name="Spacer4" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
 layout_mode = 2
+
+[node name="CancelSound" parent="." instance=ExtResource("11_y5p2d")]
 
 [node name="ConfirmSound" parent="." instance=ExtResource("12_y5p2d")]
 

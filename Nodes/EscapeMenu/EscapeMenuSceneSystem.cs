@@ -6,6 +6,7 @@ namespace CS.Nodes.EscapeMenu;
 public partial class EscapeMenuSceneSystem : Control
 {
 	[ExportCategory("Owned")]
+	[Export] private AudioStreamPlayer2D? _cancelSound;
 	[Export] private ButtonSystem__Continue? _continue;
 	[Export] private ButtonSystem__Options? _options;
 	[Export] private ButtonSystem__Quit? _quit;
@@ -13,6 +14,12 @@ public partial class EscapeMenuSceneSystem : Control
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		if (_cancelSound == null ||
+		    _continue == null ||
+		    _options == null ||
+		    _quit == null)
+			GD.PrintErr("Owned property is null\n" + System.Environment.StackTrace);
+		
 		if (_continue != null)
 		{
 			_continue.Pressed += OnContinueButtonPressed;
@@ -46,7 +53,7 @@ public partial class EscapeMenuSceneSystem : Control
 		{
 			if (eventKey.IsPressed() && eventKey.Keycode == Key.Escape)
 			{
-				_quit?.GrabFocus();
+				OnEscapePressed();
 				GetViewport().SetInputAsHandled();
 				return;
 			}
@@ -70,6 +77,7 @@ public partial class EscapeMenuSceneSystem : Control
 	private void OnEscapePressed()
 	{
 		_quit?.GrabFocus();
+		_cancelSound?.Play();
 	}
 
 	/// <summary>
