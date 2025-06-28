@@ -1,10 +1,11 @@
-[gd_scene load_steps=24 format=3 uid="uid://dsdls4s1jmcmb"]
+[gd_scene load_steps=25 format=3 uid="uid://dsdls4s1jmcmb"]
 
 [ext_resource type="Texture2D" uid="uid://cxktjg5cdokde" path="res://Resources/Sprites/PC Computer - Ragnarok Online - Goblin Dagger.png" id="1_fmps8"]
 [ext_resource type="Script" uid="uid://cg5qkkm7tx2dx" path="res://Components/Damageable/HitBoxComponent.cs" id="2_1ydkj"]
 [ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="3_lnk8x"]
 [ext_resource type="Script" uid="uid://cw63klnljs463" path="res://Components/Damageable/HealthComponent.cs" id="4_3cw3p"]
 [ext_resource type="Script" uid="uid://pd7w380tkd0u" path="res://Components/Damageable/DamageableComponent.cs" id="5_3nx7y"]
+[ext_resource type="Script" uid="uid://bj3d36tnhyffx" path="res://Components/Mob/MobComponent.cs" id="6_7uac5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j66jy"]
 atlas = ExtResource("1_fmps8")
@@ -158,7 +159,11 @@ DisplayName = "Goblin"
 [node name="HealthComponent" type="Node2D" parent="."]
 script = ExtResource("4_3cw3p")
 MaxHealth = 20
-Health = 15
+Health = 20
 
 [node name="DamageableComponent" type="Node2D" parent="."]
 script = ExtResource("5_3nx7y")
+
+[node name="MobComponent" type="Node2D" parent="."]
+script = ExtResource("6_7uac5")
+Skills = Array[String](["Bleeding Slash"])

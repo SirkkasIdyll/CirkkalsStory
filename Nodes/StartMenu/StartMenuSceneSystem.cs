@@ -15,6 +15,7 @@ public partial class StartMenuSceneSystem : Control
 	
 	[ExportCategory("Owned")]
 	[Export] private AudioStream? _bgm;
+	[Export] private AudioStreamPlayer2D? _cancelSound;
 	[Export] private ButtonSystem__NewGame? _newGame;
 	[Export] private ButtonSystem__Continue? _continue;
 	[Export] private ButtonSystem__Options? _options;
@@ -24,6 +25,15 @@ public partial class StartMenuSceneSystem : Control
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		if (_bgm == null ||
+		    _cancelSound == null ||
+		    _newGame == null ||
+		    _continue == null ||
+		    _options == null ||
+		    _achievements == null ||
+		    _quit == null)
+			GD.PrintErr("Owned property is null\n" + System.Environment.StackTrace);
+		
 		if (_bgm != null && _bgmPlayer != null)
 		{
 			_bgmPlayer.SetStream(_bgm);
@@ -74,7 +84,7 @@ public partial class StartMenuSceneSystem : Control
 		{
 			if (eventKey.IsPressed() && eventKey.Keycode == Key.Escape)
 			{
-				_quit?.GrabFocus();
+				OnEscapePressed();
 				GetViewport().SetInputAsHandled();
 				return;
 			}
@@ -100,6 +110,7 @@ public partial class StartMenuSceneSystem : Control
 	private void OnEscapePressed()
 	{
 		_quit?.GrabFocus();
+		_cancelSound?.Play();
 	}
 	
 	/// <summary>
@@ -109,10 +120,17 @@ public partial class StartMenuSceneSystem : Control
 	{
 		if (_newGameScene == null)
 			return;
+
+		var duration = 0.2f;
+		var tween = CreateTween().BindNode(this);
+		tween.TweenProperty(this, "modulate", new Color(1, 1, 1, 0), duration);
+		tween.TweenCallback(Callable.From(QueueFree));
 		
 		var instantiatedScene = _newGameScene.Instantiate();
 		GetParent().AddChild(instantiatedScene);
-		QueueFree();
+		var tweenTwo = CreateTween().BindNode(instantiatedScene);
+		instantiatedScene.Call(CanvasItem.MethodName.SetModulate, new Color(1, 1, 1, 0));
+		tweenTwo.TweenProperty(instantiatedScene, "modulate", new Color(1, 1, 1, 1), duration * 2);
 	}
 	
 	/// <summary>

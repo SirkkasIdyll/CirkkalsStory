@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://ce3ae83fe0k65" path="res://Nodes/Audio/SFX/ConfirmSound.tscn" id="7_ybh08"]
 [ext_resource type="PackedScene" uid="uid://u5dek0y50dkv" path="res://Nodes/Audio/SFX/SelectSound.tscn" id="8_ff64v"]
 
-[node name="EscapeMenuScene" type="Control" node_paths=PackedStringArray("_continue", "_options", "_quit")]
+[node name="EscapeMenuScene" type="Control" node_paths=PackedStringArray("_cancelSound", "_continue", "_options", "_quit")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,6 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_l0ogq")
 script = ExtResource("2_vb7xb")
+_cancelSound = NodePath("CancelSound")
 _continue = NodePath("PanelContainer/VBoxContainer/Continue")
 _options = NodePath("PanelContainer/VBoxContainer/Options")
 _quit = NodePath("PanelContainer/VBoxContainer/Quit")

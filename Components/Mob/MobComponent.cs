@@ -23,4 +23,9 @@ public partial class MobComponent : Node2D
     /// Spells are magical abilities a mob can use during combat
     /// </summary>
     [Export] public Array<string> Spells = [];
+
+    public string ChooseRandomSkillOrSpell()
+    {
+        return Skills.PickRandom();
+    }
 }

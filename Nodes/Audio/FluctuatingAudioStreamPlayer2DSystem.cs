@@ -8,6 +8,7 @@ namespace CS.Nodes.Audio;
 /// </summary>
 public partial class FluctuatingAudioStreamPlayer2DSystem : AudioStreamPlayer2D
 {
+    [ExportCategory("Instantiated")]
     /// <summary>
     /// How much lower than 1.0 the pitch can fluctuate
     /// </summary>

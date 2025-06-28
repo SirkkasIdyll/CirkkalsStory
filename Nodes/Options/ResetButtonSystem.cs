@@ -4,6 +4,7 @@ namespace CS.Nodes.Options;
 
 public partial class ResetButtonSystem : Button
 {
+	[ExportCategory("Instantiated")]
 	[Export] private AudioStreamPlayer2D? _cancelSound;
 	
 	// Called when the node enters the scene tree for the first time.

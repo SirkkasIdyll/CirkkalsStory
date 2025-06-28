@@ -5,9 +5,9 @@ namespace CS.Nodes.EscapeMenu;
 
 public partial class ButtonSystem__Quit : Button
 {
-	
-	[Export] private FluctuatingAudioStreamPlayer2DSystem? _selectSound;
+	[ExportCategory("Instantiated")]
 	[Export] private AudioStreamPlayer2D? _confirmSound;
+	[Export] private FluctuatingAudioStreamPlayer2DSystem? _selectSound;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()

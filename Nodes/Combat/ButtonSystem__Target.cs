@@ -1,25 +1,16 @@
 using Godot;
 
-namespace CS.Nodes.Options;
+namespace CS.Nodes.Combat;
 
-public partial class BackButtonSystem : Button
+public partial class ButtonSystem__Target : Button
 {
-	[ExportCategory("Instantiated")]
-	[Export] private AudioStreamPlayer2D? _confirmSound;
-	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		Pressed += OnPressed;
 		MouseEntered += OnMouseEntered;
 		MouseExited += OnMouseExited;
 	}
-
-	private void OnPressed()
-	{
-		_confirmSound?.Play();
-	}
-
+	
 	private void OnMouseEntered()
 	{
 		SetDefaultCursorShape(CursorShape.PointingHand);
