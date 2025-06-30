@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cvv8otsc37cqg"]
+[gd_scene load_steps=9 format=3 uid="uid://cvv8otsc37cqg"]
 
 [ext_resource type="Script" uid="uid://ggixe6gwqamu" path="res://Nodes/Combat/CombatSceneSystem.cs" id="1_y778k"]
 [ext_resource type="PackedScene" uid="uid://cv4mrw0nd0ho5" path="res://Nodes/Mobs/PlayerNode.tscn" id="1_yc7gu"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://byc6u3b0pbhv7" path="res://Nodes/Combat/SkillSelection/CombatSkillSelectionScene.tscn" id="3_y778k"]
 [ext_resource type="PackedScene" uid="uid://uvxbf3xva83e" path="res://Nodes/Combat/TurnManager/TurnManagerScene.tscn" id="4_3pmw0"]
 [ext_resource type="Script" uid="uid://cjtek16utmv1j" path="res://Nodes/Combat/ActionsItemListSystem.cs" id="5_o60ty"]
+[ext_resource type="PackedScene" uid="uid://d04x5udawxvl1" path="res://Nodes/Mobs/TargetDummyNode.tscn" id="8_o60ty"]
 
 [node name="CombatScene" type="Control" node_paths=PackedStringArray("_players", "_enemies", "_turnManager", "_playersVBoxContainer", "_enemiesVBoxContainer", "_actionsItemList")]
 layout_mode = 3
@@ -17,7 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_y778k")
 _players = [NodePath("Player")]
-_enemies = [NodePath("Goblin"), NodePath("Goblin2")]
+_enemies = [NodePath("Goblin"), NodePath("TargetDummy")]
 _turnManager = NodePath("TurnManager")
 _nameAndHealthBar = ExtResource("3_abq4k")
 _combatSkillSelection = ExtResource("3_y778k")
@@ -58,8 +59,6 @@ scale = Vector2(4, 4)
 position = Vector2(308, 0)
 scale = Vector2(4, 4)
 
-[node name="Goblin2" parent="." instance=ExtResource("2_vbgdj")]
-position = Vector2(1540, 0)
-scale = Vector2(16, 16)
+[node name="TargetDummy" parent="." instance=ExtResource("8_o60ty")]
 
 [node name="Timer" type="Timer" parent="."]

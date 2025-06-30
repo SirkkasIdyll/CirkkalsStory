@@ -1,10 +1,23 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Godot;
 
-namespace CS.Components;
+namespace CS.SlimeFactory;
 
-public static partial class ComponentSystem
+public partial class NodeManager
 {
+    /// <summary>
+    /// Making the constructor private prevents the creation of a new <see cref="NodeManager"/>
+    /// </summary>
+    private NodeManager()
+    {
+    }
+
+    /// <summary>
+    /// Declare that there can only ever be one <see cref="NodeManager"/> being used
+    /// </summary>
+    public static NodeManager Instance { get; } = new();
+    public SignalBus SignalBus = SignalBus.Instance;
+    
     /// <summary>
     /// Goes through each child of the node and checks if the child is of the same type as T.
     /// </summary>

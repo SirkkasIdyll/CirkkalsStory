@@ -1,6 +1,6 @@
-using CS.Components;
 using CS.Components.Description;
 using CS.Nodes.Skills.Manager;
+using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
@@ -95,7 +95,7 @@ public partial class CombatSkillSelectionSceneSystem : Control
 		if (!_skillManagerSceneSystem.TryGetSkill(skill, out var skillNode))
 			return;
 
-		if (!ComponentSystem.TryGetComponent<DescriptionComponent>(skillNode, out var descriptionComponent))
+		if (!NodeManager.TryGetComponent<DescriptionComponent>(skillNode, out var descriptionComponent))
 			return;
 		
 		_skillName?.SetText(descriptionComponent.DisplayName);

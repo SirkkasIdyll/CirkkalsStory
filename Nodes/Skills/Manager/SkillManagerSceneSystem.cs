@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
-using CS.Components;
 using CS.Components.Description;
 using CS.Components.Skills;
+using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
@@ -28,10 +28,10 @@ public partial class SkillManagerSceneSystem : Node2D
 		var children = GetChildren();
 		foreach (var child in children)
 		{
-			if (!ComponentSystem.HasComponent<SkillComponent>(child))
+			if (!NodeManager.HasComponent<SkillComponent>(child))
 				continue;
 			
-			if (ComponentSystem.TryGetComponent<DescriptionComponent>(child, out var descriptionComponent))
+			if (NodeManager.TryGetComponent<DescriptionComponent>(child, out var descriptionComponent))
 				_skillRepository.Add(descriptionComponent.DisplayName, child);
 		}
 	}

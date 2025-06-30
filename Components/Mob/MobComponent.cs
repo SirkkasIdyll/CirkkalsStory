@@ -24,8 +24,24 @@ public partial class MobComponent : Node2D
     /// </summary>
     [Export] public Array<string> Spells = [];
 
-    public string ChooseRandomSkillOrSpell()
+    /// <summary>
+    /// Status effects can be positive or negative
+    /// </summary>
+    [Export] public Array<Node> StatusEffects = [];
+
+    public override void _Ready()
     {
+        base._Ready();
+        
+    }
+
+    public string? ChooseRandomSkillOrSpell()
+    {
+        if (Skills.Count == 0)
+            return null;
+        
         return Skills.PickRandom();
+        
+        
     }
 }

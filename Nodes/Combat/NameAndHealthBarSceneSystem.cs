@@ -1,6 +1,6 @@
-using CS.Components;
 using CS.Components.Damageable;
 using CS.Components.Description;
+using CS.SlimeFactory;
 using Godot;
 
 namespace CS.Nodes.Combat;
@@ -33,7 +33,7 @@ public partial class NameAndHealthBarSceneSystem : BoxContainer
 		if (_mob == null)
 			return;
 		
-		if (!ComponentSystem.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
+		if (!NodeManager.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
 		{
 			GD.PrintErr("Mob has no health component\n" + System.Environment.StackTrace);
 			return;
@@ -56,13 +56,13 @@ public partial class NameAndHealthBarSceneSystem : BoxContainer
 	{
 		_mob = mob;
 		
-		if (!ComponentSystem.TryGetComponent<DescriptionComponent>(_mob, out var descriptionComponent))
+		if (!NodeManager.TryGetComponent<DescriptionComponent>(_mob, out var descriptionComponent))
 		{
 			GD.PrintErr("Mob has no description component\n" + System.Environment.StackTrace);
 			return;
 		}
 
-		if (!ComponentSystem.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
+		if (!NodeManager.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
 		{
 			GD.PrintErr("Mob has no health component\n" + System.Environment.StackTrace);
 			return;

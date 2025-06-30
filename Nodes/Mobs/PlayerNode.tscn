@@ -134,8 +134,12 @@ visible = false
 scale = Vector2(-1, 1)
 sprite_frames = SubResource("SpriteFrames_04pru")
 
+[node name="DamageableComponent" type="Node2D" parent="."]
+script = ExtResource("4_fkybt")
+
 [node name="DescriptionComponent" type="Node2D" parent="."]
 script = ExtResource("2_6yyy1")
+DisplayName = "Roxanne"
 
 [node name="HitBoxComponent" type="CollisionShape2D" parent="."]
 visible = false
@@ -147,9 +151,6 @@ script = ExtResource("2_y73r6")
 script = ExtResource("3_vgqql")
 MaxHealth = 50
 Health = 50
-
-[node name="DamageableComponent" type="Node2D" parent="."]
-script = ExtResource("4_fkybt")
 
 [node name="ManaComponent" type="Node2D" parent="."]
 script = ExtResource("4_vmnvr")
