@@ -1,4 +1,3 @@
-using CS.Components.Damageable;
 using Godot;
 
 namespace CS.Nodes.Combat.SkillSelection;

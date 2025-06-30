@@ -1,4 +1,5 @@
 ﻿using CS.Components.Damageable;
+using CS.SlimeFactory;
 using Godot;
 
 namespace CS.Components.Damage;
@@ -15,7 +16,7 @@ public partial class DamageComponent : Node2D
 
     public void ApplyCombatEffect(Node target)
     {
-        if (ComponentSystem.TryGetComponent<HealthComponent>(target, out var targetHealthComponent))
+        if (NodeManager.TryGetComponent<HealthComponent>(target, out var targetHealthComponent))
             targetHealthComponent.AlterHealth(-Damage);
     }
 

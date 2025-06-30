@@ -1,5 +1,4 @@
-﻿using CS.Components.Damageable;
-using Godot;
+﻿using Godot;
 
 namespace CS.Components.Damage;
 
@@ -31,11 +30,6 @@ public partial class DamageOverTimeComponent : Node2D
     /// </summary>
     [Export] public int Turns;
     
-    public void ApplyCombatEffect(Node target)
-    {
-        
-    }
-
     public string DescribeEffect()
     {
         return $"Damage: {Damage} for {Turns} turns";

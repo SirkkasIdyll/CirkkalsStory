@@ -11,18 +11,22 @@ public partial class DescriptionComponent : Node2D
     /// <summary>
     /// Roxxaannnee....
     /// </summary>
-    [Export] public string DisplayName = "Roxanne";
+    [Export(PropertyHint.PlaceholderText, "Roxanne")] public string DisplayName = "";
 
     /// <summary>
     /// Systems should aim to add onto the description rather than completely overwriting it.
     /// This allows multiple different systems to add their own descriptions.
     /// </summary>
-    [Export] public string Description = "";
+    [Export(PropertyHint.PlaceholderText, "You don't have to put on the red light")] public string Description = "";
 
     /// <summary>
-    /// 
+    /// What kind of effects the ability has when used in combat
     /// </summary>
     public Array<string> CombatEffects = new();
+    
+    /// <summary>
+    /// What the ability costs to use when in combat
+    /// </summary>
     public Array<string> CombatCosts = new();
     
     public override void _Ready()

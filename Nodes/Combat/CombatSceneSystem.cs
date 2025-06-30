@@ -1,9 +1,9 @@
-using CS.Components;
 using CS.Components.Damageable;
 using CS.Components.Mob;
 using CS.Nodes.Combat.SkillSelection;
 using CS.Nodes.Combat.TurnManager;
 using CS.Nodes.Skills.Manager;
+using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
@@ -128,6 +128,8 @@ public partial class CombatSceneSystem : Control
 	/// <param name="mob">The mob whose turn it is</param>
 	private void OnMobsTurn(Node mob)
 	{
+		GD.Print(mob.Name);
+
 		// If either side has no one left, don't let anyone take their turn to prevent infinite loops
 		if (_players.Count == 0 || _enemies.Count == 0)
 			return;
@@ -141,14 +143,23 @@ public partial class CombatSceneSystem : Control
 		if (_skillManager == null)
 			return;
 		
-		if (!ComponentSystem.TryGetComponent<MobComponent>(mob, out var mobComponent))
+		if (!NodeManager.TryGetComponent<MobComponent>(mob, out var mobComponent))
 			return;
 
 		var skillName = mobComponent.ChooseRandomSkillOrSpell();
+		
+		if (skillName == null)
+		{
+			_turnManager?.ProceedTurnOrder();
+			return;
+		}
+
 		GD.Print(skillName);
 
 		if (!_skillManager.TryGetSkill(skillName, out var skill))
+		{
 			return;
+		}
 
 		_chosenSkill = skill;
 		OnTargetChosen(_players.PickRandom());
@@ -164,7 +175,7 @@ public partial class CombatSceneSystem : Control
 		if (_combatSkillSelection == null)
 			return;
 
-		if (!ComponentSystem.TryGetComponent<MobComponent>(_players[0], out var mobComponent))
+		if (!NodeManager.TryGetComponent<MobComponent>(_players[0], out var mobComponent))
 			return;
 		
 		var node = _combatSkillSelection.Instantiate<CombatSkillSelectionSceneSystem>();
@@ -188,7 +199,7 @@ public partial class CombatSceneSystem : Control
 
 		_chosenSkill = skillNode;
 
-		if (!ComponentSystem.TryGetComponent<TargetingComponent>(skillNode, out var targetingComponent))
+		if (!NodeManager.TryGetComponent<TargetingComponent>(skillNode, out var targetingComponent))
 			return;
 
 		switch (targetingComponent.ValidTargets)
