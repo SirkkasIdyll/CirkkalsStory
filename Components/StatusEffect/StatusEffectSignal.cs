@@ -1,13 +1,13 @@
 ﻿using CS.SlimeFactory;
-using Godot.Collections;
+using Godot;
 
 namespace CS.Components.StatusEffect;
 
-public class StatusEffectSignal : IUserSignal
+public partial class StatusEffectSignal : UserSignalArgs
 {
-    public string Name
+    public string StatusEffect = "";
+
+    public StatusEffectSignal(Node node) : base(node)
     {
-        get => nameof(StatusEffectSignal);
-        set { }
     }
 }

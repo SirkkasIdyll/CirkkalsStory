@@ -12,11 +12,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Folder Include="Nodes\Combat\TurnManager\" />
-    <Folder Include="Nodes\StatusEffects\" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <Compile Remove=".godot\mono\temp\obj\Debug\**" />
     <Compile Remove=".godot\mono\temp\obj\**" />
     <Compile Remove=".godot\mono\temp\**" />
@@ -34,5 +29,9 @@
   
   <ItemGroup>
     <Content Include="README.md" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Nodes\Game\Skills\" />
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@ namespace CS.Components.Damage;
 /// <summary>
 /// Dictates the amount of damage a node is capable of doing
 /// </summary>
-public partial class DamageComponent : Node2D
+public partial class DamageComponent : Component
 {
     /// <summary>
     /// The amount of damage dealt
@@ -16,7 +16,7 @@ public partial class DamageComponent : Node2D
 
     public void ApplyCombatEffect(Node target)
     {
-        if (NodeManager.TryGetComponent<HealthComponent>(target, out var targetHealthComponent))
+        if (NodeManager.Instance.TryGetComponent<HealthComponent>(target, out var targetHealthComponent))
             targetHealthComponent.AlterHealth(-Damage);
     }
 

@@ -1,9 +1,10 @@
 ﻿using System;
+using CS.SlimeFactory;
 using Godot;
 
 namespace CS.Components.Damageable;
 
-public partial class HealthComponent : Node2D
+public partial class HealthComponent : Component
 {
     /// <summary>
     /// Positive changes indicate healing, negative changes indicate damage

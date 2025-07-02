@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using CS.SlimeFactory;
+using Godot;
 using Godot.Collections;
 
 namespace CS.Components.Mob;
@@ -7,7 +8,7 @@ namespace CS.Components.Mob;
 /// Mobs are the general term for all combat-capable creatures.
 /// This component stores their abilities, skills, and spells in one convenient location.
 /// </summary>
-public partial class MobComponent : Node2D
+public partial class MobComponent : Component
 {
     /// <summary>
     /// Abilities are passive effects that each mob has. 

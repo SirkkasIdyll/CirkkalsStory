@@ -1,0 +1,98 @@
+[gd_scene load_steps=5 format=3 uid="uid://byc6u3b0pbhv7"]
+
+[ext_resource type="Theme" uid="uid://bofxw0bub14i4" path="res://Resources/Themes/default.tres" id="1_3t33k"]
+[ext_resource type="Script" uid="uid://bmpwd2x4jdhgq" path="res://Nodes/UI/Combat/SkillSelection/CombatSkillSelectionSceneSystem.cs" id="2_3t33k"]
+[ext_resource type="Script" uid="uid://bfpg8fev4rxqs" path="res://Nodes/UI/Combat/SkillSelection/CombatSkillSelectionItemListSystem.cs" id="3_o76pp"]
+[ext_resource type="PackedScene" uid="uid://djj4j1dplagri" path="res://Nodes/UI/Utility/SpacerScene.tscn" id="4_wn1uu"]
+
+[node name="CombatSkillSelection" type="Control" node_paths=PackedStringArray("_combatSkillSelectionItemListSystem", "_skillName", "_skillDescription", "_effectContainer", "_costContainer")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_3t33k")
+script = ExtResource("2_3t33k")
+_combatSkillSelectionItemListSystem = NodePath("HBoxContainer/PanelContainer/ItemList")
+_skillName = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/SkillName")
+_skillDescription = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/SkillDescription")
+_effectContainer = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/GridContainer/EffectContainer")
+_costContainer = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/GridContainer/CostContainer")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -46.5
+offset_top = -25.0
+offset_right = 46.5
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="ItemList" type="ItemList" parent="HBoxContainer/PanelContainer"]
+layout_mode = 2
+allow_search = false
+auto_width = true
+auto_height = true
+item_count = 4
+item_0/text = "FIRE BALL"
+item_1/text = "FAJFASI"
+item_2/text = "REALLY LONG SKILL NAME"
+item_3/text = "SH"
+script = ExtResource("3_o76pp")
+
+[node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/PanelContainer2"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SkillName" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "FIRE BALL IS A SKILL"
+
+[node name="GridContainer" type="GridContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+columns = 2
+
+[node name="EffectContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Spacer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/GridContainer/EffectContainer" instance=ExtResource("4_wn1uu")]
+layout_mode = 2
+
+[node name="CostContainer" type="VBoxContainer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/GridContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="Spacer" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/GridContainer/CostContainer" instance=ExtResource("4_wn1uu")]
+layout_mode = 2
+
+[node name="SkillDescription" type="Label" parent="HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_vertical = 3
+text = "HOLY SHIT YOU SHOOT FIREBALLS OUT OF YOUR ANUS"
+autowrap_mode = 2

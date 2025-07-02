@@ -4,7 +4,7 @@ using Godot;
 
 namespace CS.Components.StatusEffect;
 
-public partial class StatusEffectApplicatorComponent : Node2D
+public partial class StatusEffectApplicatorComponent : Component
 {
     /// <summary>
     /// The status effect to apply to a target
@@ -16,7 +16,7 @@ public partial class StatusEffectApplicatorComponent : Node2D
         if (_statusEffect == null)
             return;
         
-        if (!NodeManager.TryGetComponent<MobComponent>(target, out var mobComponent))
+        if (!NodeManager.Instance.TryGetComponent<MobComponent>(target, out var mobComponent))
             return;
     }
 }

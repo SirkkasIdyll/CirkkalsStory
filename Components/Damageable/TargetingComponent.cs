@@ -1,11 +1,12 @@
-﻿using Godot;
+﻿using CS.SlimeFactory;
+using Godot;
 
 namespace CS.Components.Damageable;
 
 /// <summary>
 /// Determines what targets are valid for the ability and the AOE status of the ability during battles
 /// </summary>
-public partial class TargetingComponent : Node2D
+public partial class TargetingComponent : Component
 {
     /// <summary>
     /// When true, will affect every available target
