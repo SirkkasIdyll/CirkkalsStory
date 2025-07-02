@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using CS.SlimeFactory;
+using Godot;
 
 namespace CS.Components.Damage;
 
@@ -6,7 +7,7 @@ namespace CS.Components.Damage;
 /// Dictates the amount of damage over time a node will do,
 /// and whether the damage is capable of stacking in damage and/or duration.
 /// </summary>
-public partial class DamageOverTimeComponent : Node2D
+public partial class DamageOverTimeComponent : Component
 {
     /// <summary>
     /// The amount of damage that will occur each turn

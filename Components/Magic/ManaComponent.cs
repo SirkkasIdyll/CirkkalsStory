@@ -1,9 +1,10 @@
 ﻿using System;
+using CS.SlimeFactory;
 using Godot;
 
 namespace CS.Components.Magic;
 
-public partial class ManaComponent : Node2D
+public partial class ManaComponent : Component
 {
     private int _manaCap = 9999;
     private int _maxMana;

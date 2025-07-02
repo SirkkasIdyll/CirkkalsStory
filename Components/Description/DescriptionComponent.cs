@@ -1,4 +1,5 @@
-﻿using Godot;
+﻿using CS.SlimeFactory;
+using Godot;
 using Godot.Collections;
 
 namespace CS.Components.Description;
@@ -6,7 +7,7 @@ namespace CS.Components.Description;
 /// <summary>
 /// Used for things that need to be described such as skills, spells, or monsters
 /// </summary>
-public partial class DescriptionComponent : Node2D
+public partial class DescriptionComponent : Component
 {
     /// <summary>
     /// Roxxaannnee....

@@ -1,4 +1,4 @@
-using CS.Components.StatusEffect;
+using CS.SlimeFactory;
 using Godot;
 
 namespace CS;
@@ -15,10 +15,12 @@ public partial class MainSceneSystem : Node2D
 
     public override void _Ready()
     {
- 
-        // var system = new StatusEffectApplicatorSystem();
-        // var system2 = new StatusEffectApplicatorSystem();
-        // DirContents();
+        NodeSystemManager.Instance.Initialize(this);
+        
+        // TODO: GO THROUGH AND FUCKING PURGE ALL OF THE LOGIC FROM THE NODES AND START THROWING SIGNALBUS EVENTS
+        // TODO: VIVA LA NODESYSTEMS, VIVA LA NODESYSTEMS
+        // TODO: NO MORE LOGIC IN COMPONENTS, ONLY IN NODESYSTEMS
+        // TODO: THE SAME APPLIES TO UI NODES, SEND SIGNALS AND HAVE THE NODESYSTEMS DEAL WITH IT
     }
 
     public override void _UnhandledInput(InputEvent @event)

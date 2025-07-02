@@ -1,5 +1,6 @@
 ﻿using CS.SlimeFactory;
 using Godot;
+using Godot.Collections;
 
 namespace CS.Components.StatusEffect;
 
@@ -8,15 +9,14 @@ public partial class StatusEffectApplicatorSystem : NodeSystem
     public override void _SystemReady()
     {
         base._SystemReady();
-
-        var signal = new StatusEffectSignal();
-        SignalBus.AddUserSignal(signal.Name);
-        SignalBus.Connect(signal.Name, Callable.From(HIii));
-        SignalBus.EmitSignal(signal.Name);
+        
+        var signal = new StatusEffectSignal(this);
+        _nodeManager.SignalBus.AddUserSignal(signal);
+        _nodeManager.SignalBus.Connect(signal, nameof(HIii));
+        _nodeManager.SignalBus.EmitSignal<StatusEffectSignal>(ref signal);
     }
-
-    private void HIii()
+    
+    public void HIii(Array<Variant> args)
     {
-        GD.Print("HAIII");
     }
 }

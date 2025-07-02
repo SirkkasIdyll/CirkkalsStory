@@ -1,10 +1,11 @@
-﻿using Godot;
+﻿using CS.SlimeFactory;
+using Godot;
 
 namespace CS.Components.Magic;
 
 /// <summary>
 /// Spell nodes will show up in a mob's spell options
 /// </summary>
-public partial class SpellNode : Node2D
+public partial class SpellNode : Component
 {
 }
