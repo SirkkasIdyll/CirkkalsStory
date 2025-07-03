@@ -1,5 +1,4 @@
 ﻿using CS.SlimeFactory;
-using Godot;
 
 namespace CS.Components.Magic;
 

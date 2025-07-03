@@ -17,7 +17,7 @@ namespace CS.Nodes.UI.Combat;
 /// </summary>
 public partial class CombatSceneSystem : Control
 {
-	private NodeManager _nodeManager = NodeManager.Instance;
+	private readonly NodeManager _nodeManager = NodeManager.Instance;
 	private SkillManagerSystem? _skillManagerSystem;
 	private Node? _chosenSkill;
 	
@@ -238,7 +238,7 @@ public partial class CombatSceneSystem : Control
 	/// <param name="target"></param>
 	private void OnTargetChosen(Node target)
 	{
-		if (_chosenSkill == null || _playersVBoxContainer == null || _enemiesVBoxContainer == null)
+		if (_chosenSkill == null || _playersVBoxContainer == null || _enemiesVBoxContainer == null || _turnManager == null)
 			return;
 		
 		foreach (var child in _playersVBoxContainer.GetChildren())
@@ -253,11 +253,18 @@ public partial class CombatSceneSystem : Control
 				child.Call(NameAndHealthBarSceneSystem.MethodName.HideTargetButton);
 		}
 
+		if (!_nodeManager.TryGetComponent<SkillComponent>(_chosenSkill, out var skillComponent))
+			return;
+		
+		var signal = new UseSkillSignal(_turnManager.CurrentMobsTurn, target);
+		_nodeManager.SignalBus.EmitUseSkillSignal((_chosenSkill, skillComponent), signal);
+
+		/*// get components of skill, do something about it
 		foreach (var child in _chosenSkill.GetChildren())
 		{
 			if (child.HasMethod("ApplyCombatEffect"))
 				child.Call("ApplyCombatEffect", target);
-		}
+		}*/
 		
 		_turnManager?.ProceedTurnOrder();
 	}

@@ -10,10 +10,10 @@ public partial class StatusEffectApplicatorSystem : NodeSystem
     {
         base._SystemReady();
         
-        var signal = new StatusEffectSignal(this);
+        /*var signal = new StatusEffectSignal();
         _nodeManager.SignalBus.AddUserSignal(signal);
-        _nodeManager.SignalBus.Connect(signal, nameof(HIii));
-        _nodeManager.SignalBus.EmitSignal<StatusEffectSignal>(ref signal);
+        _nodeManager.SignalBus.Connect(signal, this, nameof(HIii));
+        _nodeManager.SignalBus.EmitSignal<StatusEffectSignal>(ref signal);*/
     }
     
     public void HIii(Array<Variant> args)

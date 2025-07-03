@@ -1,5 +1,5 @@
-﻿using CS.Components.Damageable;
-using CS.SlimeFactory;
+﻿using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.Components.Damage;
@@ -13,15 +13,19 @@ public partial class DamageComponent : Component
     /// The amount of damage dealt
     /// </summary>
     [Export] public int Damage;
+}
 
-    public void ApplyCombatEffect(Node target)
+/// <summary>
+/// Raised when attempting to damage a target
+/// </summary>
+public partial class DamageAttemptSignal : HandledSignalArgs
+{
+    public DamageAttemptSignal(Node? attacker = null, Node? defender = null)
     {
-        if (NodeManager.Instance.TryGetComponent<HealthComponent>(target, out var targetHealthComponent))
-            targetHealthComponent.AlterHealth(-Damage);
+        Attacker = attacker;
+        Defender = defender;
     }
-
-    public string DescribeEffect()
-    {
-        return $"Damage: {Damage}";
-    }
+    
+    public Node? Attacker;
+    public Node? Defender;
 }

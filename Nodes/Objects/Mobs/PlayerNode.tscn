@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://cv4mrw0nd0ho5"]
+[gd_scene load_steps=24 format=3 uid="uid://gtliq8y3qd67"]
 
 [ext_resource type="Texture2D" uid="uid://ejtkhic7cb50" path="res://Resources/Sprites/PC Computer - Ragnarok Online - Gold Poring.png" id="1_v5t36"]
 [ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="2_6yyy1"]
@@ -127,7 +127,7 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_f60y1"]
 radius = 12.5
 
-[node name="CharacterBody2D" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D"]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 visible = false

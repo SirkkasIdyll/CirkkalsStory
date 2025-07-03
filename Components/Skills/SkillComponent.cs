@@ -1,4 +1,5 @@
 ﻿using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.Components.Skills;
@@ -9,4 +10,16 @@ namespace CS.Components.Skills;
 public partial class SkillComponent : Component
 {
     
+}
+
+public partial class UseSkillSignal : UserSignalArgs
+{
+    public UseSkillSignal(Node? user = null, Node? target = null)
+    {
+        User = user;
+        Target = target;
+    }
+
+    public Node? User;
+    public Node? Target;
 }

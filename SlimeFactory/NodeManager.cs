@@ -1,31 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using CS.Components.Skills;
 using Godot;
 
 namespace CS.SlimeFactory;
 
-public partial class NodeManager : Node
+public partial class NodeManager
 {
+    /// <summary>
+    /// Declare that there can only ever be one <see cref="NodeManager"/> being used
+    /// </summary>
+    public static NodeManager Instance { get; } = new();
+    public readonly Signals.SignalBus SignalBus = Signals.SignalBus.Instance;
+    public readonly HashSet<Dictionary<Node, Component>> NodeCompHashset = [];
+    public readonly Dictionary<string, Component> ComponentDictionary = [];
+    
     /// <summary>
     /// Making the constructor private prevents the creation of a new <see cref="NodeManager"/>
     /// </summary>
     private NodeManager()
     {
-        GetAllNodes("res://Nodes/Game/");
-        // Fetch("res://Nodes/Game/Mobs");
+        GetAllNodes("res://Nodes/Objects/");
+        GetAllComponents();
     }
 
     /// <summary>
-    /// Declare that there can only ever be one <see cref="NodeManager"/> being used
+    /// Makes a list of all components so that we can AddComponent() later
     /// </summary>
-    public static NodeManager Instance { get; } = new();
-    public readonly SignalBus SignalBus = SignalBus.Instance;
-    public HashSet<Dictionary<Node, Component>> NodeCompHashset = new();
-    // private Dictionary<string, Component> _componentDictionary = [];
-
+    private void GetAllComponents()
+    {
+        foreach (var dictionary in NodeCompHashset)
+        {
+            foreach (var value in dictionary.Values)
+            {
+                ComponentDictionary.TryAdd(value.CompName, value);
+            }
+        }
+    }
+    
     /// <summary>
     /// Fetches all nodes and their components for future lookup
     /// Previously I was just doing GetChildren() on a Node and seeing if the node was the component I was looking for,
@@ -92,14 +105,6 @@ public partial class NodeManager : Node
 
         return files;
     }
-
-    /// <summary>
-    /// Makes a list of all components so that we can AddComponent() later
-    /// </summary>
-    private void GetAllComponents()
-    {
-        
-    }
     
     /// <summary>
     /// Goes through each child of the node and checks if the child is of the same type as T.
@@ -141,6 +146,44 @@ public partial class NodeManager : Node
         component = default;
         return false;
     }
-    
-    
+}
+
+public struct Node<TComp> where TComp : IComponent?
+{
+    public Node ParentNode;
+    public TComp Component;
+
+    public Node(Node parentNode, TComp component)
+    {
+        Debug.Assert(component?.ParentNode == parentNode);
+        
+        ParentNode = parentNode;
+        Component = component;
+    } 
+        
+    public static implicit operator Node<TComp>((Node ParentNode, TComp Component) tuple)
+    {
+        return new Node<TComp>(tuple.ParentNode, tuple.Component);
+    }
+
+    public static implicit operator Node<TComp?>(Node owner)
+    {
+        return new Node<TComp?>(owner, default);
+    }
+
+    public static implicit operator Node(Node<TComp> ent)
+    {
+        return ent.ParentNode;
+    }
+
+    public static implicit operator TComp(Node<TComp> ent)
+    {
+        return ent.Component;
+    }
+
+    public readonly void Deconstruct(out Node parentNode, out TComp comp)
+    {
+        parentNode = ParentNode;
+        comp = Component;
+    }
 }

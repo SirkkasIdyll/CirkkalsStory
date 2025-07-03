@@ -1,13 +1,13 @@
 [gd_scene load_steps=9 format=3 uid="uid://cvv8otsc37cqg"]
 
 [ext_resource type="Script" uid="uid://ggixe6gwqamu" path="res://Nodes/UI/Combat/CombatSceneSystem.cs" id="1_y778k"]
-[ext_resource type="PackedScene" uid="uid://cv4mrw0nd0ho5" path="res://Nodes/Game/Mobs/PlayerNode.tscn" id="1_yc7gu"]
-[ext_resource type="PackedScene" uid="uid://dsdls4s1jmcmb" path="res://Nodes/Game/Mobs/GoblinNode.tscn" id="2_vbgdj"]
 [ext_resource type="PackedScene" uid="uid://dxcp063mrk6rf" path="res://Nodes/UI/Combat/NameAndHealthBarScene.tscn" id="3_abq4k"]
 [ext_resource type="PackedScene" uid="uid://byc6u3b0pbhv7" path="res://Nodes/UI/Combat/SkillSelection/CombatSkillSelectionScene.tscn" id="3_y778k"]
 [ext_resource type="PackedScene" uid="uid://uvxbf3xva83e" path="res://Nodes/UI/Combat/TurnManager/TurnManagerScene.tscn" id="4_3pmw0"]
 [ext_resource type="Script" uid="uid://cjtek16utmv1j" path="res://Nodes/UI/Combat/ActionsItemListSystem.cs" id="5_o60ty"]
-[ext_resource type="PackedScene" uid="uid://d04x5udawxvl1" path="res://Nodes/Game/Mobs/TargetDummyNode.tscn" id="8_o60ty"]
+[ext_resource type="PackedScene" uid="uid://gtliq8y3qd67" path="res://Nodes/Objects/Mobs/PlayerNode.tscn" id="6_mnh2c"]
+[ext_resource type="PackedScene" uid="uid://dsdls4s1jmcmb" path="res://Nodes/Objects/Mobs/GoblinNode.tscn" id="7_euxus"]
+[ext_resource type="PackedScene" uid="uid://d04x5udawxvl1" path="res://Nodes/Objects/Mobs/TargetDummyNode.tscn" id="8_6ao0n"]
 
 [node name="CombatScene" type="Control" node_paths=PackedStringArray("_players", "_enemies", "_turnManager", "_playersVBoxContainer", "_enemiesVBoxContainer", "_actionsItemList")]
 layout_mode = 3
@@ -52,13 +52,10 @@ metadata/_edit_use_anchors_ = true
 [node name="EnemiesVBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
 layout_mode = 2
 
-[node name="Player" parent="." instance=ExtResource("1_yc7gu")]
-scale = Vector2(4, 4)
-
-[node name="Goblin" parent="." instance=ExtResource("2_vbgdj")]
-position = Vector2(308, 0)
-scale = Vector2(4, 4)
-
-[node name="TargetDummy" parent="." instance=ExtResource("8_o60ty")]
-
 [node name="Timer" type="Timer" parent="."]
+
+[node name="Player" parent="." instance=ExtResource("6_mnh2c")]
+
+[node name="Goblin" parent="." instance=ExtResource("7_euxus")]
+
+[node name="TargetDummy" parent="." instance=ExtResource("8_6ao0n")]
