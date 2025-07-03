@@ -6,6 +6,7 @@ namespace CS;
 public partial class MainSceneSystem : Node2D
 {
     public Control? ActiveScene;
+    private NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
     
     [ExportCategory("Instantiated")]
     [Export] private PackedScene? _escapeMenuSceneSystem;
@@ -15,7 +16,7 @@ public partial class MainSceneSystem : Node2D
 
     public override void _Ready()
     {
-        NodeSystemManager.Instance.Initialize(this);
+        _nodeSystemManager.InitializeNodeSystems(this);
         
         // TODO: GO THROUGH AND FUCKING PURGE ALL OF THE LOGIC FROM THE NODES AND START THROWING SIGNALBUS EVENTS
         // TODO: VIVA LA NODESYSTEMS, VIVA LA NODESYSTEMS

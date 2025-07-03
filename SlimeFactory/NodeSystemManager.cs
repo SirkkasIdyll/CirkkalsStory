@@ -6,8 +6,16 @@ using Godot;
 
 namespace CS.SlimeFactory;
 
+/// <summary>
+/// Responsible for adding <see cref="NodeSystem"/> to the mainScene and readying them
+/// If you need access to this, go through <see cref="NodeSystem"/>'s instance of it
+/// </summary>
 public class NodeSystemManager
 {
+    /// <summary>
+    /// Declare that there can only ever be a single instance of the <see cref="Signals.SignalBus"/>
+    /// </summary>
+    public static NodeSystemManager Instance { get; } = new();
     private Node? _mainScene;
     
     private NodeSystemManager()
@@ -15,15 +23,10 @@ public class NodeSystemManager
     }
     
     /// <summary>
-    /// Declare that there can only ever be a single instance of the <see cref="SignalBus"/>
-    /// </summary>
-    public static NodeSystemManager Instance { get; } = new();
-
-    /// <summary>
     /// Gets every <see cref="NodeSystem"/> and calls their _SystemReady functions, which initializes them,
-    /// the <see cref="NodeManager"/>, and the <see cref="SignalBus"/>
+    /// the <see cref="NodeManager"/>, and the <see cref="Signals.SignalBus"/>
     /// </summary>
-    public void Initialize(Node mainScene)
+    public void InitializeNodeSystems(Node mainScene)
     {
         _mainScene = mainScene;
         

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.Components.Description;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;

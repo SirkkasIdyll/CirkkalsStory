@@ -5,7 +5,7 @@ namespace CS.Nodes.UI.Combat.TurnManager;
 
 public partial class TurnManagerSceneSystem : Node2D
 {
-	private Node? _currentMobsTurn;
+	public Node? CurrentMobsTurn;
 	private Array<Node> _turnOrder = [];
 
 	/// <summary>
@@ -28,12 +28,14 @@ public partial class TurnManagerSceneSystem : Node2D
 		var moveToLast = _turnOrder[0];
 		_turnOrder.RemoveAt(0);
 		_turnOrder.Add(moveToLast);
+		CurrentMobsTurn = _turnOrder[0];
 		EmitSignalMobsTurn(_turnOrder[0]);
 	}
 
 	public void SetTurnOrder(Array<Node> players, Array<Node> enemies)
 	{
 		_turnOrder = players + enemies;
+		CurrentMobsTurn = _turnOrder[0];
 		EmitSignalMobsTurn(_turnOrder[0]);
 	}
 
