@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.SlimeFactory;
@@ -12,7 +13,7 @@ public partial class NodeManager
     /// Declare that there can only ever be one <see cref="NodeManager"/> being used
     /// </summary>
     public static NodeManager Instance { get; } = new();
-    public readonly Signals.SignalBus SignalBus = Signals.SignalBus.Instance;
+    public readonly SignalBus SignalBus = SignalBus.Instance;
     public readonly HashSet<Dictionary<Node, Component>> NodeCompHashset = [];
     public readonly Dictionary<string, Component> ComponentDictionary = [];
     
@@ -34,7 +35,7 @@ public partial class NodeManager
         {
             foreach (var value in dictionary.Values)
             {
-                ComponentDictionary.TryAdd(value.CompName, value);
+                ComponentDictionary.TryAdd(value.Name, value);
             }
         }
     }
@@ -111,17 +112,10 @@ public partial class NodeManager
     /// </summary>
     /// <param name="node">Mob, skill, whatever</param>
     /// <returns>True if component was found, false if otherwise</returns>
-    public bool HasComponent<T>(Node node)
+    public bool HasComponent<T>(Node node) where T : class, IComponent
     {
-        var children = node.GetChildren();
-
-        foreach (var child in children)
-        {
-            if (child is T)
-                return true;
-        }
-
-        return false;
+        var comp = node.GetNodeOrNull<T>($"{typeof(T).Name}");
+        return comp != null;
     }
 
     /// <summary>
@@ -130,21 +124,10 @@ public partial class NodeManager
     /// <param name="node">Mob, skill, whatever</param>
     /// <param name="component">The component if found, null otherwise</param>
     /// <returns>True if component was found, false if otherwise</returns>
-    public bool TryGetComponent<T>(Node node, [NotNullWhen(true)] out T? component)
+    public bool TryGetComponent<T>(Node node, [NotNullWhen(true)] out T? component) where T : class, IComponent
     {
-        var children = node.GetChildren();
-        
-        foreach (var child in children)
-        {
-            if (child is not T generic)
-                continue;
-            
-            component = generic;
-            return true;
-        }
-
-        component = default;
-        return false;
+        component = node.GetNodeOrNull<T>($"{typeof(T).Name}");
+        return component != null;
     }
 }
 

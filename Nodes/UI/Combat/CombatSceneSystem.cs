@@ -1,8 +1,8 @@
+using CS.Components.CombatManager;
 using CS.Components.Damageable;
 using CS.Components.Mob;
 using CS.Components.Skills;
 using CS.Nodes.UI.Combat.SkillSelection;
-using CS.Nodes.UI.Combat.TurnManager;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -18,7 +18,9 @@ namespace CS.Nodes.UI.Combat;
 public partial class CombatSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
+	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	private SkillManagerSystem? _skillManagerSystem;
+	private TurnManagerSystem? _turnManagerSystem;
 	private Node? _chosenSkill;
 	
 	[ExportCategory("Instantiated")]
@@ -26,7 +28,6 @@ public partial class CombatSceneSystem : Control
 	[Export] private Array<Node> _enemies = [];
 
 	[ExportCategory("Owned")]
-	[Export] private TurnManagerSceneSystem? _turnManager;
 	[Export] private PackedScene? _nameAndHealthBar;
 	[Export] private PackedScene? _combatSkillSelection;
 	[Export] private VBoxContainer? _playersVBoxContainer;
@@ -50,33 +51,37 @@ public partial class CombatSceneSystem : Control
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		if (_turnManager == null ||
-		    _nameAndHealthBar == null ||
+		if (_nameAndHealthBar == null ||
 		    _combatSkillSelection == null ||
 		    _playersVBoxContainer == null ||
 		    _enemiesVBoxContainer == null ||
 		    _actionsItemList == null)
 			GD.PrintErr("Owned property is null\n" + System.Environment.StackTrace);
-
-		if (NodeSystemManager.Instance.TryGetNodeSystem<SkillManagerSystem>(out var nodeSystem))
-			_skillManagerSystem = nodeSystem;
 		
+		_nodeManager.SignalBus.MobDiedSignal += OnMobDied;
+		_nodeManager.SignalBus.StartOfTurnSignal += OnStartOfTurn;
+
 		if (_playersVBoxContainer != null)
 			LoadHealthBars(_playersVBoxContainer, _players);
 		
 		if (_enemiesVBoxContainer != null)
 			LoadHealthBars(_enemiesVBoxContainer, _enemies);
-
-		if (_turnManager != null)
-		{
-			_turnManager.MobsTurn += OnMobsTurn;
-			_turnManager.SetTurnOrder(_players, _enemies);
-		}
 		
 		if (_actionsItemList != null)
 			_actionsItemList.SkillsPressed += OnSkillsPressed;
 		else
 			GD.PrintErr("Could not load action list\n" + System.Environment.StackTrace);
+		
+		if (_nodeSystemManager.TryGetNodeSystem<SkillManagerSystem>(out var skillManagerSystem))
+			_skillManagerSystem = skillManagerSystem;
+
+		if (_nodeSystemManager.TryGetNodeSystem<TurnManagerSystem>(out var turnManagerSystem))
+		{
+			_turnManagerSystem = turnManagerSystem;
+
+			var signal = new StartOfCombatSignal(_players, _enemies);
+			_nodeManager.SignalBus.EmitStartOfCombatSignal(this, ref signal);
+		}
 	}
 
 	/// <summary>
@@ -99,7 +104,6 @@ public partial class CombatSceneSystem : Control
 			container?.AddChild(node);
 			node.SetMob(mob);
 			node.TargetChosen += OnTargetChosen;
-			node.MobDied += OnMobDied;
 		}
 	}
 
@@ -107,12 +111,10 @@ public partial class CombatSceneSystem : Control
 	/// On death remove mob from players or enemies
 	/// as well as turn order
 	/// </summary>
-	/// <param name="mob"></param>
-	private void OnMobDied(Node mob)
+	private void OnMobDied(Node node, ref MobDiedSignal args)
 	{
-        _players.Remove(mob);
-        _enemies.Remove(mob);
-		_turnManager?.RemoveFromTurnOrder(mob);
+        _players.Remove(node);
+        _enemies.Remove(node);
 		GD.Print("Mob has died!");
 		
 		if (_players.Count == 0)
@@ -126,32 +128,36 @@ public partial class CombatSceneSystem : Control
 	/// On the players turn, make their actions visible again
 	/// On the enemies turn, make them choose a random action
 	/// </summary>
-	/// <param name="mob">The mob whose turn it is</param>
-	private void OnMobsTurn(Node mob)
+	/// <param name="node">The mob whose turn it is</param>
+	/// <param name="args"></param>
+	private void OnStartOfTurn(Node node, ref StartOfTurnSignal args)
 	{
-		GD.Print(mob.Name);
-
 		// If either side has no one left, don't let anyone take their turn to prevent infinite loops
 		if (_players.Count == 0 || _enemies.Count == 0)
 			return;
 		
-		if (_players.Contains(mob))
+		if (_players.Contains(node))
 		{
 			_actionsItemList?.SetVisible(true);
 			return;
 		}
+		
+		// Start of enemy decision making logic, move this out of combat scene
+		// It has nothing to do with the UI
 
 		if (_skillManagerSystem == null)
 			return;
 		
-		if (!_nodeManager.TryGetComponent<MobComponent>(mob, out var mobComponent))
+		if (!_nodeManager.TryGetComponent<MobComponent>(node, out var mobComponent))
 			return;
 
 		var skillName = mobComponent.ChooseRandomSkillOrSpell();
 		
+		// if the skill doesn't exist, just skip the mob's turn to prevent soft-locks
 		if (skillName == null)
 		{
-			_turnManager?.ProceedTurnOrder();
+			var signal = new EndOfTurnSignal();
+			_nodeManager.SignalBus.EmitEndOfTurnSignal(node, ref signal);
 			return;
 		}
 
@@ -238,9 +244,10 @@ public partial class CombatSceneSystem : Control
 	/// <param name="target"></param>
 	private void OnTargetChosen(Node target)
 	{
-		if (_chosenSkill == null || _playersVBoxContainer == null || _enemiesVBoxContainer == null || _turnManager == null)
+		if (_chosenSkill == null || _playersVBoxContainer == null || _enemiesVBoxContainer == null || _turnManagerSystem == null)
 			return;
 		
+		// Hide targeting buttons for players and enemies
 		foreach (var child in _playersVBoxContainer.GetChildren())
 		{
 			if (child.HasMethod(NameAndHealthBarSceneSystem.MethodName.HideTargetButton))
@@ -253,19 +260,14 @@ public partial class CombatSceneSystem : Control
 				child.Call(NameAndHealthBarSceneSystem.MethodName.HideTargetButton);
 		}
 
+		// Emit a signal indicating which skill was used and who is being targeted by the skill
 		if (!_nodeManager.TryGetComponent<SkillComponent>(_chosenSkill, out var skillComponent))
 			return;
 		
-		var signal = new UseSkillSignal(_turnManager.CurrentMobsTurn, target);
-		_nodeManager.SignalBus.EmitUseSkillSignal((_chosenSkill, skillComponent), signal);
-
-		/*// get components of skill, do something about it
-		foreach (var child in _chosenSkill.GetChildren())
-		{
-			if (child.HasMethod("ApplyCombatEffect"))
-				child.Call("ApplyCombatEffect", target);
-		}*/
+		var useSkillSignal = new UseSkillSignal(_turnManagerSystem.CurrentMobsTurn, target);
+		_nodeManager.SignalBus.EmitUseSkillSignal((_chosenSkill, skillComponent), ref useSkillSignal);
 		
-		_turnManager?.ProceedTurnOrder();
+		var endOfTurnSignal = new EndOfTurnSignal();
+		_nodeManager.SignalBus.EmitEndOfTurnSignal(_turnManagerSystem.CurrentMobsTurn, ref endOfTurnSignal);
 	}
 }

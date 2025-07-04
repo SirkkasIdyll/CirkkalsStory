@@ -1,4 +1,5 @@
 ﻿using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.Components.StatusEffect;
@@ -12,24 +13,30 @@ public partial class StatusEffectComponent : Component
     /// <summary>
     /// If the status effect is permanent, it does not expire after a certain number of terns.
     /// </summary>
-    public bool IsPermanent = false;
+    [Export] public bool IsPermanent = false;
 
+    /// <summary>
+    /// When true, turns stack on top of the existing duration
+    /// </summary>
+    [Export] public bool StacksDuration = false;
+    
+    /// <summary>
+    /// The base amount of turns set each time the skill is used
+    /// </summary>
+    [Export] public int TurnsPerApplication;
+    
     /// <summary>
     /// How many turns until the status effect expires
     /// </summary>
-    private int _duration;
+    public int StatusDuration;
+}
 
-    [Signal]
-    public delegate void StatusEffectExpiredEventHandler(Node status);
-    
-    public void AlterDuration(int amount)
+public partial class ProcStatusEffectSignal : UserSignalArgs
+{
+    public Node Target;
+
+    public ProcStatusEffectSignal(Node target)
     {
-        if (IsPermanent)
-            return;
-        
-        _duration += amount;
-
-        if (_duration <= 0)
-            EmitSignal(SignalName.StatusEffectExpired);
+        this.Target = target;
     }
 }

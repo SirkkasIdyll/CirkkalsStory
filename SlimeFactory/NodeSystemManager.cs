@@ -44,7 +44,7 @@ public class NodeSystemManager
         {
             // GD.Print(nodeSystemEnumerator.Current);
             var nodeSystem = (INodeSystem) Activator.CreateInstance(nodeSystemEnumerator.Current)!;
-            nodeSystem._SystemReady();
+            // nodeSystem._SystemReady();
             nodeSystem.AddToMainScene(mainScene);
         }
     }
@@ -56,23 +56,13 @@ public class NodeSystemManager
     /// <param name="nodeSystem"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public bool TryGetNodeSystem<T>([NotNullWhen(true)] out T? nodeSystem) where T : INodeSystem
+    public bool TryGetNodeSystem<T>([NotNullWhen(true)] out T? nodeSystem) where T : class, INodeSystem
     {
         nodeSystem = default;
         if (_mainScene == null)
             return false;
-        
-        var children = _mainScene.GetChildren();
-        
-        foreach (var child in children)
-        {
-            if (child is not T generic)
-                continue;
-            
-            nodeSystem = generic;
-            return true;
-        }
 
-        return false;
+        nodeSystem = _mainScene.GetNodeOrNull<T>($"{typeof(T).Name}");
+        return nodeSystem != null;
     }
 }

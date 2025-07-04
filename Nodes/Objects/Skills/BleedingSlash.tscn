@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://bo8urbmvfmp8c" path="res://Components/Skills/SkillComponent.cs" id="4_p5p5g"]
 [ext_resource type="Script" uid="uid://b8w88sas3vvem" path="res://Components/StatusEffect/StatusEffectApplicatorComponent.cs" id="5_j45vb"]
 [ext_resource type="Script" uid="uid://cmvfomctvourc" path="res://Components/Damageable/TargetingComponent.cs" id="5_q1ux5"]
-[ext_resource type="PackedScene" uid="uid://02un0me2llcu" path="res://Nodes/Game/StatusEffects/Bleed.tscn" id="5_uxeh1"]
+[ext_resource type="PackedScene" uid="uid://02un0me2llcu" path="res://Nodes/Objects/StatusEffects/Bleed.tscn" id="5_uxeh1"]
 
 [node name="BleedingSlash" type="Node2D"]
 
@@ -21,9 +21,9 @@ Description = "A swiping attack aimed at the enemy's most vulnerable spots, caus
 [node name="SkillComponent" type="Node2D" parent="."]
 script = ExtResource("4_p5p5g")
 
-[node name="StatusEffectApplicatorComponent" type="Node2D" parent="." node_paths=PackedStringArray("_statusEffect")]
+[node name="StatusEffectApplicatorComponent" type="Node2D" parent="." node_paths=PackedStringArray("StatusEffect")]
 script = ExtResource("5_j45vb")
-_statusEffect = NodePath("Bleed")
+StatusEffect = NodePath("Bleed")
 
 [node name="Bleed" parent="StatusEffectApplicatorComponent" instance=ExtResource("5_uxeh1")]
 

@@ -1,17 +1,12 @@
 ﻿using System;
 using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.Components.Damageable;
 
 public partial class HealthComponent : Component
 {
-    /// <summary>
-    /// Positive changes indicate healing, negative changes indicate damage
-    /// </summary>
-    [Signal]
-    public delegate void HealthAlteredEventHandler(int amount, int result);
-    
     private int _healthCap = 9999;
     private int _maxHealth;
     private int _health;
@@ -36,10 +31,14 @@ public partial class HealthComponent : Component
         get => _health;
         set => _health = Math.Clamp(value, 0, _maxHealth);
     }
+}
 
-    public void AlterHealth(int amount)
-    {
-        Health += amount;
-        EmitSignalHealthAltered(amount, Health);
-    }
+public partial class HealthAlteredSignal : UserSignalArgs
+{
+    
+}
+
+public partial class MobDiedSignal : UserSignalArgs
+{
+    
 }

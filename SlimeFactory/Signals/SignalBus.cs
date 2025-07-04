@@ -10,7 +10,7 @@ public partial class SignalBus : Node2D
     /// <summary>
     /// Declare that there can only ever be a single instance of the <see cref="Signals.SignalBus"/>
     /// </summary>
-    public static Signals.SignalBus Instance { get; } = new();
+    public static SignalBus Instance { get; } = new();
     
     /// <summary>
     /// Making the constructor private prevents the creation of a new <see cref="Signals.SignalBus"/>

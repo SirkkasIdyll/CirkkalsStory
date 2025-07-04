@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection;
-using Godot;
+﻿using Godot;
 
 namespace CS.SlimeFactory;
 
@@ -24,7 +22,17 @@ public abstract partial class NodeSystem : Node2D, INodeSystem
         mainScene.AddChild(this);
     }
     
-    public virtual void _SystemReady()
+    /*public virtual void _SystemReady()
     {
+    }*/
+
+    /// <summary>
+    /// Set node name to the type that it is for easier retrieval in <see cref="NodeSystemManager"/>
+    /// </summary>
+    public override void _Ready()
+    {
+        base._Ready();
+        
+        SetName(GetType().Name);
     }
 }
