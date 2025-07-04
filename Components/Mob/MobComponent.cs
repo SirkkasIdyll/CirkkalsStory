@@ -28,7 +28,7 @@ public partial class MobComponent : Component
     /// <summary>
     /// Status effects can be positive or negative
     /// </summary>
-    [Export] public Array<Node> StatusEffects = [];
+    [Export] public Dictionary<string, Node> StatusEffects = [];
 
     public override void _Ready()
     {

@@ -1,15 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://02un0me2llcu"]
+[gd_scene load_steps=4 format=3 uid="uid://02un0me2llcu"]
 
+[ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="1_7cbcr"]
 [ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="1_sfvw4"]
-[ext_resource type="Script" uid="uid://bjy3jur5ey1oq" path="res://Components/Damage/DamageOverTimeComponent.cs" id="2_y1amt"]
+[ext_resource type="Script" uid="uid://b2hpgbh12fjcd" path="res://Components/StatusEffect/StatusEffectComponent.cs" id="3_m7c2a"]
 
 [node name="Bleed" type="Node2D"]
 
-[node name="DamageOverTimeComponent" type="Node2D" parent="."]
-script = ExtResource("2_y1amt")
+[node name="DamageComponent" type="Node2D" parent="."]
+script = ExtResource("1_7cbcr")
 Damage = 5
-Turns = 3
 
 [node name="DescriptionComponent" type="Node2D" parent="."]
 script = ExtResource("1_sfvw4")
 DisplayName = "Bleed"
+
+[node name="StatusEffectComponent" type="Node2D" parent="."]
+script = ExtResource("3_m7c2a")
+TurnsPerApplication = 2

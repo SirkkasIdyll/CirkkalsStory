@@ -8,13 +8,13 @@ namespace CS.Components.Skills;
 public partial class SkillManagerSystem : NodeSystem
 {
     private Dictionary<string, Node> _skillRepository = [];
-    
-    public override void _SystemReady()
+
+    public override void _Ready()
     {
-        base._SystemReady();
+        base._Ready();
         
         GetAllSkills();
-        GD.Print(_skillRepository.Count);
+        GD.Print("Skill count is " + _skillRepository.Count);
     }
 
     /// <summary>

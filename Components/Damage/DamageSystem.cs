@@ -1,5 +1,7 @@
 ﻿using CS.Components.Damageable;
+using CS.Components.Description;
 using CS.Components.Skills;
+using CS.Components.StatusEffect;
 using CS.SlimeFactory;
 using Godot;
 
@@ -11,37 +13,52 @@ public partial class DamageSystem : NodeSystem
     {
         base._Ready();
 
+        _nodeManager.SignalBus.GetDescriptionSignal += OnGetDescription;
         _nodeManager.SignalBus.UseSkillSignal += OnUseSkill;
-        // _nodeManager.SignalBus.DamageAttemptSignal += TryDamageTarget;
-        // signal for attempting to damage target
+        _nodeManager.SignalBus.ProcStatusEffectSignal += OnProcStatusEffect;
     }
 
-    private void OnUseSkill(Node<SkillComponent> node, UseSkillSignal args)
+    private void OnGetDescription(Node<DescriptionComponent> node, ref GetDescriptionSignal args)
     {
         if (!_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
             return;
         
-        TryDamageTarget((node, damageComponent), args.Target);
+        node.Component.CombatEffects.Add($"Damage: {damageComponent.Damage}");
     }
 
-    private void TryDamageTarget(Node<DamageComponent> node, Node? defender)
+    private void OnProcStatusEffect(Node<StatusEffectComponent> node, ref ProcStatusEffectSignal args)
     {
-        if (defender == null)
-            return;
-
-        // Can't damage a target that isn't damageable
-        if (!_nodeManager.HasComponent<DamageableComponent>(defender))
-            return;
-
-        // Can't damage a target that has no health
-        if (!_nodeManager.TryGetComponent<HealthComponent>(defender, out var targetHealthComponent))
+        if (!_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
             return;
         
-        targetHealthComponent.AlterHealth(-node.Component.Damage);
+        TryDamageTarget((node.ParentNode, damageComponent), args.Target);
+    }
+    
+    private void OnUseSkill(Node<SkillComponent> node, ref UseSkillSignal args)
+    {
+        // Requires a target to damage
+        if (args.Target == null)
+            return;
+        
+        if (!_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
+            return;
+        
+        TryDamageTarget((node, damageComponent), args.Target, args.User);
     }
 
-    /*public string DescribeEffect()
+    /// <summary>
+    /// Try to apply damage to a Damageable target
+    /// </summary>
+    /// <param name="node">Skill being used to damage the defender</param>
+    /// <param name="defender">The node being attacked</param>
+    /// <param name="attacker">The node attacking the defender</param>
+    private void TryDamageTarget(Node<DamageComponent> node, Node defender, Node? attacker = null)
     {
-        return $"Damage: {Damage}";
-    }*/
+        // Can't damage a target that has no health
+        if (!_nodeManager.TryGetComponent<HealthComponent>(defender, out var healthComponent))
+            return;
+        
+        if (_nodeSystemManager.TryGetNodeSystem<DamageableSystem>(out var damageableSystem))
+            damageableSystem.TryTakeDamage((defender, healthComponent), node.Component.Damage);
+    }
 }

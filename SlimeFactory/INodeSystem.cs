@@ -13,5 +13,5 @@ public interface INodeSystem
     /// Called once by the <see cref="NodeSystemManager"/> upon its construction<br />
     /// The custom NodeSystem equivalent of the _Ready function
     /// </summary>
-    public void _SystemReady() { }
+    // public void _SystemReady() { }
 }

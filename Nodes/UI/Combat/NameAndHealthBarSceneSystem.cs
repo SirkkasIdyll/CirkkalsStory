@@ -7,6 +7,8 @@ namespace CS.Nodes.UI.Combat;
 
 public partial class NameAndHealthBarSceneSystem : BoxContainer
 {
+	private readonly NodeManager _nodeManager = NodeManager.Instance;
+	
 	[ExportCategory("Instantiated")]
 	[Export] private Node? _mob;
 	
@@ -19,31 +21,19 @@ public partial class NameAndHealthBarSceneSystem : BoxContainer
 	[Signal]
 	public delegate void TargetChosenEventHandler(Node mob);
 
-	[Signal]
-	public delegate void MobDiedEventHandler(Node mob);
-
 	public override void _Ready()
 	{
 		if (_target != null)
 			_target.Pressed += OnTargetPressed;
 	}
 
-	private void OnHealthAltered(int amount, int result)
+	private void OnHealthAltered(Node<HealthComponent> node, ref HealthAlteredSignal args)
 	{
-		if (_mob == null)
+		if (_mob != node.ParentNode)
 			return;
 		
-		if (!NodeManager.Instance.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
-		{
-			GD.PrintErr("Mob has no health component\n" + System.Environment.StackTrace);
-			return;
-		}
-		
-		_mobHpBar?.SetValue(healthComponent.Health);
-		_mobHpBarNumbers?.SetText($"{healthComponent.Health} / {healthComponent.MaxHealth}");
-		
-		if (healthComponent.Health == 0)
-			EmitSignalMobDied(_mob);
+		_mobHpBar?.SetValue(node.Component.Health);
+		_mobHpBarNumbers?.SetText($"{node.Component.Health} / {node.Component.MaxHealth}");
 	}
 	
 	private void OnTargetPressed()
@@ -72,12 +62,13 @@ public partial class NameAndHealthBarSceneSystem : BoxContainer
 		_mobHpBar?.SetMax(healthComponent.MaxHealth);
 		_mobHpBar?.SetValue(healthComponent.Health);
 		_mobHpBarNumbers?.SetText($"{healthComponent.Health} / {healthComponent.MaxHealth}");
-		healthComponent.HealthAltered += OnHealthAltered;
+		_nodeManager.SignalBus.HealthAlteredSignal += OnHealthAltered;
 	}
 
 	public void ShowTargetButton()
 	{
 		_target?.SetVisible(true);
+		_target?.GrabFocus();
 	}
 
 	public void HideTargetButton()

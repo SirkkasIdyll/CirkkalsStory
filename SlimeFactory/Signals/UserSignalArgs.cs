@@ -1,7 +1,4 @@
-﻿using Godot;
-using Godot.Collections;
-
-namespace CS.SlimeFactory.Signals;
+﻿namespace CS.SlimeFactory.Signals;
 
 /// <summary>
 /// I'm implementing user signals because I hate how clunky it is having to use

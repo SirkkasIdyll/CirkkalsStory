@@ -1,4 +1,5 @@
 ﻿using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 using Godot.Collections;
 
@@ -29,18 +30,9 @@ public partial class DescriptionComponent : Component
     /// What the ability costs to use when in combat
     /// </summary>
     public Array<string> CombatCosts = new();
-    
-    public override void _Ready()
-    {
-        base._Ready();
+}
 
-        foreach (var child in GetParent().GetChildren())
-        {
-            if (child.HasMethod("DescribeEffect"))
-                CombatEffects.Add(child.Call("DescribeEffect").AsString());
-            
-            if (child.HasMethod("DescribeCosts"))
-                CombatEffects.Add(child.Call("DescribeCosts").AsString());
-        }
-    }
+public partial class GetDescriptionSignal : UserSignalArgs
+{
+    
 }

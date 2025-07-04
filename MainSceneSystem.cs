@@ -17,7 +17,6 @@ public partial class MainSceneSystem : Node2D
     public override void _Ready()
     {
         _nodeSystemManager.InitializeNodeSystems(this);
-        
         // TODO: GO THROUGH AND FUCKING PURGE ALL OF THE LOGIC FROM THE NODES AND START THROWING SIGNALBUS EVENTS
         // TODO: VIVA LA NODESYSTEMS, VIVA LA NODESYSTEMS
         // TODO: NO MORE LOGIC IN COMPONENTS, ONLY IN NODESYSTEMS
