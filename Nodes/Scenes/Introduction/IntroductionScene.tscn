@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3 uid="uid://cl2xuwsvdr5n8"]
+
+[ext_resource type="Theme" uid="uid://bofxw0bub14i4" path="res://Resources/Themes/default.tres" id="1_qj8cd"]
+[ext_resource type="PackedScene" uid="uid://cdwpmhjdel17p" path="res://Nodes/UI/ButtonTypes/StandardButton.tscn" id="2_fhl10"]
+[ext_resource type="Script" uid="uid://bwe36wo6jlw4y" path="res://Nodes/Scenes/Introduction/IntroductionScene.cs" id="2_rhncs"]
+[ext_resource type="PackedScene" uid="uid://cvv8otsc37cqg" path="res://Nodes/Scenes/Combat/CombatScene.tscn" id="3_smawa"]
+
+[node name="IntroductionScene" type="Control" node_paths=PackedStringArray("_acceptButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_qj8cd")
+script = ExtResource("2_rhncs")
+_nextScene = ExtResource("3_smawa")
+_acceptButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Accept")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"MarginContainerLarge"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_type_variation = &"MarginContainerSmall"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+text = "YOU'RE TOTALLY FUCKED, YOU'RE UBER FUCKED, NO ONE IS COMING FOR YOU, WELCOME TO HELL THIS IS A PLACEHOLDER OPENING SEQUENCE"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Accept" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("2_fhl10")]
+layout_mode = 2
+text = "I UNDERSTAND AND ACCEPT ALL THE  CONSEQUENCES THAT WILL COME"

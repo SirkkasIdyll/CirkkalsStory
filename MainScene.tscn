@@ -1,22 +1,24 @@
-[gd_scene load_steps=7 format=3 uid="uid://wgqqcbvm2nn0"]
+[gd_scene load_steps=8 format=3 uid="uid://wgqqcbvm2nn0"]
 
 [ext_resource type="Script" uid="uid://y4pka5ydh2ue" path="res://MainSceneSystem.cs" id="1_j2ntn"]
-[ext_resource type="PackedScene" uid="uid://detfedhbicpnq" path="res://Nodes/UI/EscapeMenu/EscapeMenuScene.tscn" id="2_a814b"]
-[ext_resource type="PackedScene" uid="uid://bj83w83rrsasl" path="res://Nodes/UI/StartMenu/StartMenuScene.tscn" id="3_cd713"]
-[ext_resource type="PackedScene" uid="uid://ixse28vqndr0" path="res://Nodes/UI/Options/OptionsScene.tscn" id="4_da86c"]
-[ext_resource type="PackedScene" uid="uid://cvv8otsc37cqg" path="res://Nodes/UI/Combat/CombatScene.tscn" id="4_rf2cd"]
+[ext_resource type="PackedScene" uid="uid://detfedhbicpnq" path="res://Nodes/Scenes/EscapeMenu/EscapeMenuScene.tscn" id="2_a814b"]
+[ext_resource type="PackedScene" uid="uid://cf340q4pq5e5i" path="res://Nodes/Scenes/GameOver/GameOverScene.tscn" id="3_5crlr"]
+[ext_resource type="PackedScene" uid="uid://bj83w83rrsasl" path="res://Nodes/Scenes/StartMenu/StartMenuScene.tscn" id="3_cd713"]
+[ext_resource type="PackedScene" uid="uid://cl2xuwsvdr5n8" path="res://Nodes/Scenes/Introduction/IntroductionScene.tscn" id="4_a814b"]
+[ext_resource type="PackedScene" uid="uid://ixse28vqndr0" path="res://Nodes/Scenes/Options/OptionsScene.tscn" id="4_da86c"]
 [ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="7_5crlr"]
 
 [node name="MainScene" type="Node2D" node_paths=PackedStringArray("_canvasLayer")]
 script = ExtResource("1_j2ntn")
 _escapeMenuSceneSystem = ExtResource("2_a814b")
+_gameOverScene = ExtResource("3_5crlr")
 _canvasLayer = NodePath("CanvasLayer")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="StartMenu" parent="CanvasLayer" node_paths=PackedStringArray("_bgmPlayer", "_optionsScene") instance=ExtResource("3_cd713")]
 _bgmPlayer = NodePath("../../BGMAudioStreamPlayer2D")
-_newGameScene = ExtResource("4_rf2cd")
+_newGameScene = ExtResource("4_a814b")
 _optionsScene = NodePath("../Options")
 
 [node name="Options" parent="CanvasLayer" instance=ExtResource("4_da86c")]

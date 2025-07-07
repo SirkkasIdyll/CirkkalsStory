@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=3 uid="uid://cncg0vu0rs250"]
+
+[ext_resource type="Script" uid="uid://pd7w380tkd0u" path="res://Components/Damageable/DamageableComponent.cs" id="2_x7tgo"]
+[ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="3_ah6js"]
+[ext_resource type="Script" uid="uid://cw63klnljs463" path="res://Components/Damageable/HealthComponent.cs" id="5_ue1lv"]
+[ext_resource type="Script" uid="uid://bsydnvgac5ggj" path="res://Components/Magic/ManaComponent.cs" id="6_km1gv"]
+[ext_resource type="Script" uid="uid://bj3d36tnhyffx" path="res://Components/Mob/MobComponent.cs" id="7_ysox8"]
+
+[node name="BaseMob" type="CharacterBody2D"]
+
+[node name="DamageableComponent" type="Node2D" parent="."]
+script = ExtResource("2_x7tgo")
+
+[node name="DescriptionComponent" type="Node2D" parent="."]
+script = ExtResource("3_ah6js")
+
+[node name="HealthComponent" type="Node2D" parent="."]
+script = ExtResource("5_ue1lv")
+
+[node name="ManaComponent" type="Node2D" parent="."]
+script = ExtResource("6_km1gv")
+
+[node name="MobComponent" type="Node2D" parent="."]
+script = ExtResource("7_ysox8")

@@ -1,0 +1,25 @@
+[gd_scene load_steps=4 format=3 uid="uid://bqfols4elkr5d"]
+
+[ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Objects/Mobs/BaseMob.tscn" id="1_5y5kf"]
+[ext_resource type="Texture2D" uid="uid://bx5e72g5tsgl2" path="res://Resources/Sprites/Sprite-0002.png" id="2_2mdjs"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5y5kf"]
+radius = 16.0
+
+[node name="MobPlaceholder2" instance=ExtResource("1_5y5kf")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Placeholder2"
+
+[node name="HealthComponent" parent="." index="2"]
+MaxHealth = 999
+Health = 999
+
+[node name="MobComponent" parent="." index="4"]
+Skills = Array[String](["SlimeTackle"])
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="5"]
+texture = ExtResource("2_2mdjs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="6"]
+shape = SubResource("CircleShape2D_5y5kf")

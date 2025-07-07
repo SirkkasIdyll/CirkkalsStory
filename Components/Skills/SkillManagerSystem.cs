@@ -28,7 +28,7 @@ public partial class SkillManagerSystem : NodeSystem
             foreach (var value in nodeCompDic.Values)
             {
                 if (value is SkillComponent skillComponent)
-                    _skillRepository.Add(skillComponent.ParentNode.Name, skillComponent.ParentNode);
+                    _skillRepository.Add(skillComponent.Owner.Name, skillComponent.Owner);
             }
         }
     }

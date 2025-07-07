@@ -1,0 +1,95 @@
+[gd_scene load_steps=7 format=3 uid="uid://cvv8otsc37cqg"]
+
+[ext_resource type="Script" uid="uid://ggixe6gwqamu" path="res://Nodes/Scenes/Combat/CombatSceneSystem.cs" id="1_y778k"]
+[ext_resource type="PackedScene" uid="uid://byc6u3b0pbhv7" path="res://Nodes/Scenes/Combat/SkillSelection/CombatSkillSelectionScene.tscn" id="3_y778k"]
+[ext_resource type="PackedScene" uid="uid://p3cx4x7ahdxg" path="res://Nodes/Scenes/Combat/CombatMobRepresentation.tscn" id="4_tp54h"]
+[ext_resource type="PackedScene" uid="uid://hkavjwdmu5da" path="res://Nodes/Objects/Mobs/MobPlaceholder.tscn" id="5_f4cj5"]
+[ext_resource type="Script" uid="uid://cjtek16utmv1j" path="res://Nodes/Scenes/Combat/ActionsItemListSystem.cs" id="5_o60ty"]
+[ext_resource type="PackedScene" uid="uid://bqfols4elkr5d" path="res://Nodes/Objects/Mobs/MobPlaceholder2.tscn" id="6_tp54h"]
+
+[node name="CombatScene" type="Control" node_paths=PackedStringArray("_players", "_enemies", "_playersVBoxContainer", "_enemiesVBoxContainer", "_actionsItemList")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y778k")
+_players = [NodePath("MobPlaceholder")]
+_enemies = [NodePath("MobPlaceholder2"), NodePath("MobPlaceholder3")]
+_combatMobRepresentation = ExtResource("4_tp54h")
+_combatSkillSelection = ExtResource("3_y778k")
+_playersVBoxContainer = NodePath("MarginContainer2/PlayersVBoxContainer")
+_enemiesVBoxContainer = NodePath("MarginContainer/EnemiesVBoxContainer")
+_actionsItemList = NodePath("ActionsItemList")
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -26.0
+offset_right = 116.0
+offset_bottom = 26.0
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="PlayersVBoxContainer" type="VBoxContainer" parent="MarginContainer2"]
+layout_mode = 2
+
+[node name="MobRepresentation" parent="MarginContainer2/PlayersVBoxContainer" instance=ExtResource("4_tp54h")]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -116.0
+offset_top = -26.0
+offset_bottom = 26.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="EnemiesVBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="MobRepresentation" parent="MarginContainer/EnemiesVBoxContainer" instance=ExtResource("4_tp54h")]
+layout_mode = 2
+
+[node name="ActionsItemList" type="ItemList" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -58.0
+offset_right = 48.0
+offset_bottom = 58.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+allow_search = false
+auto_width = true
+auto_height = true
+item_count = 3
+item_0/text = "Skills"
+item_1/text = "Spells"
+item_2/text = "Flee"
+script = ExtResource("5_o60ty")
+metadata/_edit_use_anchors_ = true
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="MobPlaceholder" parent="." instance=ExtResource("5_f4cj5")]
+
+[node name="MobPlaceholder2" parent="." instance=ExtResource("6_tp54h")]
+
+[node name="MobPlaceholder3" parent="." instance=ExtResource("6_tp54h")]

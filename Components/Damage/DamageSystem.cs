@@ -13,17 +13,18 @@ public partial class DamageSystem : NodeSystem
     {
         base._Ready();
 
-        _nodeManager.SignalBus.GetDescriptionSignal += OnGetDescription;
+        _nodeManager.SignalBus.ReloadCombatDescriptionSignal += OnReloadCombatDescription;
         _nodeManager.SignalBus.UseSkillSignal += OnUseSkill;
         _nodeManager.SignalBus.ProcStatusEffectSignal += OnProcStatusEffect;
     }
 
-    private void OnGetDescription(Node<DescriptionComponent> node, ref GetDescriptionSignal args)
+    private void OnReloadCombatDescription(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args)
     {
         if (!_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
             return;
-        
-        node.Component.CombatEffects.Add($"Damage: {damageComponent.Damage}");
+
+        var combatEffect = $"Damage: {damageComponent.Damage}";
+        node.Comp.CombatEffects.Add(combatEffect);
     }
 
     private void OnProcStatusEffect(Node<StatusEffectComponent> node, ref ProcStatusEffectSignal args)
@@ -31,7 +32,7 @@ public partial class DamageSystem : NodeSystem
         if (!_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
             return;
         
-        TryDamageTarget((node.ParentNode, damageComponent), args.Target);
+        TryDamageTarget((node.Owner, damageComponent), args.Target);
     }
     
     private void OnUseSkill(Node<SkillComponent> node, ref UseSkillSignal args)
@@ -59,6 +60,6 @@ public partial class DamageSystem : NodeSystem
             return;
         
         if (_nodeSystemManager.TryGetNodeSystem<DamageableSystem>(out var damageableSystem))
-            damageableSystem.TryTakeDamage((defender, healthComponent), node.Component.Damage);
+            damageableSystem.TryTakeDamage((defender, healthComponent), node.Comp.Damage);
     }
 }

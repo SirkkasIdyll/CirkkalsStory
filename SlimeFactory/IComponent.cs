@@ -4,5 +4,5 @@ namespace CS.SlimeFactory;
 
 public interface IComponent
 {
-    public Node ParentNode { get; }
+    public Node Owner { get; }
 }

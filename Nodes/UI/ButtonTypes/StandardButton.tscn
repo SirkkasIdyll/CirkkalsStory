@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdwpmhjdel17p"]
+
+[ext_resource type="Script" uid="uid://otmunyfthgfw" path="res://Nodes/UI/ButtonTypes/StandardButton.cs" id="1_aylav"]
+[ext_resource type="PackedScene" uid="uid://ce3ae83fe0k65" path="res://Nodes/UI/Audio/SFX/ConfirmSound.tscn" id="2_0p634"]
+[ext_resource type="PackedScene" uid="uid://u5dek0y50dkv" path="res://Nodes/UI/Audio/SFX/SelectSound.tscn" id="3_q5fng"]
+
+[node name="StandardButton" type="Button" node_paths=PackedStringArray("_confirmSound", "_selectSound")]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = &"ButtonSmall"
+script = ExtResource("1_aylav")
+_confirmSound = NodePath("ConfirmSound")
+_selectSound = NodePath("SelectSound")
+
+[node name="ConfirmSound" parent="." instance=ExtResource("2_0p634")]
+
+[node name="SelectSound" parent="." instance=ExtResource("3_q5fng")]

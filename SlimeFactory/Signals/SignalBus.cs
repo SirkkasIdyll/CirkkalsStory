@@ -5,7 +5,7 @@ namespace CS.SlimeFactory.Signals;
 /// <summary>
 /// This has Node2D because it needs access to Godot's Signal functions despite not being put into the SceneTree
 /// </summary>
-public partial class SignalBus : Node2D
+public partial class SignalBus
 {
     /// <summary>
     /// Declare that there can only ever be a single instance of the <see cref="Signals.SignalBus"/>

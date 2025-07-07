@@ -13,7 +13,7 @@ public partial class DamageableSystem : NodeSystem
 
     private void OnHealthAltered(Node<HealthComponent> node, ref HealthAlteredSignal args)
     {
-        if (node.Component.Health <= 0)
+        if (node.Comp.Health <= 0)
         {
             var signal = new MobDiedSignal();
             _nodeManager.SignalBus.EmitMobDiedSignal(node, ref signal);
@@ -31,7 +31,7 @@ public partial class DamageableSystem : NodeSystem
         if (!_nodeManager.HasComponent<DamageableComponent>(node))
             return;
 
-        node.Component.Health -= amount;
+        node.Comp.Health -= amount;
         
         var signal = new HealthAlteredSignal();
         _nodeManager.SignalBus.EmitHealthAlteredSignal(node, ref signal);

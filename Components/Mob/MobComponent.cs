@@ -28,21 +28,5 @@ public partial class MobComponent : Component
     /// <summary>
     /// Status effects can be positive or negative
     /// </summary>
-    [Export] public Dictionary<string, Node> StatusEffects = [];
-
-    public override void _Ready()
-    {
-        base._Ready();
-        
-    }
-
-    public string? ChooseRandomSkillOrSpell()
-    {
-        if (Skills.Count == 0)
-            return null;
-        
-        return Skills.PickRandom();
-        
-        
-    }
+    public Dictionary<string, Node> StatusEffects = [];
 }

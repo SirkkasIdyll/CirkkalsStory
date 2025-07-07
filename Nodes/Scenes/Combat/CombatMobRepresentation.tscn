@@ -1,0 +1,101 @@
+[gd_scene load_steps=19 format=3 uid="uid://p3cx4x7ahdxg"]
+
+[ext_resource type="Script" uid="uid://bgnkis1kmhvm6" path="res://Nodes/Scenes/Combat/CombatMobRepresentationSystem.cs" id="1_bjixq"]
+[ext_resource type="Texture2D" uid="uid://ouestvtbjjua" path="res://Resources/Sprite-0005.png" id="1_tdbus"]
+[ext_resource type="Texture2D" uid="uid://c6g8n5mokyrpv" path="res://Resources/Sprite-0007.png" id="3_upw8m"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c141r"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bjixq"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_upw8m"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ip3j3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8pipt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3ptlx"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1qbg5"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_iokq3"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7150f"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vy2g2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_olsyx"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7qmtw"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bjixq"]
+texture = ExtResource("1_tdbus")
+texture_margin_left = 2.0
+texture_margin_top = 2.0
+texture_margin_right = 2.0
+texture_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tdbus"]
+bg_color = Color(0.205117, 0.205117, 0.205117, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bjixq"]
+bg_color = Color(1, 0.333333, 0.341176, 1)
+
+[node name="MobRepresentation" type="VBoxContainer" node_paths=PackedStringArray("_name", "Target", "_cursor", "_hpProgressBar", "_hpLabel")]
+custom_minimum_size = Vector2(100, 0)
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 76.0
+offset_bottom = 38.0
+theme_override_constants/separation = 0
+script = ExtResource("1_bjixq")
+_name = NodePath("PanelContainer2/Name")
+Target = NodePath("PanelContainer2/Target")
+_cursor = NodePath("Cursor")
+_hpProgressBar = NodePath("PanelContainer/HPProgressBar")
+_hpLabel = NodePath("PanelContainer/HPLabel")
+
+[node name="PanelContainer2" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_c141r")
+
+[node name="Name" type="Label" parent="PanelContainer2"]
+layout_mode = 2
+text = "Green Slime"
+
+[node name="Target" type="Button" parent="PanelContainer2"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bjixq")
+theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_upw8m")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_ip3j3")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxEmpty_8pipt")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_3ptlx")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxEmpty_1qbg5")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_iokq3")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxEmpty_7150f")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_vy2g2")
+theme_override_styles/normal_mirrored = SubResource("StyleBoxEmpty_olsyx")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_7qmtw")
+alignment = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_bjixq")
+
+[node name="HPProgressBar" type="ProgressBar" parent="PanelContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_styles/background = SubResource("StyleBoxFlat_tdbus")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bjixq")
+value = 50.0
+show_percentage = false
+
+[node name="HPLabel" type="Label" parent="PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "9999 / 9999"
+horizontal_alignment = 1
+
+[node name="Cursor" type="Sprite2D" parent="."]
+texture = ExtResource("3_upw8m")
