@@ -32,7 +32,7 @@ public partial class DescriptionComponent : Component
     public Array<string> CombatCosts = new();
 }
 
-public partial class GetDescriptionSignal : UserSignalArgs
+public partial class ReloadCombatDescriptionSignal : UserSignalArgs
 {
     
 }

@@ -21,9 +21,11 @@ buses/default_bus_layout="uid://bi5pdrhdl60cg"
 
 [display]
 
-window/size/viewport_width=1280
-window/size/viewport_height=720
+window/size/viewport_width=640
+window/size/viewport_height=360
+window/size/resizable=false
 window/stretch/mode="viewport"
+window/stretch/scale_mode="integer"
 
 [dotnet]
 
@@ -32,6 +34,10 @@ project/assembly_name="Cirkkals Story"
 [global_group]
 
 config_options="Stuff like volume, resolution, button maps, etc."
+
+[gui]
+
+theme/custom="uid://bofxw0bub14i4"
 
 [rendering]
 

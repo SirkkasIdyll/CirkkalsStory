@@ -52,8 +52,6 @@ public partial class NodeManager
         foreach (var file in nodeFiles)
         {
             var node = ResourceLoader.Load<PackedScene>(file).Instantiate();
-            // GD.Print(node.Name);
-
             var children = node.GetChildren();
             
             foreach (var child in children)
@@ -106,6 +104,20 @@ public partial class NodeManager
 
         return files;
     }
+
+    /// <summary>
+    /// Prevent memory leaks by purging resources on close
+    /// </summary>
+    public void PurgeDictionary()
+    {
+        foreach (var nodeCompDic in NodeCompHashset)
+        {
+            foreach (var node in nodeCompDic.Keys)
+            {
+                node.QueueFree();
+            }
+        }
+    }
     
     /// <summary>
     /// Goes through each child of the node and checks if the child is of the same type as T.
@@ -131,17 +143,17 @@ public partial class NodeManager
     }
 }
 
-public struct Node<TComp> where TComp : IComponent?
+public readonly struct Node<TComp> where TComp : IComponent?
 {
-    public Node ParentNode;
-    public TComp Component;
+    public readonly Node Owner;
+    public readonly TComp Comp;
 
-    public Node(Node parentNode, TComp component)
+    private Node(Node owner, TComp comp)
     {
-        Debug.Assert(component?.ParentNode == parentNode);
+        Debug.Assert(comp?.Owner == owner);
         
-        ParentNode = parentNode;
-        Component = component;
+        Owner = owner;
+        Comp = comp;
     } 
         
     public static implicit operator Node<TComp>((Node ParentNode, TComp Component) tuple)
@@ -156,17 +168,17 @@ public struct Node<TComp> where TComp : IComponent?
 
     public static implicit operator Node(Node<TComp> ent)
     {
-        return ent.ParentNode;
+        return ent.Owner;
     }
 
     public static implicit operator TComp(Node<TComp> ent)
     {
-        return ent.Component;
+        return ent.Comp;
     }
 
     public readonly void Deconstruct(out Node parentNode, out TComp comp)
     {
-        parentNode = ParentNode;
-        comp = Component;
+        parentNode = Owner;
+        comp = Comp;
     }
 }

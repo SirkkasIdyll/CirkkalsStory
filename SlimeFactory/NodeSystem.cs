@@ -34,5 +34,6 @@ public abstract partial class NodeSystem : Node2D, INodeSystem
         base._Ready();
         
         SetName(GetType().Name);
+        SetOwner(GetParent());
     }
 }

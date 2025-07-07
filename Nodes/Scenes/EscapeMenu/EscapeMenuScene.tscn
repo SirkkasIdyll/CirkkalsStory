@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=3 uid="uid://detfedhbicpnq"]
+
+[ext_resource type="Theme" uid="uid://bofxw0bub14i4" path="res://Resources/Themes/default.tres" id="1_l0ogq"]
+[ext_resource type="Script" uid="uid://ddsok4dmgs86u" path="res://Nodes/Scenes/EscapeMenu/EscapeMenuSceneSystem.cs" id="2_vb7xb"]
+[ext_resource type="PackedScene" uid="uid://cdwpmhjdel17p" path="res://Nodes/UI/ButtonTypes/StandardButton.tscn" id="3_6u3o8"]
+[ext_resource type="PackedScene" uid="uid://d1d3s3xnlpvjh" path="res://Nodes/UI/ButtonTypes/EscapeButton.tscn" id="4_wavr7"]
+[ext_resource type="PackedScene" uid="uid://can0cu6eda7p" path="res://Nodes/UI/Audio/SFX/CancelSound.tscn" id="6_oj2b3"]
+
+[node name="EscapeMenuScene" type="Control" node_paths=PackedStringArray("_cancelSound", "_continue", "_options", "_quit")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_l0ogq")
+script = ExtResource("2_vb7xb")
+_cancelSound = NodePath("CancelSound")
+_continue = NodePath("PanelContainer/MarginContainer/VBoxContainer/Continue")
+_options = NodePath("PanelContainer/MarginContainer/VBoxContainer/Options")
+_quit = NodePath("PanelContainer/MarginContainer/VBoxContainer/Quit")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 120
+theme_override_constants/margin_bottom = 120
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+alignment = 1
+
+[node name="Continue" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("3_6u3o8")]
+layout_mode = 2
+theme_type_variation = &"ButtonMedium"
+text = "Continue"
+
+[node name="Options" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("3_6u3o8")]
+layout_mode = 2
+theme_type_variation = &"ButtonMedium"
+text = "Options
+"
+
+[node name="Quit" parent="PanelContainer/MarginContainer/VBoxContainer" instance=ExtResource("4_wavr7")]
+layout_mode = 2
+theme_type_variation = &"ButtonMedium"
+text = "Quit"
+
+[node name="CancelSound" parent="." instance=ExtResource("6_oj2b3")]

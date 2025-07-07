@@ -1,0 +1,48 @@
+[gd_scene load_steps=4 format=3 uid="uid://cf340q4pq5e5i"]
+
+[ext_resource type="Script" uid="uid://xslr7hyclp3f" path="res://Nodes/Scenes/GameOver/GameOverSceneSystem.cs" id="1_x5jpm"]
+[ext_resource type="PackedScene" uid="uid://bj83w83rrsasl" path="res://Nodes/Scenes/StartMenu/StartMenuScene.tscn" id="2_p2c02"]
+[ext_resource type="PackedScene" uid="uid://cdwpmhjdel17p" path="res://Nodes/UI/ButtonTypes/StandardButton.tscn" id="3_s33d5"]
+
+[node name="GameOver" type="Control" node_paths=PackedStringArray("_acceptButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_x5jpm")
+_nextScene = ExtResource("2_p2c02")
+_acceptButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Accept")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"MarginContainerLarge"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_type_variation = &"MarginContainerSmall"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+text = "YOU BLEW IT, YOU LOST, NO ONE WILL REMEMBER YOU, YOUR ONLY REWARD IS THIS STUPID SCREEN THAT DOESN'T DO ANYTHING, GO AWAY"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Accept" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("3_s33d5")]
+layout_mode = 2
+text = "BACK TO START MENU"

@@ -4,10 +4,10 @@ namespace CS.SlimeFactory.Signals;
 
 public partial class SignalBus
 {
-    public delegate void GetDescriptionSignalHandler(Node<DescriptionComponent> node, ref GetDescriptionSignal args);
-    public event GetDescriptionSignalHandler? GetDescriptionSignal;
-    public void EmitGetDescriptionSignal(Node<DescriptionComponent> node, ref GetDescriptionSignal args)
+    public delegate void ReloadCombatDescriptionSignalHandler(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args);
+    public event ReloadCombatDescriptionSignalHandler? ReloadCombatDescriptionSignal;
+    public void EmitReloadCombatDescriptionSignal(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args)
     {
-        GetDescriptionSignal?.Invoke(node, ref args);
+        ReloadCombatDescriptionSignal?.Invoke(node, ref args);
     }
 }

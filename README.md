@@ -10,8 +10,10 @@ This is a small project I'm working on to familiarize myself with the Godot engi
 - Arrange properties and functions in alphabetical order. This lessens organizational ambiguity and makes it easier to find specific code.
 - Add summaries for all classes and all properties even if they seem obvious. Make your intention known, otherwise no one will know.
 - Use if statements to return as early as possible to reduce nesting complexity later on.
-- Delete unused template functions like Ready() and Process().
+- Delete unused template functions like _Ready() and _Process().
 - Parents use signal from children, then call functions from their children to update them. Children do not ever need to be aware of their parents.
+- Events subscribed from the SignalBus need to be manually disconnected in _ExitTree(), failure to do so will make the node unavailable to be freed and cause bugs.
+
 
 ### Naming Practices
 

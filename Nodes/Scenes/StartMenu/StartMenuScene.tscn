@@ -1,0 +1,96 @@
+[gd_scene load_steps=8 format=3 uid="uid://bj83w83rrsasl"]
+
+[ext_resource type="Script" uid="uid://xcjnsxni4kmh" path="res://Nodes/Scenes/StartMenu/StartMenuSceneSystem.cs" id="1_3kyvb"]
+[ext_resource type="Texture2D" uid="uid://bfx35gfsxfd8" path="res://Resources/Sprite-0003.png" id="3_xltjs"]
+[ext_resource type="AudioStream" uid="uid://cawpht33ubjnc" path="res://Resources/Sounds/Hopeless - Full.wav" id="4_loh3u"]
+[ext_resource type="PackedScene" uid="uid://djj4j1dplagri" path="res://Nodes/UI/Utility/SpacerScene.tscn" id="5_3wqj7"]
+[ext_resource type="PackedScene" uid="uid://cdwpmhjdel17p" path="res://Nodes/UI/ButtonTypes/StandardButton.tscn" id="5_61efr"]
+[ext_resource type="PackedScene" uid="uid://d1d3s3xnlpvjh" path="res://Nodes/UI/ButtonTypes/EscapeButton.tscn" id="7_ca38m"]
+[ext_resource type="PackedScene" uid="uid://can0cu6eda7p" path="res://Nodes/UI/Audio/SFX/CancelSound.tscn" id="11_y5p2d"]
+
+[node name="StartMenu" type="Control" node_paths=PackedStringArray("_cancelSound", "_newGame", "_continue", "_options", "_achievements", "_quit")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3kyvb")
+_bgm = ExtResource("4_loh3u")
+_cancelSound = NodePath("CancelSound")
+_newGame = NodePath("MarginContainer2/VBoxContainer/HBoxContainer/New Game")
+_continue = NodePath("MarginContainer2/VBoxContainer/HBoxContainer/Continue")
+_options = NodePath("MarginContainer2/VBoxContainer/HBoxContainer2/Options")
+_achievements = NodePath("MarginContainer2/VBoxContainer/HBoxContainer2/Achievements")
+_quit = NodePath("MarginContainer2/VBoxContainer/HBoxContainer2/Quit")
+
+[node name="TitleBackgroundImage" type="TextureRect" parent="."]
+layout_mode = 2
+offset_right = 640.0
+offset_bottom = 360.0
+texture = ExtResource("3_xltjs")
+expand_mode = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 160
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 60
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="New Game" parent="MarginContainer2/VBoxContainer/HBoxContainer" instance=ExtResource("5_61efr")]
+layout_mode = 2
+theme_type_variation = &"ButtonLarge"
+text = "New Game"
+
+[node name="Spacer" parent="MarginContainer2/VBoxContainer/HBoxContainer" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="Continue" parent="MarginContainer2/VBoxContainer/HBoxContainer" instance=ExtResource("5_61efr")]
+layout_mode = 2
+theme_type_variation = &"ButtonLarge"
+text = "Continue"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacer" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="Options" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_61efr")]
+layout_mode = 2
+theme_type_variation = &"ButtonMedium"
+text = "Options"
+
+[node name="Spacer2" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="Achievements" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_61efr")]
+layout_mode = 2
+theme_type_variation = &"ButtonMedium"
+text = "Achievements"
+
+[node name="Spacer3" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="Quit" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("7_ca38m")]
+layout_mode = 2
+theme_type_variation = &"ButtonMedium"
+text = "Quit"
+
+[node name="Spacer4" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_3wqj7")]
+layout_mode = 2
+
+[node name="CancelSound" parent="." instance=ExtResource("11_y5p2d")]

@@ -1,4 +1,5 @@
 ﻿using CS.Components.CombatManager;
+using CS.Components.Description;
 using CS.Components.Mob;
 using CS.Components.Skills;
 using CS.SlimeFactory;
@@ -15,6 +16,19 @@ public partial class StatusEffectSystem : NodeSystem
         
         _nodeManager.SignalBus.StartOfTurnSignal += OnStartOfTurn;
         _nodeManager.SignalBus.UseSkillSignal += OnUseSkill;
+        _nodeManager.SignalBus.ReloadCombatDescriptionSignal += OnReloadCombatDescription;
+    }
+
+    private void OnReloadCombatDescription(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<StatusEffectApplicatorComponent>(node, out var statusEffectApplicatorComponent))
+            return;
+
+        if (statusEffectApplicatorComponent.StatusEffect == null)
+            return;
+        
+        var combatEffect = $"Apply {statusEffectApplicatorComponent.StatusEffect.Name}";
+        node.Comp.CombatEffects.Add(combatEffect);
     }
     
     /// <summary>
@@ -53,7 +67,7 @@ public partial class StatusEffectSystem : NodeSystem
     private void ProcStatusEffects(Node<MobComponent> node)
     {
         Array<string> statusEffectsToRemove = [];
-        foreach (var statusEffect in node.Component.StatusEffects)
+        foreach (var statusEffect in node.Comp.StatusEffects)
         {
             if (!_nodeManager.TryGetComponent<StatusEffectComponent>(statusEffect.Value, out var statusEffectComponent))
                 continue;
@@ -73,7 +87,7 @@ public partial class StatusEffectSystem : NodeSystem
         // Safely remove the status effects outside the first foreach loop
         foreach (var statusEffectName in statusEffectsToRemove)
         {
-            node.Component.StatusEffects.Remove(statusEffectName);
+            node.Comp.StatusEffects.Remove(statusEffectName);
         }
     }
 
@@ -85,14 +99,14 @@ public partial class StatusEffectSystem : NodeSystem
     private void TryApplyStatusEffect(Node<StatusEffectApplicatorComponent> node, Node target)
     {
         // No status effect set to be applied
-        if (node.Component.StatusEffect == null)
+        if (node.Comp.StatusEffect == null)
             return;
 
         if (!_nodeManager.TryGetComponent<MobComponent>(target, out var mobComponent))
             return;
 
-        var statusEffectName = node.Component.StatusEffect.Name;
-        var statusEffect = node.Component.StatusEffect;
+        var statusEffectName = node.Comp.StatusEffect.Name;
+        var statusEffect = node.Comp.StatusEffect;
 
         // If the mob isn't currently afflicted with the status effect, apply a duplicate of it
         if (!mobComponent.StatusEffects.ContainsKey(statusEffectName))

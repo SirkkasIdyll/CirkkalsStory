@@ -8,7 +8,7 @@ namespace CS.Components.CombatManager;
 
 public partial class TurnManagerSystem : NodeSystem
 {
-    public Node CurrentMobsTurn = new();
+    public Node? CurrentMobsTurn;
     private Array<Node> _turnOrder = [];
 	
     // Called when the node enters the scene tree for the first time.
@@ -29,10 +29,11 @@ public partial class TurnManagerSystem : NodeSystem
     /// <param name="args"></param>
     private void OnEndOfTurnSignal(Node node, ref EndOfTurnSignal args)
     {
-        _turnOrder.RemoveAt(0);
-        _turnOrder.Add(node);
-        CurrentMobsTurn = _turnOrder[0];
+        // Only re-add mobs that are in the turn order, those that aren't were dead and removed
+        if (_turnOrder.Remove(node))
+            _turnOrder.Add(node);
         
+        CurrentMobsTurn = _turnOrder[0];
         var signal = new StartOfTurnSignal();
         _nodeManager.SignalBus.EmitStartOfTurnSignal(CurrentMobsTurn, ref signal);
     }
@@ -50,8 +51,7 @@ public partial class TurnManagerSystem : NodeSystem
     /// <param name="args"></param>
     private void OnStartOfCombat(Node node, ref StartOfCombatSignal args)
     {
-        _turnOrder.Clear();
-        _turnOrder = args.players + args.enemies;
+        _turnOrder = args.Players + args.Enemies;
         CurrentMobsTurn = _turnOrder[0];
         
         var signal = new StartOfTurnSignal();
@@ -61,22 +61,37 @@ public partial class TurnManagerSystem : NodeSystem
 
 public partial class StartOfCombatSignal : UserSignalArgs
 {
-    public Array<Node> players;
-    public Array<Node> enemies;
+    public Array<Node> Players;
+    public Array<Node> Enemies;
 
     public StartOfCombatSignal(Array<Node> players, Array<Node> enemies)
     {
-        this.players = players;
-        this.enemies = enemies;
+        Players = players;
+        Enemies = enemies;
     }
+}
+
+public partial class EndOfCombatSignal : UserSignalArgs
+{
+    public bool Won;
 }
 
 public partial class StartOfTurnSignal : UserSignalArgs
 {
-    
 }
 
 public partial class EndOfTurnSignal : UserSignalArgs
 {
-    
+}
+
+public partial class EnemyTurnSignal : UserSignalArgs
+{
+    public Array<Node> Players;
+    public Array<Node> Enemies;
+
+    public EnemyTurnSignal(Array<Node> players, Array<Node> enemies)
+    {
+        Players = players;
+        Enemies = enemies;
+    }
 }
