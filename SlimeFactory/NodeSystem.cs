@@ -1,4 +1,7 @@
-﻿using Godot;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using Godot;
 
 namespace CS.SlimeFactory;
 
@@ -21,10 +24,22 @@ public abstract partial class NodeSystem : Node2D, INodeSystem
     {
         mainScene.AddChild(this);
     }
-    
-    /*public virtual void _SystemReady()
+
+    /// <summary>
+    /// After all systems are initialized, system dependencies can be injected without worry of order of initialization
+    /// </summary>
+    public void _InjectDependencies()
     {
-    }*/
+        var fields = GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance).Where(t => t.GetCustomAttribute<InjectDependency>(false) != null);
+        foreach (var field in fields)
+        {
+            if (!_nodeSystemManager.NodeSystemDictionary.TryGetValue(field.FieldType.Name, out var nodeSystem))
+                continue;
+            
+            field.SetValue(this, nodeSystem);
+            GD.Print("Injected " + nodeSystem.Name + " as a dependency");
+        }
+    }
 
     /// <summary>
     /// Set node name to the type that it is for easier retrieval in <see cref="NodeSystemManager"/>
@@ -37,3 +52,6 @@ public abstract partial class NodeSystem : Node2D, INodeSystem
         SetOwner(GetParent());
     }
 }
+
+[AttributeUsage(AttributeTargets.Field)]
+public class InjectDependency : Attribute { }

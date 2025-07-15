@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cl23frrjgn4hr"]
+
+[ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_whd7h"]
+
+[node name="MobOrc" instance=ExtResource("1_whd7h")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Orc"

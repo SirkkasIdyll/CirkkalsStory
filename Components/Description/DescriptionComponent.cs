@@ -36,3 +36,8 @@ public partial class ReloadCombatDescriptionSignal : UserSignalArgs
 {
     
 }
+
+public partial class UpdateDisplayNameSignal : UserSignalArgs
+{
+    
+}

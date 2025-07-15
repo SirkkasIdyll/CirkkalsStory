@@ -10,23 +10,25 @@ namespace CS.Components.Mob;
 /// </summary>
 public partial class MobComponent : Component
 {
+    private const string SerializeAttributeName = "Serialize";
+    
     /// <summary>
     /// Abilities are passive effects that each mob has. 
     /// </summary>
-    [Export] public Array<string> Abilities = [];
+    [Export] [Serialize] public Array<string> Abilities = [];
     
     /// <summary>
     /// Skills are physical abilities a mob can use during combat
     /// </summary>
-    [Export] public Array<string> Skills = [];
+    [Export] [Serialize]  public Array<string> Skills = [];
     
     /// <summary>
     /// Spells are magical abilities a mob can use during combat
     /// </summary>
-    [Export] public Array<string> Spells = [];
+    [Export] [Serialize]  public Array<string> Spells = [];
 
     /// <summary>
     /// Status effects can be positive or negative
     /// </summary>
-    public Dictionary<string, Node> StatusEffects = [];
+    [Serialize] public Dictionary<string, Node> StatusEffects = [];
 }

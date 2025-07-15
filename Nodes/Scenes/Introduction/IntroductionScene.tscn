@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://bwe36wo6jlw4y" path="res://Nodes/Scenes/Introduction/IntroductionScene.cs" id="2_rhncs"]
 [ext_resource type="PackedScene" uid="uid://cvv8otsc37cqg" path="res://Nodes/Scenes/Combat/CombatScene.tscn" id="3_smawa"]
 
-[node name="IntroductionScene" type="Control" node_paths=PackedStringArray("_acceptButton")]
+[node name="IntroductionScene" type="Control" node_paths=PackedStringArray("_acceptButton", "_textField")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -16,6 +16,7 @@ theme = ExtResource("1_qj8cd")
 script = ExtResource("2_rhncs")
 _nextScene = ExtResource("3_smawa")
 _acceptButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Accept")
+_textField = NodePath("MarginContainer/VBoxContainer/PlayerName")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -41,6 +42,11 @@ theme_type_variation = &"MarginContainerSmall"
 [node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
 layout_mode = 2
 text = "YOU'RE TOTALLY FUCKED, YOU'RE UBER FUCKED, NO ONE IS COMING FOR YOU, WELCOME TO HELL THIS IS A PLACEHOLDER OPENING SEQUENCE"
+
+[node name="PlayerName" type="TextEdit" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Enter your FUCKING name and then hit accept"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2

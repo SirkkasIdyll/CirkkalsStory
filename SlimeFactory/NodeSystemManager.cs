@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 using Godot;
+using Godot.Collections;
 
 namespace CS.SlimeFactory;
 
@@ -16,6 +17,8 @@ public class NodeSystemManager
     /// Declare that there can only ever be a single instance of the <see cref="Signals.SignalBus"/>
     /// </summary>
     public static NodeSystemManager Instance { get; } = new();
+    
+    public readonly Dictionary<string, NodeSystem> NodeSystemDictionary = [];
     private Node? _mainScene;
     
     private NodeSystemManager()
@@ -42,10 +45,17 @@ public class NodeSystemManager
         
         while (nodeSystemEnumerator.MoveNext())
         {
-            // GD.Print(nodeSystemEnumerator.Current);
-            var nodeSystem = (INodeSystem) Activator.CreateInstance(nodeSystemEnumerator.Current)!;
-            // nodeSystem._SystemReady();
+            var nodeSystem = (NodeSystem) Activator.CreateInstance(nodeSystemEnumerator.Current)!;
             nodeSystem.AddToMainScene(mainScene);
+            NodeSystemDictionary.Add(nodeSystem.Name, nodeSystem);
+        }
+    }
+
+    public void InjectNodeSystemDependencies()
+    {
+        foreach (var nodeSystem in NodeSystemDictionary.Values)
+        {
+            nodeSystem._InjectDependencies();
         }
     }
 

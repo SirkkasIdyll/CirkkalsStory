@@ -1,11 +1,11 @@
 [gd_scene load_steps=5 format=3 uid="uid://byc6u3b0pbhv7"]
 
 [ext_resource type="Theme" uid="uid://bofxw0bub14i4" path="res://Resources/Themes/default.tres" id="1_3t33k"]
-[ext_resource type="Script" uid="uid://bmpwd2x4jdhgq" path="res://Nodes/Scenes/Combat/SkillSelection/CombatSkillSelectionSceneSystem.cs" id="2_3t33k"]
-[ext_resource type="Script" uid="uid://bfpg8fev4rxqs" path="res://Nodes/Scenes/Combat/SkillSelection/CombatSkillSelectionItemListSystem.cs" id="3_o76pp"]
+[ext_resource type="Script" uid="uid://bmpwd2x4jdhgq" path="res://Nodes/Scenes/Combat/SkillSelection/SkillSelectionSceneSystem.cs" id="2_3t33k"]
+[ext_resource type="Script" uid="uid://bfpg8fev4rxqs" path="res://Nodes/Scenes/Combat/SkillSelection/SkillSelectionItemListSystem.cs" id="3_o76pp"]
 [ext_resource type="PackedScene" uid="uid://djj4j1dplagri" path="res://Nodes/UI/Utility/SpacerScene.tscn" id="4_wn1uu"]
 
-[node name="CombatSkillSelection" type="Control" node_paths=PackedStringArray("_combatSkillSelectionItemListSystem", "_skillName", "_skillDescription", "_effectContainer", "_costContainer")]
+[node name="CombatSkillSelection" type="Control" node_paths=PackedStringArray("_skillSelectionItemListSystem", "_skillName", "_skillDescription", "_effectContainer", "_costContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_3t33k")
 script = ExtResource("2_3t33k")
-_combatSkillSelectionItemListSystem = NodePath("HBoxContainer/PanelContainer/ItemList")
+_skillSelectionItemListSystem = NodePath("HBoxContainer/PanelContainer/ItemList")
 _skillName = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/SkillName")
 _skillDescription = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/SkillDescription")
 _effectContainer = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/GridContainer/EffectContainer")

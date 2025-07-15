@@ -11,13 +11,11 @@ public partial class StartMenuSceneSystem : Control
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
 	
 	[ExportCategory("Instantiated")]
-	[Export] private LoopingAudioStreamPlayer2DSystem? _bgmPlayer;
-	[Export] private PackedScene? _newGameScene;
 	[Export] private PackedScene? _continueScene;
 	[Export] private PackedScene? _achievementsScene;
+	[Export] private AudioStream? _bgm;
 	
 	[ExportCategory("Owned")]
-	[Export] private AudioStream _bgm = default!;
 	[Export] private AudioStreamPlayer2D _cancelSound = default!;
 	[Export] private StandardButton _newGame = default!;
 	[Export] private StandardButton _continue = default!;
@@ -28,13 +26,12 @@ public partial class StartMenuSceneSystem : Control
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		if (_bgmPlayer != null)
+		var bgmPlayer = GetNode<LoopingAudioStreamPlayer2DSystem>("/root/MainScene/BGMAudioStreamPlayer2D");
+		if (bgmPlayer != null)
 		{
-			_bgmPlayer.SetStream(_bgm);
-			_bgmPlayer.Play();
+			bgmPlayer.SetStream(_bgm);
+			bgmPlayer.Play();
 		}
-
-		_newGameScene = ResourceLoader.Load<PackedScene>("res://Nodes/Scenes/Introduction/IntroductionScene.tscn");
 
 		_newGame.Pressed += OnNewGameButtonPressed;
 		_newGame.EscapePressed += OnEscapePressed;
@@ -97,15 +94,14 @@ public partial class StartMenuSceneSystem : Control
 	/// </summary>
 	private void OnNewGameButtonPressed()
 	{
-		if (_newGameScene == null)
-			return;
+		var newGameScene = ResourceLoader.Load<PackedScene>("res://Nodes/Scenes/Introduction/IntroductionScene.tscn");
 
 		var duration = 0.2f;
 		var tween = CreateTween().BindNode(this);
 		tween.TweenProperty(this, "modulate", new Color(1, 1, 1, 0), duration);
 		tween.TweenCallback(Callable.From(QueueFree));
 
-		var signal = new ChangeActiveSceneSignal(_newGameScene);
+		var signal = new ChangeActiveSceneSignal(newGameScene);
 		_nodeManager.SignalBus.EmitChangeActiveSceneSignal(this, ref signal);
 	}
 	

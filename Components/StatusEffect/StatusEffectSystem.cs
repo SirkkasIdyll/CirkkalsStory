@@ -10,6 +10,8 @@ namespace CS.Components.StatusEffect;
 
 public partial class StatusEffectSystem : NodeSystem
 {
+    [InjectDependency] private DescriptionSystem _descriptionSystem = default!;
+    
     public override void _Ready()
     {
         base._Ready();
@@ -26,8 +28,9 @@ public partial class StatusEffectSystem : NodeSystem
 
         if (statusEffectApplicatorComponent.StatusEffect == null)
             return;
-        
-        var combatEffect = $"Apply {statusEffectApplicatorComponent.StatusEffect.Name}";
+
+        var statusEffectName = _descriptionSystem.GetDisplayName(statusEffectApplicatorComponent.StatusEffect);
+        var combatEffect = $"Apply {statusEffectName}";
         node.Comp.CombatEffects.Add(combatEffect);
     }
     
@@ -110,9 +113,7 @@ public partial class StatusEffectSystem : NodeSystem
 
         // If the mob isn't currently afflicted with the status effect, apply a duplicate of it
         if (!mobComponent.StatusEffects.ContainsKey(statusEffectName))
-        {
             mobComponent.StatusEffects.Add(statusEffect.Name, statusEffect.Duplicate());
-        }
 
         // Get the status effect from the mob and refresh the duration of it
         statusEffect = mobComponent.StatusEffects[statusEffectName];

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://dm8i52isq546h"]
+
+[ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_3p126"]
+
+[node name="MobGiantAssScorpion" instance=ExtResource("1_3p126")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "B.F. Scorpion"

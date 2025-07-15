@@ -9,6 +9,8 @@ namespace CS.Components.Damage;
 
 public partial class DamageSystem : NodeSystem
 {
+    [InjectDependency] private DamageableSystem _damageableSystem = default!;
+    
     public override void _Ready()
     {
         base._Ready();
@@ -59,7 +61,6 @@ public partial class DamageSystem : NodeSystem
         if (!_nodeManager.TryGetComponent<HealthComponent>(defender, out var healthComponent))
             return;
         
-        if (_nodeSystemManager.TryGetNodeSystem<DamageableSystem>(out var damageableSystem))
-            damageableSystem.TryTakeDamage((defender, healthComponent), node.Comp.Damage);
+        _damageableSystem.TryTakeDamage((defender, healthComponent), node);
     }
 }

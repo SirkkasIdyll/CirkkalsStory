@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cq07snrj62od5"]
+
+[ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_bpt15"]
+
+[node name="MobCursedDeer" instance=ExtResource("1_bpt15")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Cursed Deer"

@@ -1,5 +1,6 @@
 ﻿using System;
 using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.Components.Magic;
@@ -26,4 +27,9 @@ public partial class ManaComponent : Component
         get => _mana;
         set => _mana = Math.Clamp(value, 0, _maxMana);
     }
+}
+
+public partial class ManaAlteredSignal : UserSignalArgs
+{
+    
 }

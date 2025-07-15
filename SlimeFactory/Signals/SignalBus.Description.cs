@@ -10,4 +10,12 @@ public partial class SignalBus
     {
         ReloadCombatDescriptionSignal?.Invoke(node, ref args);
     }
+
+    public delegate void UpdateDisplayNameSignalHandler(Node<DescriptionComponent> node,
+        ref UpdateDisplayNameSignal args);
+    public event UpdateDisplayNameSignalHandler? UpdateDisplayNameSignal;
+    public void EmitUpdateDisplayNameSignal(Node<DescriptionComponent> node, ref UpdateDisplayNameSignal args)
+    {
+        UpdateDisplayNameSignal?.Invoke(node, ref args);
+    }
 }

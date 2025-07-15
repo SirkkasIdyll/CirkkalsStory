@@ -32,6 +32,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="Nodes\Objects\Skills\" />
+    <Folder Include="Resources\CombatScenarios\1-Basic\" />
   </ItemGroup>
 </Project>

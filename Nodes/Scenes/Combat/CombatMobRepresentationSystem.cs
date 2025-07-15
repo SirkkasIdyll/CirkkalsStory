@@ -1,5 +1,8 @@
 using CS.Components.Damageable;
 using CS.Components.Description;
+using CS.Components.Magic;
+using CS.Components.Mob;
+using CS.Components.StatusEffect;
 using CS.SlimeFactory;
 using Godot;
 
@@ -13,11 +16,12 @@ public partial class CombatMobRepresentationSystem : Control
 	private Node? _mob;
 
 	[ExportCategory("Owned")]
-	[Export] private Label _name = default!;
-	[Export] public Button Target = default!;
-	[Export] private Sprite2D _cursor = default!;
+	[Export] public LinkButton MobNameLinkButton = default!;
+	[Export] private AnimatedSprite2D _cursor = default!;
 	[Export] private ProgressBar _hpProgressBar = default!;
 	[Export] private Label _hpLabel = default!;
+	[Export] private ProgressBar _mpProgressBar = default!;
+	[Export] private Label _mpLabel = default!;
 
 	[Signal]
 	public delegate void TargetPressedEventHandler(Node mob);
@@ -26,11 +30,13 @@ public partial class CombatMobRepresentationSystem : Control
 	public override void _Ready()
 	{
 		_nodeManager.SignalBus.HealthAlteredSignal += OnHealthAltered;
+		_nodeManager.SignalBus.ManaAlteredSignal += OnManaAltered;
 		
-		Target.FocusEntered += OnFocusEntered;
-		Target.FocusExited += OnFocusExited;
-		Target.Pressed += OnTargetPressed;
-		Target.SetVisible(false);
+		MobNameLinkButton.FocusEntered += OnFocusEntered;
+		MobNameLinkButton.FocusExited += OnFocusExited;
+		MobNameLinkButton.Pressed += OnPressed;
+		MobNameLinkButton.MouseEntered += OnMouseEntered;
+		MobNameLinkButton.SetDisabled(true);
 		_cursor.SetVisible(false);
 
 		PositionCursor();
@@ -41,6 +47,7 @@ public partial class CombatMobRepresentationSystem : Control
 		base._ExitTree();
 		
 		_nodeManager.SignalBus.HealthAlteredSignal -= OnHealthAltered;
+		_nodeManager.SignalBus.ManaAlteredSignal -= OnManaAltered;
 	}
 
 	private void OnFocusEntered()
@@ -59,11 +66,42 @@ public partial class CombatMobRepresentationSystem : Control
 			return;
 		
 		_hpLabel.Text = node.Comp.Health + " / " + node.Comp.MaxHealth;
-		_hpProgressBar.Value = (double) node.Comp.Health / node.Comp.MaxHealth * 100;
+		_hpProgressBar.Value = (double)node.Comp.Health / node.Comp.MaxHealth * 100;
 	}
 
-	private void OnTargetPressed()
+	private void OnManaAltered(Node<ManaComponent> node, ref ManaAlteredSignal args)
 	{
+		if (node.Owner != _mob)
+			return;
+
+		_mpLabel.Text = node.Comp.Mana + " / " + node.Comp.MaxMana;
+		_mpProgressBar.Value = (double)node.Comp.Mana / node.Comp.MaxMana * 100;
+	}
+
+	private void OnMouseEntered()
+	{
+		MobNameLinkButton.TooltipText = "";
+		
+		if (_mob == null)
+			return;
+
+		if (!_nodeManager.TryGetComponent<MobComponent>(_mob, out var mobComponent))
+			return;
+
+		foreach (var statusEffect in mobComponent.StatusEffects)
+		{
+			if (!_nodeManager.TryGetComponent<StatusEffectComponent>(statusEffect.Value, out var statusEffectComponent))
+				return;
+
+			MobNameLinkButton.TooltipText = statusEffect.Key + ": " + statusEffectComponent.StatusDuration + " turns remaining";
+		}
+	}
+
+	private void OnPressed()
+	{
+		if (MobNameLinkButton.Disabled)
+			return;
+		
 		_cursor.SetVisible(false);
 		EmitSignalTargetPressed(_mob);
 	}
@@ -77,23 +115,29 @@ public partial class CombatMobRepresentationSystem : Control
 
 		if (!_nodeManager.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
 			return;
+		
+		if (!_nodeManager.TryGetComponent<ManaComponent>(_mob, out var manaComponent))
+			return;
 
-		_name.Text = descriptionComponent.DisplayName;
+		MobNameLinkButton.Text = descriptionComponent.DisplayName;
 		_hpLabel.Text = healthComponent.Health + " / " + healthComponent.MaxHealth;
 		_hpProgressBar.Value = (double) healthComponent.Health / healthComponent.MaxHealth * 100;
+
+		if (manaComponent.MaxMana == 0)
+		{
+			_mpLabel.GetParent<Control>().SetVisible(false);
+			return;
+		}
+		
+		_mpLabel.Text = manaComponent.Mana + " / " + manaComponent.MaxMana;
+		_mpProgressBar.Value = (double)manaComponent.Mana / manaComponent.MaxMana * 100;
 	}
 
 	private void PositionCursor()
 	{
-		var position = Target.GetPosition();
-		position.X -= 12;
+		var position = MobNameLinkButton.GetPosition();
+		position.X -= 15;
 		position.Y += 20;
 		_cursor.SetPosition(position);
-
-		var newPos = _cursor.GetPosition();
-		newPos.X -= 6;
-		var tween = CreateTween().BindNode(this).SetLoops();
-		tween.TweenProperty(_cursor, "position", newPos, 0.35);
-		tween.TweenProperty(_cursor, "position", _cursor.GetPosition(), 0.35);
 	}
 }

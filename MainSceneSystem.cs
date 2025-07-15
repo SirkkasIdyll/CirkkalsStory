@@ -22,6 +22,7 @@ public partial class MainSceneSystem : Node2D
     public override void _Ready()
     {
         _nodeSystemManager.InitializeNodeSystems(this);
+        _nodeSystemManager.InjectNodeSystemDependencies();
         _nodeManager.SignalBus.ChangeActiveSceneSignal += OnChangeActiveScene;
         _nodeManager.SignalBus.EndOfCombatSignal += OnEndOfCombat;
     }

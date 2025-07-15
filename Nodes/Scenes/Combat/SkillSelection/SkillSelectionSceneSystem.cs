@@ -6,14 +6,14 @@ using Godot.Collections;
 
 namespace CS.Nodes.Scenes.Combat.SkillSelection;
 
-public partial class CombatSkillSelectionSceneSystem : Control
+public partial class SkillSelectionSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
-	private SkillManagerSystem _skillManagerSystem = default!;
+	private SkillSystem _skillSystem = default!;
 	private Array<string> _skills = [];
 	
 	[ExportCategory("Owned")]
-	[Export] private CombatSkillSelectionItemListSystem _combatSkillSelectionItemListSystem = default!;
+	[Export] private SkillSelectionItemListSystem _skillSelectionItemListSystem = default!;
 	[Export] private Label _skillName = default!;
 	[Export] private Label _skillDescription = default!;
 	[Export] private VBoxContainer _effectContainer = default!;
@@ -27,12 +27,12 @@ public partial class CombatSkillSelectionSceneSystem : Control
 	
 	public override void _Ready()
 	{
-		if (NodeSystemManager.Instance.TryGetNodeSystem<SkillManagerSystem>(out var nodeSystem))
-			_skillManagerSystem = nodeSystem;
+		if (NodeSystemManager.Instance.TryGetNodeSystem<SkillSystem>(out var nodeSystem))
+			_skillSystem = nodeSystem;
 
-		_combatSkillSelectionItemListSystem.PreviewSkill += OnPreviewSkill;
-		_combatSkillSelectionItemListSystem.ItemActivated += OnItemActivated;
-		_combatSkillSelectionItemListSystem.EscapePressed += OnEscapePressed;
+		_skillSelectionItemListSystem.PreviewSkill += OnPreviewSkill;
+		_skillSelectionItemListSystem.ItemActivated += OnItemActivated;
+		_skillSelectionItemListSystem.EscapePressed += OnEscapePressed;
 		_nodeManager.SignalBus.ReloadCombatDescriptionSignal += OnReloadCombatDescription;
 	}
 
@@ -86,7 +86,7 @@ public partial class CombatSkillSelectionSceneSystem : Control
 	/// <param name="index"></param>
 	private void OnItemActivated(long index)
 	{
-		EmitSignalSkillChosen(_combatSkillSelectionItemListSystem.GetItemText((int) index).Replace(" ", string.Empty));
+		EmitSignalSkillChosen(_skillSelectionItemListSystem.GetItemText((int) index).Replace(" ", string.Empty));
 		SetVisible(false);
 	}
 
@@ -96,7 +96,7 @@ public partial class CombatSkillSelectionSceneSystem : Control
 	/// <param name="skillName">The skill to be further inspected</param>
 	private void OnPreviewSkill(string skillName)
 	{
-		if (!_skillManagerSystem.TryGetSkill(skillName, out var skillNode))
+		if (!_skillSystem.TryGetSkill(skillName, out var skillNode))
 			return;
 
 		if (!NodeManager.Instance.TryGetComponent<DescriptionComponent>(skillNode, out var descriptionComponent))
@@ -106,6 +106,10 @@ public partial class CombatSkillSelectionSceneSystem : Control
 		descriptionComponent.CombatCosts.Clear();
 		var signal = new ReloadCombatDescriptionSignal();
 		_nodeManager.SignalBus.EmitReloadCombatDescriptionSignal((skillNode, descriptionComponent), ref signal);
+
+		/*var jsonString = Json.Stringify(descriptionComponent);
+		using var file = FileAccess.Open("user://example_file.dat", FileAccess.ModeFlags.Write);
+		file.StoreString(jsonString);*/
 	}
 
 	/// <summary>
@@ -114,20 +118,20 @@ public partial class CombatSkillSelectionSceneSystem : Control
 	/// <param name="skills">A list of skills that the mob can use</param>
 	public void SetSkills(Array<string> skills)
 	{
-		_combatSkillSelectionItemListSystem.Clear();
+		_skillSelectionItemListSystem.Clear();
 		foreach (var skillName in skills)
 		{
-			if (!_skillManagerSystem.TryGetSkill(skillName, out var skillNode))
+			if (!_skillSystem.TryGetSkill(skillName, out var skillNode))
 				return;
 
 			if (!NodeManager.Instance.TryGetComponent<DescriptionComponent>(skillNode, out var descriptionComponent))
 				return;
 			
-			_combatSkillSelectionItemListSystem?.AddItem(descriptionComponent.DisplayName);
+			_skillSelectionItemListSystem?.AddItem(descriptionComponent.DisplayName);
 		}
 		
-		_combatSkillSelectionItemListSystem?.GrabFocus();
-		_combatSkillSelectionItemListSystem?.Select(0);
-		_combatSkillSelectionItemListSystem?.OnItemSelected(0);
+		_skillSelectionItemListSystem?.GrabFocus();
+		_skillSelectionItemListSystem?.Select(0);
+		_skillSelectionItemListSystem?.OnItemSelected(0);
 	}
 }
