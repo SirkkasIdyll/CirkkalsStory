@@ -5,7 +5,7 @@ namespace CS.Nodes.Scenes.Combat.SkillSelection;
 /// <summary>
 /// TODO: EXTREMELY LATER ON REFACTOR, USE BUTTONS INSTEAD OF ITEMLIST, EACH BUTTON WILL HOLD THE SKILL
 /// </summary>
-public partial class CombatSkillSelectionItemListSystem : ItemList
+public partial class SkillSelectionItemListSystem : ItemList
 {
 	[Signal]
 	public delegate void PreviewSkillEventHandler(string skill);

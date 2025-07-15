@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://hkavjwdmu5da"]
 
-[ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Objects/Mobs/BaseMob.tscn" id="1_tnr28"]
+[ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_tnr28"]
 [ext_resource type="Texture2D" uid="uid://53anc4smic08" path="res://Resources/Sprites/Sprite-0001.png" id="2_uovx4"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_uovx4"]
@@ -22,6 +22,7 @@ Mana = 999
 
 [node name="MobComponent" parent="." index="4"]
 Skills = Array[String](["SlimeTackle", "BleedingSlash"])
+Spells = Array[String](["Poison"])
 
 [node name="Sprite2D" type="Sprite2D" parent="." index="5"]
 texture = ExtResource("2_uovx4")

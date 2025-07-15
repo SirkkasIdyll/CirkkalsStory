@@ -1,35 +1,49 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CS.Components.Mob;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
 namespace CS.Components.Skills;
 
-public partial class SkillManagerSystem : NodeSystem
+public partial class SkillSystem : NodeSystem
 {
-    private Dictionary<string, Node> _skillRepository = [];
+    private Dictionary<string, Node> _skillDictionary = [];
 
     public override void _Ready()
     {
         base._Ready();
         
-        GetAllSkills();
-        GD.Print("Skill count is " + _skillRepository.Count);
+        LoadDictionary();
+    }
+    
+    /// <summary>
+    /// Fetches an array of the known skills
+    /// </summary>
+    /// <param name="node">A mob</param>
+    /// <param name="skills">Skills from the <see cref="MobComponent"/></param>
+    public void GetKnownSkills(Node node, out Array<string> skills)
+    {
+        skills = [];
+
+        if (!_nodeManager.TryGetComponent<MobComponent>(node, out var mobComponent))
+            return;
+
+        skills = mobComponent.Skills;
     }
 
     /// <summary>
     /// Loads all skills into the skill repository.
     /// Skill details can be retrieved from the skill repository.
     /// </summary>
-    private void GetAllSkills()
+    private void LoadDictionary()
     {
-        foreach (var nodeCompDic in _nodeManager.NodeCompHashset)
+        foreach (var node in _nodeManager.NodeDictionary.Values)
         {
-            foreach (var value in nodeCompDic.Values)
-            {
-                if (value is SkillComponent skillComponent)
-                    _skillRepository.Add(skillComponent.Owner.Name, skillComponent.Owner);
-            }
+            if (!_nodeManager.HasComponent<SkillComponent>(node))
+                continue;
+            
+            _skillDictionary.Add(node.Name, node);
         }
     }
     
@@ -41,7 +55,7 @@ public partial class SkillManagerSystem : NodeSystem
     /// <returns>True if skill found, false if skill not found</returns>
     public bool TryGetSkill(string name, [NotNullWhen(true)] out Node? skill)
     {
-        return _skillRepository.TryGetValue(name, out skill);
+        return _skillDictionary.TryGetValue(name, out skill);
     }
 
     /// <summary>
@@ -51,6 +65,6 @@ public partial class SkillManagerSystem : NodeSystem
     /// <returns>True if skill found, false if skill not found</returns>
     public bool SkillExists(string name)
     {
-        return _skillRepository.ContainsKey(name);
+        return _skillDictionary.ContainsKey(name);
     }
 }

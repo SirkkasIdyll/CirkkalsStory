@@ -52,6 +52,8 @@ layout_mode = 2
 
 [node name="New Game" parent="MarginContainer2/VBoxContainer/HBoxContainer" instance=ExtResource("5_61efr")]
 layout_mode = 2
+focus_neighbor_right = NodePath("../Continue")
+focus_neighbor_bottom = NodePath("../../HBoxContainer2/Options")
 theme_type_variation = &"ButtonLarge"
 text = "New Game"
 
@@ -60,6 +62,8 @@ layout_mode = 2
 
 [node name="Continue" parent="MarginContainer2/VBoxContainer/HBoxContainer" instance=ExtResource("5_61efr")]
 layout_mode = 2
+focus_neighbor_left = NodePath("../New Game")
+focus_neighbor_bottom = NodePath("../../HBoxContainer2/Quit")
 theme_type_variation = &"ButtonLarge"
 text = "Continue"
 
@@ -71,6 +75,8 @@ layout_mode = 2
 
 [node name="Options" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_61efr")]
 layout_mode = 2
+focus_neighbor_top = NodePath("../../HBoxContainer/New Game")
+focus_neighbor_right = NodePath("../Achievements")
 theme_type_variation = &"ButtonMedium"
 text = "Options"
 
@@ -79,6 +85,9 @@ layout_mode = 2
 
 [node name="Achievements" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("5_61efr")]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Options")
+focus_neighbor_top = NodePath("../../HBoxContainer/New Game")
+focus_neighbor_right = NodePath("../Quit")
 theme_type_variation = &"ButtonMedium"
 text = "Achievements"
 
@@ -87,6 +96,8 @@ layout_mode = 2
 
 [node name="Quit" parent="MarginContainer2/VBoxContainer/HBoxContainer2" instance=ExtResource("7_ca38m")]
 layout_mode = 2
+focus_neighbor_left = NodePath("../Achievements")
+focus_neighbor_top = NodePath("../../HBoxContainer/Continue")
 theme_type_variation = &"ButtonMedium"
 text = "Quit"
 

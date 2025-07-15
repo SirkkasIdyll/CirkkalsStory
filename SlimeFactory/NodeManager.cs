@@ -14,19 +14,21 @@ public partial class NodeManager
     /// </summary>
     public static NodeManager Instance { get; } = new();
     public readonly SignalBus SignalBus = SignalBus.Instance;
-    public readonly HashSet<Dictionary<Node, Component>> NodeCompHashset = [];
-    public readonly Dictionary<string, Component> ComponentDictionary = [];
+    public readonly Dictionary<string, Node> NodeDictionary = [];
+    public readonly Dictionary<string, Component> CompDictionary = [];
+    // public readonly Dictionary<string, Component> ComponentDictionary = [];
     
     /// <summary>
     /// Making the constructor private prevents the creation of a new <see cref="NodeManager"/>
+    /// TODO: Fix magic pointer to Prototypes folder
     /// </summary>
     private NodeManager()
     {
-        GetAllNodes("res://Nodes/Objects/");
-        GetAllComponents();
+        GetAllNodes("res://Nodes/Prototypes/");
+        // GetAllComponents();
     }
 
-    /// <summary>
+    /*/// <summary>
     /// Makes a list of all components so that we can AddComponent() later
     /// </summary>
     private void GetAllComponents()
@@ -38,7 +40,7 @@ public partial class NodeManager
                 ComponentDictionary.TryAdd(value.Name, value);
             }
         }
-    }
+    }*/
     
     /// <summary>
     /// Fetches all nodes and their components for future lookup
@@ -52,8 +54,9 @@ public partial class NodeManager
         foreach (var file in nodeFiles)
         {
             var node = ResourceLoader.Load<PackedScene>(file).Instantiate();
-            var children = node.GetChildren();
+            NodeDictionary.TryAdd(node.Name, node);
             
+            var children = node.GetChildren();
             foreach (var child in children)
             {
                 if (child == null)
@@ -61,8 +64,7 @@ public partial class NodeManager
                 
                 if (child is Component component)
                 {
-                    var dic = new Dictionary<Node, Component> { { node, component } };
-                    NodeCompHashset.Add(dic);
+                    CompDictionary.TryAdd(component.Name, component);
                 }
             }
         }
@@ -81,7 +83,6 @@ public partial class NodeManager
         if (dir != null)
         {
             dir.ListDirBegin();
-            // files.AddRange(dir.GetFiles());
             string fileName = dir.GetNext();
             while (fileName != "")
             {
@@ -97,10 +98,6 @@ public partial class NodeManager
                 fileName = dir.GetNext();
             }
         }
-        else
-        {
-            GD.Print("An error occurred when trying to access the path.");
-        }
 
         return files;
     }
@@ -110,13 +107,22 @@ public partial class NodeManager
     /// </summary>
     public void PurgeDictionary()
     {
-        foreach (var nodeCompDic in NodeCompHashset)
+        foreach (var node in NodeDictionary.Values)
         {
-            foreach (var node in nodeCompDic.Keys)
-            {
-                node.QueueFree();
-            }
+            node.QueueFree();
         }
+    }
+
+    public bool TryInstantiateNode(string nodeName, [NotNullWhen(true)] out Node? instantiatedNode)
+    {
+        instantiatedNode = null;
+        NodeDictionary.TryGetValue(nodeName, out var node);
+        
+        if (node == null)
+            return false;
+        
+        instantiatedNode = node.Duplicate();
+        return true;
     }
     
     /// <summary>
@@ -140,6 +146,18 @@ public partial class NodeManager
     {
         component = node.GetNodeOrNull<T>($"{typeof(T).Name}");
         return component != null;
+    }
+
+    public bool TryAddComponent<T>(Node node) where T : class, IComponent
+    {
+        CompDictionary.TryGetValue(typeof(T).Name, out var component);
+
+        if (component == null)
+            return false;
+        
+        node.AddChild(component.Duplicate());
+        component.SetOwner(node);
+        return true;
     }
 }
 

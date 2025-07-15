@@ -1,13 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://cvv8otsc37cqg"]
+[gd_scene load_steps=8 format=3 uid="uid://cvv8otsc37cqg"]
 
 [ext_resource type="Script" uid="uid://ggixe6gwqamu" path="res://Nodes/Scenes/Combat/CombatSceneSystem.cs" id="1_y778k"]
-[ext_resource type="PackedScene" uid="uid://byc6u3b0pbhv7" path="res://Nodes/Scenes/Combat/SkillSelection/CombatSkillSelectionScene.tscn" id="3_y778k"]
+[ext_resource type="AudioStream" uid="uid://birwbjmxflecy" path="res://Resources/Sounds/57-Spanish-Duet-FULL-SM387.wav" id="2_tp54h"]
+[ext_resource type="PackedScene" uid="uid://byc6u3b0pbhv7" path="res://Nodes/Scenes/Combat/SkillSelection/SkillSelectionScene.tscn" id="3_y778k"]
 [ext_resource type="PackedScene" uid="uid://p3cx4x7ahdxg" path="res://Nodes/Scenes/Combat/CombatMobRepresentation.tscn" id="4_tp54h"]
-[ext_resource type="PackedScene" uid="uid://hkavjwdmu5da" path="res://Nodes/Objects/Mobs/MobPlaceholder.tscn" id="5_f4cj5"]
+[ext_resource type="PackedScene" uid="uid://hkavjwdmu5da" path="res://Nodes/Prototypes/Mobs/MobPlaceholder.tscn" id="5_f4cj5"]
 [ext_resource type="Script" uid="uid://cjtek16utmv1j" path="res://Nodes/Scenes/Combat/ActionsItemListSystem.cs" id="5_o60ty"]
-[ext_resource type="PackedScene" uid="uid://bqfols4elkr5d" path="res://Nodes/Objects/Mobs/MobPlaceholder2.tscn" id="6_tp54h"]
+[ext_resource type="PackedScene" uid="uid://b6lg3dwd6hear" path="res://Nodes/Scenes/Combat/SpellSelection/SpellSelectionScene.tscn" id="5_tp54h"]
 
-[node name="CombatScene" type="Control" node_paths=PackedStringArray("_players", "_enemies", "_playersVBoxContainer", "_enemiesVBoxContainer", "_actionsItemList")]
+[node name="CombatScene" type="Control" node_paths=PackedStringArray("Players", "_actionsItemList", "_enemiesVBoxContainer", "_playersVBoxContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -15,13 +16,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_y778k")
-_players = [NodePath("MobPlaceholder")]
-_enemies = [NodePath("MobPlaceholder2"), NodePath("MobPlaceholder3")]
+_bgm = ExtResource("2_tp54h")
+Players = [NodePath("MobPlaceholder")]
+_actionsItemList = NodePath("ActionsItemList")
 _combatMobRepresentation = ExtResource("4_tp54h")
 _combatSkillSelection = ExtResource("3_y778k")
-_playersVBoxContainer = NodePath("MarginContainer2/PlayersVBoxContainer")
+_combatSpellSelection = ExtResource("5_tp54h")
 _enemiesVBoxContainer = NodePath("MarginContainer/EnemiesVBoxContainer")
-_actionsItemList = NodePath("ActionsItemList")
+_playersVBoxContainer = NodePath("MarginContainer2/PlayersVBoxContainer")
 
 [node name="MarginContainer2" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -89,7 +91,3 @@ metadata/_edit_use_anchors_ = true
 [node name="Timer" type="Timer" parent="."]
 
 [node name="MobPlaceholder" parent="." instance=ExtResource("5_f4cj5")]
-
-[node name="MobPlaceholder2" parent="." instance=ExtResource("6_tp54h")]
-
-[node name="MobPlaceholder3" parent="." instance=ExtResource("6_tp54h")]

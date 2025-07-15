@@ -8,10 +8,6 @@ namespace CS.SlimeFactory;
 public interface INodeSystem
 {
     public void AddToMainScene(Node mainScene) { }
-
-    /// <summary>
-    /// Called once by the <see cref="NodeSystemManager"/> upon its construction<br />
-    /// The custom NodeSystem equivalent of the _Ready function
-    /// </summary>
-    // public void _SystemReady() { }
+    
+    public virtual void _InjectDependencies() { }
 }

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://3ttqy1ntewwj"]
+
+[ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_ilcss"]
+
+[node name="MobNaga" instance=ExtResource("1_ilcss")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Naga"

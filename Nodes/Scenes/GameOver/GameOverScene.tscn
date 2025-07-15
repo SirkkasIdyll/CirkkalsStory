@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cf340q4pq5e5i"]
+[gd_scene load_steps=5 format=3 uid="uid://cf340q4pq5e5i"]
 
 [ext_resource type="Script" uid="uid://xslr7hyclp3f" path="res://Nodes/Scenes/GameOver/GameOverSceneSystem.cs" id="1_x5jpm"]
 [ext_resource type="PackedScene" uid="uid://bj83w83rrsasl" path="res://Nodes/Scenes/StartMenu/StartMenuScene.tscn" id="2_p2c02"]
+[ext_resource type="AudioStream" uid="uid://bqdynmmwu0ybo" path="res://Resources/Sounds/Abandoned.wav" id="3_p2c02"]
 [ext_resource type="PackedScene" uid="uid://cdwpmhjdel17p" path="res://Nodes/UI/ButtonTypes/StandardButton.tscn" id="3_s33d5"]
 
 [node name="GameOver" type="Control" node_paths=PackedStringArray("_acceptButton")]
@@ -13,6 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_x5jpm")
 _nextScene = ExtResource("2_p2c02")
+_bgm = ExtResource("3_p2c02")
 _acceptButton = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Accept")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]

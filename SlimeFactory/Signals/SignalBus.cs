@@ -1,6 +1,4 @@
-﻿using Godot;
-
-namespace CS.SlimeFactory.Signals;
+﻿namespace CS.SlimeFactory.Signals;
 
 /// <summary>
 /// This has Node2D because it needs access to Godot's Signal functions despite not being put into the SceneTree

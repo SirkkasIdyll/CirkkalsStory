@@ -18,11 +18,12 @@ public partial class TargetingComponent : Component
         All,
         Allies,
         Enemies,
+        Self
     }
     
     /// <summary>
     /// Establish what you're able to target with the skill
     /// </summary>
-    [Export(PropertyHint.Enum, "All,Allies,Enemies")]
+    [Export(PropertyHint.Enum, "All,Allies,Enemies,Self")]
     public Targets ValidTargets = Targets.Enemies;
 }

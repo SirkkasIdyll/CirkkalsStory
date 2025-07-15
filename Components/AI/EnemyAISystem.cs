@@ -3,22 +3,18 @@ using CS.Components.Damageable;
 using CS.Components.Mob;
 using CS.Components.Skills;
 using CS.SlimeFactory;
-using Godot;
 
 namespace CS.Components.AI;
 
 public partial class EnemyAISystem : NodeSystem
 {
-    private SkillManagerSystem? _skillManagerSystem;
+    [InjectDependency] private SkillSystem _skillManagerSystem = default!;
     
     public override void _Ready()
     {
         base._Ready();
 
         _nodeManager.SignalBus.EnemyTurnSignal += OnEnemyTurn;
-
-        if (_nodeSystemManager.TryGetNodeSystem<SkillManagerSystem>(out var skillManagerSystem))
-            _skillManagerSystem = skillManagerSystem;
     }
 
     private void OnEnemyTurn(Node<MobComponent> node, ref EnemyTurnSignal args)
@@ -28,9 +24,6 @@ public partial class EnemyAISystem : NodeSystem
         
         // Enemy is dead from a status effect, don't let them continue their turn
         if (healthComponent.Health <= 0)
-            return;
-        
-        if (_skillManagerSystem == null)
             return;
 
         if (node.Comp.Skills.Count == 0)

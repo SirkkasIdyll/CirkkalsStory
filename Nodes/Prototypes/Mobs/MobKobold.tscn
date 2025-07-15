@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://gdgwlj76wsc7"]
+
+[ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_7layk"]
+
+[node name="MobKobold" instance=ExtResource("1_7layk")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Kobold"

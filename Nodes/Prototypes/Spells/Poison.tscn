@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://c183jx8vh12la"]
+
+[ext_resource type="PackedScene" uid="uid://dhu3c7ivg5ahy" path="res://Nodes/Prototypes/Spells/BaseSpell.tscn" id="1_q5mdp"]
+[ext_resource type="Script" uid="uid://b8w88sas3vvem" path="res://Components/StatusEffect/StatusEffectApplicatorComponent.cs" id="2_k6vpd"]
+[ext_resource type="PackedScene" uid="uid://cdc0v34gmhjey" path="res://Nodes/Prototypes/StatusEffects/WeakPoison.tscn" id="3_b0csx"]
+
+[node name="Poison" instance=ExtResource("1_q5mdp")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Poison"
+Description = "Apply a weak poison to the enemy that deals damage each turn."
+
+[node name="ManaCostComponent" parent="." index="2"]
+ManaCost = 5
+
+[node name="StatusEffectApplicatorComponent" type="Node2D" parent="." index="3" node_paths=PackedStringArray("StatusEffect")]
+script = ExtResource("2_k6vpd")
+StatusEffect = NodePath("WeakPoison")
+
+[node name="WeakPoison" parent="StatusEffectApplicatorComponent" index="0" instance=ExtResource("3_b0csx")]
