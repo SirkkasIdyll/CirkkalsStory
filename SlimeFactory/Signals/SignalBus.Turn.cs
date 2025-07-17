@@ -1,35 +1,41 @@
 ﻿using CS.Components.CombatManager;
 using CS.Components.Mob;
-using Godot;
 
 namespace CS.SlimeFactory.Signals;
 
 public partial class SignalBus
 {
-    public delegate void StartOfCombatSignalHandler(Node node, ref StartOfCombatSignal args);
+    public delegate void StartOfCombatSignalHandler(ref StartOfCombatSignal args);
     public event StartOfCombatSignalHandler? StartOfCombatSignal;
-    public void EmitStartOfCombatSignal(Node node, ref StartOfCombatSignal args)
+    public void EmitStartOfCombatSignal(ref StartOfCombatSignal args)
     {
-        StartOfCombatSignal?.Invoke(node, ref args);
+        StartOfCombatSignal?.Invoke(ref args);
     }
     
-    public delegate void EndOfCombatSignalHandler(Node node, ref EndOfCombatSignal args);
+    public delegate void EndOfCombatSignalHandler(ref EndOfCombatSignal args);
     public event EndOfCombatSignalHandler? EndOfCombatSignal;
-    public void EmitEndOfCombatSignal(Node node, ref EndOfCombatSignal args)
+    public void EmitEndOfCombatSignal(ref EndOfCombatSignal args)
     {
-        EndOfCombatSignal?.Invoke(node, ref args);
+        EndOfCombatSignal?.Invoke(ref args);
+    }
+
+    public delegate void GameOverSignalHandler();
+    public event GameOverSignalHandler? GameOverSignal;
+    public void EmitGameOverSignal()
+    {
+        GameOverSignal?.Invoke();
     }
     
-    public delegate void StartOfTurnSignalHandler(Node node, ref StartOfTurnSignal args);
+    public delegate void StartOfTurnSignalHandler(Node<MobComponent> node, ref StartOfTurnSignal args);
     public event StartOfTurnSignalHandler? StartOfTurnSignal;
-    public void EmitStartOfTurnSignal(Node node, ref StartOfTurnSignal args)
+    public void EmitStartOfTurnSignal(Node<MobComponent> node, ref StartOfTurnSignal args)
     {
         StartOfTurnSignal?.Invoke(node, ref args);
     }
 
-    public delegate void EndOfTurnSignalHandler(Node node, ref EndOfTurnSignal args);
+    public delegate void EndOfTurnSignalHandler(Node<MobComponent> node, ref EndOfTurnSignal args);
     public event EndOfTurnSignalHandler? EndOfTurnSignal;
-    public void EmitEndOfTurnSignal(Node node, ref EndOfTurnSignal args)
+    public void EmitEndOfTurnSignal(Node<MobComponent> node, ref EndOfTurnSignal args)
     {
         EndOfTurnSignal?.Invoke(node, ref args);
     }
@@ -40,4 +46,12 @@ public partial class SignalBus
     {
         EnemyTurnSignal?.Invoke(node, ref args);
     }
+
+    public delegate void UseActionSignalHandler(Node<MobComponent> node, ref UseActionSignal args);
+    public event UseActionSignalHandler? UseActionSignal;
+    public void EmitUseActionSignal(Node<MobComponent> node, ref UseActionSignal args)
+    {
+        UseActionSignal?.Invoke(node, ref args);
+    }
+    
 }

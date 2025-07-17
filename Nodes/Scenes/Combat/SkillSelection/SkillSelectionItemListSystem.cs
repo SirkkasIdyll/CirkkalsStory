@@ -30,6 +30,6 @@ public partial class SkillSelectionItemListSystem : ItemList
 
 	public void OnItemSelected(long index)
 	{
-		EmitSignalPreviewSkill(GetItemText((int) index).Replace(" ", string.Empty));
+		EmitSignalPreviewSkill(GetItemText((int) index));
 	}
 }

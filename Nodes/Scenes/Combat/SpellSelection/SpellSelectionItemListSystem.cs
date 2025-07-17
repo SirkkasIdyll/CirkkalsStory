@@ -30,6 +30,6 @@ public partial class SpellSelectionItemListSystem : ItemList
 
 	public void OnItemSelected(long index)
 	{
-		EmitSignalPreviewSpell(GetItemText((int) index).Replace(" ", string.Empty));
+		EmitSignalPreviewSpell(GetItemText((int) index));
 	}
 }

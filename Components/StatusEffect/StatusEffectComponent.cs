@@ -1,6 +1,7 @@
 ﻿using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
 using Godot;
+using Godot.Collections;
 
 namespace CS.Components.StatusEffect;
 
@@ -34,6 +35,7 @@ public partial class StatusEffectComponent : Component
 public partial class ProcStatusEffectSignal : UserSignalArgs
 {
     public Node Target;
+    public Array<string> Summaries = [];
 
     public ProcStatusEffectSignal(Node target)
     {

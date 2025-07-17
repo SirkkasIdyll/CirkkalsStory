@@ -3,6 +3,7 @@ using CS.Components.Description;
 using CS.Components.Magic;
 using CS.Components.Mob;
 using CS.Components.StatusEffect;
+using CS.Nodes.UI.ButtonTypes;
 using CS.SlimeFactory;
 using Godot;
 
@@ -16,9 +17,9 @@ public partial class CombatMobRepresentationSystem : Control
 	private Node? _mob;
 
 	[ExportCategory("Owned")]
-	[Export] public LinkButton MobNameLinkButton = default!;
+	[Export] public StandardLinkButton MobNameLinkButton = default!;
 	[Export] private AnimatedSprite2D _cursor = default!;
-	[Export] private ProgressBar _hpProgressBar = default!;
+	[Export] public ProgressBar HpProgressBar = default!;
 	[Export] private Label _hpLabel = default!;
 	[Export] private ProgressBar _mpProgressBar = default!;
 	[Export] private Label _mpLabel = default!;
@@ -66,7 +67,7 @@ public partial class CombatMobRepresentationSystem : Control
 			return;
 		
 		_hpLabel.Text = node.Comp.Health + " / " + node.Comp.MaxHealth;
-		_hpProgressBar.Value = (double)node.Comp.Health / node.Comp.MaxHealth * 100;
+		HpProgressBar.Value = (double)node.Comp.Health / node.Comp.MaxHealth * 100;
 	}
 
 	private void OnManaAltered(Node<ManaComponent> node, ref ManaAlteredSignal args)
@@ -121,7 +122,7 @@ public partial class CombatMobRepresentationSystem : Control
 
 		MobNameLinkButton.Text = descriptionComponent.DisplayName;
 		_hpLabel.Text = healthComponent.Health + " / " + healthComponent.MaxHealth;
-		_hpProgressBar.Value = (double) healthComponent.Health / healthComponent.MaxHealth * 100;
+		HpProgressBar.Value = (double) healthComponent.Health / healthComponent.MaxHealth * 100;
 
 		if (manaComponent.MaxMana == 0)
 		{

@@ -28,6 +28,8 @@ public partial class GameOverSceneSystem : Control
 		
 		_acceptButton.Pressed += OnAcceptButtonPressed;
 		_acceptButton.GrabFocus();
+		
+		_nodeManager.SignalBus.EmitGameOverSignal();
 	}
 
 	private void OnAcceptButtonPressed()

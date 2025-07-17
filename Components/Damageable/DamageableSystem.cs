@@ -26,8 +26,12 @@ public partial class DamageableSystem : NodeSystem
     /// </summary>
     /// <param name="node">The mob taking damage</param>
     /// <param name="attack">The attack being aimed at the target</param>
-    public void TryTakeDamage(Node<HealthComponent> node, Node<DamageComponent> attack)
+    /// <param name="damageTaken">How much damage is taken after calculations</param>
+
+    public void TryTakeDamage(Node<HealthComponent> node, Node<DamageComponent> attack, out int damageTaken)
     {
+        damageTaken = 0;
+        
         // Can't damage a target that isn't damageable
         if (!_nodeManager.TryGetComponent<DamageableComponent>(node, out var damageableComponent))
             return;
@@ -43,7 +47,8 @@ public partial class DamageableSystem : NodeSystem
         damageableComponent.DamageTypeResistance.TryGetValue(attack.Comp.DamageType, out var damageTypeResistance);
         damage *= damageTypeResistance;
         
-        node.Comp.Health -= (int) damage;
+        node.Comp.Health -= (int)damage;
+        damageTaken = (int)damage;
         
         var signal = new HealthAlteredSignal();
         _nodeManager.SignalBus.EmitHealthAlteredSignal(node, ref signal);

@@ -2,12 +2,12 @@
 
 [ext_resource type="PackedScene" uid="uid://dhu3c7ivg5ahy" path="res://Nodes/Prototypes/Spells/BaseSpell.tscn" id="1_q5mdp"]
 [ext_resource type="Script" uid="uid://b8w88sas3vvem" path="res://Components/StatusEffect/StatusEffectApplicatorComponent.cs" id="2_k6vpd"]
-[ext_resource type="PackedScene" uid="uid://cdc0v34gmhjey" path="res://Nodes/Prototypes/StatusEffects/WeakPoison.tscn" id="3_b0csx"]
+[ext_resource type="PackedScene" uid="uid://cdc0v34gmhjey" path="res://Nodes/Prototypes/StatusEffects/Poison.tscn" id="3_b0csx"]
 
-[node name="Poison" instance=ExtResource("1_q5mdp")]
+[node name="WeakPoison" instance=ExtResource("1_q5mdp")]
 
 [node name="DescriptionComponent" parent="." index="0"]
-DisplayName = "Poison"
+DisplayName = "Weak Poison"
 Description = "Apply a weak poison to the enemy that deals damage each turn."
 
 [node name="ManaCostComponent" parent="." index="2"]
@@ -15,6 +15,11 @@ ManaCost = 5
 
 [node name="StatusEffectApplicatorComponent" type="Node2D" parent="." index="3" node_paths=PackedStringArray("StatusEffect")]
 script = ExtResource("2_k6vpd")
-StatusEffect = NodePath("WeakPoison")
+StatusEffect = NodePath("Poison")
 
-[node name="WeakPoison" parent="StatusEffectApplicatorComponent" index="0" instance=ExtResource("3_b0csx")]
+[node name="Poison" parent="StatusEffectApplicatorComponent" index="0" instance=ExtResource("3_b0csx")]
+
+[node name="DamageComponent" parent="StatusEffectApplicatorComponent/Poison" index="2"]
+Damage = 3.0
+
+[editable path="StatusEffectApplicatorComponent/Poison"]

@@ -113,41 +113,30 @@ public partial class NodeManager
         }
     }
 
-    public bool TryInstantiateNode(string nodeName, [NotNullWhen(true)] out Node? instantiatedNode)
+    /// <summary>
+    /// Grabs the node from the dictionary of EVERY KNOWN NODE and duplicates it into existence if found
+    /// </summary>
+    public bool TrySpawnNode(string nodeName, [NotNullWhen(true)] out Node? spawnedNode)
     {
-        instantiatedNode = null;
+        spawnedNode = null;
         NodeDictionary.TryGetValue(nodeName, out var node);
         
         if (node == null)
             return false;
         
-        instantiatedNode = node.Duplicate();
+        spawnedNode = node.Duplicate();
         return true;
     }
     
     /// <summary>
     /// Goes through each child of the node and checks if the child is of the same type as T.
     /// </summary>
-    /// <param name="node">Mob, skill, whatever</param>
-    /// <returns>True if component was found, false if otherwise</returns>
     public bool HasComponent<T>(Node node) where T : class, IComponent
     {
         var comp = node.GetNodeOrNull<T>($"{typeof(T).Name}");
         return comp != null;
     }
-
-    /// <summary>
-    /// Goes through each child of the node and returns the child with the type of T
-    /// </summary>
-    /// <param name="node">Mob, skill, whatever</param>
-    /// <param name="component">The component if found, null otherwise</param>
-    /// <returns>True if component was found, false if otherwise</returns>
-    public bool TryGetComponent<T>(Node node, [NotNullWhen(true)] out T? component) where T : class, IComponent
-    {
-        component = node.GetNodeOrNull<T>($"{typeof(T).Name}");
-        return component != null;
-    }
-
+    
     public bool TryAddComponent<T>(Node node) where T : class, IComponent
     {
         CompDictionary.TryGetValue(typeof(T).Name, out var component);
@@ -158,6 +147,15 @@ public partial class NodeManager
         node.AddChild(component.Duplicate());
         component.SetOwner(node);
         return true;
+    }
+
+    /// <summary>
+    /// Goes through each child of the node and returns the child with the type of T
+    /// </summary>
+    public bool TryGetComponent<T>(Node node, [NotNullWhen(true)] out T? component) where T : class, IComponent
+    {
+        component = node.GetNodeOrNull<T>($"{typeof(T).Name}");
+        return component != null;
     }
 }
 

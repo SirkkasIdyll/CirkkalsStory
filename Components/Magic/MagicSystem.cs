@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CS.Components.Mob;
 using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
 using Godot;
 using Godot.Collections;
 

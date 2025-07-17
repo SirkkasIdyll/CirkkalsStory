@@ -20,3 +20,11 @@ public abstract partial class HandledSignalArgs : UserSignalArgs
     /// </summary>
     public bool Handled;
 }
+
+public abstract partial class CancellableSignalArgs : UserSignalArgs
+{
+    /// <summary>
+    /// If the signal is marked as Canceled, don't process the signal by any other systems
+    /// </summary>
+    public bool Canceled;
+}

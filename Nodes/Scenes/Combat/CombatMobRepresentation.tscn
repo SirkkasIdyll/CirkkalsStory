@@ -1,7 +1,8 @@
-[gd_scene load_steps=17 format=3 uid="uid://p3cx4x7ahdxg"]
+[gd_scene load_steps=18 format=3 uid="uid://p3cx4x7ahdxg"]
 
 [ext_resource type="Script" uid="uid://bgnkis1kmhvm6" path="res://Nodes/Scenes/Combat/CombatMobRepresentationSystem.cs" id="1_bjixq"]
 [ext_resource type="Texture2D" uid="uid://ouestvtbjjua" path="res://Resources/Sprite-0005.png" id="1_tdbus"]
+[ext_resource type="Script" uid="uid://dofh0vcxqq1w3" path="res://Nodes/UI/ButtonTypes/StandardLinkButton.cs" id="2_ip3j3"]
 [ext_resource type="Texture2D" uid="uid://lly7ts1efjjf" path="res://Resources/Sprite-0006-Sheet.png" id="4_ip3j3"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c141r"]
@@ -79,7 +80,7 @@ animations = [{
 "speed": 12.0
 }]
 
-[node name="MobRepresentation" type="VBoxContainer" node_paths=PackedStringArray("MobNameLinkButton", "_cursor", "_hpProgressBar", "_hpLabel", "_mpProgressBar", "_mpLabel")]
+[node name="MobRepresentation" type="VBoxContainer" node_paths=PackedStringArray("MobNameLinkButton", "_cursor", "HpProgressBar", "_hpLabel", "_mpProgressBar", "_mpLabel")]
 custom_minimum_size = Vector2(100, 0)
 offset_left = 2.0
 offset_top = 2.0
@@ -87,9 +88,9 @@ offset_right = 76.0
 offset_bottom = 38.0
 theme_override_constants/separation = 0
 script = ExtResource("1_bjixq")
-MobNameLinkButton = NodePath("PanelContainer2/Name")
+MobNameLinkButton = NodePath("PanelContainer2/NameButton")
 _cursor = NodePath("Cursor")
-_hpProgressBar = NodePath("PanelContainer/HPProgressBar")
+HpProgressBar = NodePath("PanelContainer/HPProgressBar")
 _hpLabel = NodePath("PanelContainer/HPLabel")
 _mpProgressBar = NodePath("PanelContainer3/MPProgressBar")
 _mpLabel = NodePath("PanelContainer3/MPLabel")
@@ -98,9 +99,11 @@ _mpLabel = NodePath("PanelContainer3/MPLabel")
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_c141r")
 
-[node name="Name" type="LinkButton" parent="PanelContainer2"]
+[node name="NameButton" type="LinkButton" parent="PanelContainer2"]
 layout_mode = 2
 text = "Green Slime"
+underline = 2
+script = ExtResource("2_ip3j3")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 2

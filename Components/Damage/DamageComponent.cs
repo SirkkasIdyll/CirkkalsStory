@@ -14,7 +14,13 @@ public partial class DamageComponent : Component
     /// </summary>
     [Export] public float Damage;
 
-    [Export] public DamageType DamageType;
-
+    /// <summary>
+    /// Physical or Magical
+    /// </summary>
     [Export] public DamageCategory DamageCategory;
+    
+    /// <summary>
+    /// More specific damage types
+    /// </summary>
+    [Export] public DamageType DamageType;
 }

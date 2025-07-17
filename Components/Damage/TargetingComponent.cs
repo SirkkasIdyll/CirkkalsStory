@@ -1,7 +1,7 @@
 ﻿using CS.SlimeFactory;
 using Godot;
 
-namespace CS.Components.Damageable;
+namespace CS.Components.Damage;
 
 /// <summary>
 /// Determines what targets are valid for the ability and the AOE status of the ability during battles
@@ -18,12 +18,13 @@ public partial class TargetingComponent : Component
         All,
         Allies,
         Enemies,
-        Self
+        Self,
+        None
     }
     
     /// <summary>
     /// Establish what you're able to target with the skill
     /// </summary>
-    [Export(PropertyHint.Enum, "All,Allies,Enemies,Self")]
+    [Export]
     public Targets ValidTargets = Targets.Enemies;
 }

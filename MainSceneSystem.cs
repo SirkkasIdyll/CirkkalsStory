@@ -53,13 +53,14 @@ public partial class MainSceneSystem : Node2D
     /// </summary>
     private void OnChangeActiveScene(Node node, ref ChangeActiveSceneSignal args)
     {
+        // Add new scene to scene tree
         var prevScene = _activeScene;
-        
         var newScene = args.NewScene.Instantiate<Control>();
         _activeScene = newScene;
         _canvasLayer.AddChild(newScene);
         _activeScene.SetOwner(_canvasLayer);
         
+        // Fade out previous scene before deleting it entirely
         if (prevScene != null)
         {
             var tweenQueueFreeTarget = prevScene;
@@ -68,13 +69,14 @@ public partial class MainSceneSystem : Node2D
             tweenQueueFree.TweenCallback(Callable.From(tweenQueueFreeTarget.QueueFree));
         }
         
+        // Fade in new scene
         var tweenIntoSceneTarget = _activeScene;
         tweenIntoSceneTarget.Call(CanvasItem.MethodName.SetModulate, new Color(1, 1, 1, 0));    
         var tweenIntoScene = CreateTween();
         tweenIntoScene.TweenProperty(tweenIntoSceneTarget, "modulate", new Color(1, 1, 1, 1),  0.3);
     }
 
-    private void OnEndOfCombat(Node node, ref EndOfCombatSignal args)
+    private void OnEndOfCombat(ref EndOfCombatSignal args)
     {
         if (args.Won)
             return;
@@ -83,7 +85,7 @@ public partial class MainSceneSystem : Node2D
             return;
         
         var signal = new ChangeActiveSceneSignal(_gameOverScene);
-        _nodeManager.SignalBus.EmitChangeActiveSceneSignal(node, ref signal);
+        _nodeManager.SignalBus.EmitChangeActiveSceneSignal(args.CombatScene, ref signal);
     }
 }
 

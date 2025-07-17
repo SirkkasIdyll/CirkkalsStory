@@ -1,65 +1,72 @@
 using CS.Components.CombatManager;
+using CS.Components.Damage;
 using CS.Components.Damageable;
+using CS.Components.Description;
 using CS.Components.Magic;
 using CS.Components.Mob;
+using CS.Components.Player;
 using CS.Components.Skills;
 using CS.Nodes.Scenes.Combat.SkillSelection;
 using CS.Nodes.Scenes.Combat.SpellSelection;
 using CS.Nodes.UI.Audio;
-using CS.Resources.CombatScenarios;
+using CS.Nodes.UI.DialogBox;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
 namespace CS.Nodes.Scenes.Combat;
 
-/// <summary>
-/// 1. Load mobs and actions in
-/// 2. On specific actions pressed, listen to options
-/// 3. Once ability chosen, choose target
-/// 4. Once target chosen, apply combat effects to the target
-/// </summary>
 public partial class CombatSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
+	private CombatScenarioSystem _combatScenarioSystem = default!;
+	private DescriptionSystem _descriptionSystem = default!;
 	private MagicSystem _magicSystem = default!;
+	private PlayerManagerSystem _playerManagerSystem = default!;
 	private SkillSystem _skillSystem = default!;
 	private TurnManagerSystem _turnManagerSystem = default!;
-	private CombatScenarioSystem _combatScenarioSystem = default!;
-	
-	private Node? _chosenSkill;
+
+	private Node? _chosenAction;
 	
 	[ExportCategory("Instantiated")]
 	[Export] private AudioStream? _bgm;
-	[Export] public Array<Node> Enemies = [];
-	[Export] public Array<Node> Players = [];
 
 	[ExportCategory("Owned")]
 	[Export] private ActionsItemListSystem _actionsItemList = default!;
 	[Export] private PackedScene _combatMobRepresentation = default!;
 	[Export] private PackedScene _combatSkillSelection = default!;
 	[Export] private PackedScene _combatSpellSelection = default!;
+	[Export] private PackedScene _dialogBox = default!;
 	[Export] private VBoxContainer _enemiesVBoxContainer = default!;
 	[Export] private VBoxContainer _playersVBoxContainer = default!;
 	
-	/// <summary>
-	/// Once the targets are chosen, we enact the skill on those targets
-	/// TODO: Skill impact needs more fleshing out, such as lifesteal or damage resistance
-	/// </summary>
-	[Signal]
-	public delegate void SkillTargetChosenEventHandler(Node attacker, Node defender);
-	
-	/// <summary>
-	/// We display a textual summary in a UI element of what happened
-	/// Example: Slime attacked wolf!
-	/// </summary>
-	[Signal]
-	public delegate void DisplayActionSummaryEventHandler(string summary);
+	private void _InjectDependencies()
+	{
+		if (_nodeSystemManager.TryGetNodeSystem<CombatScenarioSystem>(out var combatScenarioSystem))
+			_combatScenarioSystem = combatScenarioSystem;
+		
+		if (_nodeSystemManager.TryGetNodeSystem<DescriptionSystem>(out var descriptionSystem))
+			_descriptionSystem = descriptionSystem;
+		
+		if (_nodeSystemManager.TryGetNodeSystem<MagicSystem>(out var magicSystem))
+			_magicSystem = magicSystem;
+
+		if (_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerSystem))
+			_playerManagerSystem = playerSystem;
+			
+		if (_nodeSystemManager.TryGetNodeSystem<SkillSystem>(out var skillManagerSystem))
+			_skillSystem = skillManagerSystem;
+
+		if (_nodeSystemManager.TryGetNodeSystem<TurnManagerSystem>(out var turnManagerSystem))
+			_turnManagerSystem = turnManagerSystem;
+	}
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		_InjectDependencies();
+		
 		var bgmPlayer = GetNode<LoopingAudioStreamPlayer2DSystem>("/root/MainScene/BGMAudioStreamPlayer2D");
 		if (bgmPlayer != null)
 		{
@@ -67,125 +74,71 @@ public partial class CombatSceneSystem : Control
 			bgmPlayer.Play();
 		}
 
-		if (_nodeSystemManager.TryGetNodeSystem<CombatScenarioSystem>(out var combatScenarioSystem))
-			_combatScenarioSystem = combatScenarioSystem;
-		
-		var mobs = _combatScenarioSystem.GetNextEnemies();
-		foreach (var mob in mobs)
+		var player = _playerManagerSystem.GetPlayer();
+		_turnManagerSystem.Players.Add(player);
+		var enemies = _combatScenarioSystem.GetNextEnemies();
+		foreach (var enemy in enemies)
 		{
-			AddChild(mob);
-			mob.SetOwner(this);
-			Enemies.Add(mob);
+			AddChild(enemy);
+			enemy.SetOwner(this);
+			_turnManagerSystem.Enemies.Add(enemy);
 		}
-		_nodeManager.SignalBus.MobDiedSignal += OnMobDied;
-		_nodeManager.SignalBus.StartOfTurnSignal += OnStartOfTurn;
+		
+		_actionsItemList.FleePressed += OnFleePressed;
 		_actionsItemList.SkillsPressed += OnSkillsPressed;
 		_actionsItemList.SpellsPressed += OnSpellsPressed;
-		_actionsItemList.FleePressed += OnFleePressed;
+		_nodeManager.SignalBus.StartOfCombatSignal += OnStartOfCombat;
+		_nodeManager.SignalBus.StartOfTurnSignal += OnStartOfTurn;
+		_nodeManager.SignalBus.EndOfTurnSignal += OnEndOfTurn;
 		_actionsItemList.SetVisible(false);
-
-		if (_nodeSystemManager.TryGetNodeSystem<MagicSystem>(out var magicSystem))
-			_magicSystem = magicSystem;
-			
-		if (_nodeSystemManager.TryGetNodeSystem<SkillSystem>(out var skillManagerSystem))
-			_skillSystem = skillManagerSystem;
-
-		if (_nodeSystemManager.TryGetNodeSystem<TurnManagerSystem>(out var turnManagerSystem))
-			_turnManagerSystem = turnManagerSystem;
-		
-		var signal = new StartOfCombatSignal(Players, Enemies);
-		_nodeManager.SignalBus.EmitStartOfCombatSignal(this, ref signal);
-		
-		LoadHealthBars(_playersVBoxContainer, Players);
-		LoadHealthBars(_enemiesVBoxContainer, Enemies);
+		LoadHealthBars(_playersVBoxContainer, _turnManagerSystem.Players);
+		LoadHealthBars(_enemiesVBoxContainer, _turnManagerSystem.Enemies);
+		_turnManagerSystem.StartCombat();
 	}
 
 	public override void _ExitTree()
 	{
 		base._ExitTree();
 		
-		_nodeManager.SignalBus.MobDiedSignal -= OnMobDied;
+		_nodeManager.SignalBus.StartOfCombatSignal -= OnStartOfCombat;
 		_nodeManager.SignalBus.StartOfTurnSignal -= OnStartOfTurn;
+		_nodeManager.SignalBus.EndOfTurnSignal -= OnEndOfTurn;
 	}
 
-	private void OnFleePressed()
+	private void OnEscapePressedCancelTargeting()
 	{
-		var signal = new EndOfCombatSignal();
-		_nodeManager.SignalBus.EmitEndOfCombatSignal(this, ref signal);
+		if (_chosenAction != null)
+			HideActionTargets(_chosenAction);
+		
+		_actionsItemList.SetVisible(true);
 	}
 	
 	/// <summary>
 	/// Closes the skill list and opens up the actions list
 	/// </summary>
-	/// <param name="node"></param>
-	private void OnEscapePressed(Node node)
+	private void OnEscapePressedClosePopup(Node node)
 	{
 		node.QueueFree();
 		_actionsItemList.SetVisible(true);
 	}
-
-	/// <summary>
-	/// On death remove mob from players or enemies
-	/// as well as turn order
-	/// </summary>
-	private void OnMobDied(Node node, ref MobDiedSignal args)
+	
+	private void OnFleePressed()
 	{
-        Players.Remove(node);
-        Enemies.Remove(node);
-
-        var signal = new EndOfCombatSignal();
-        if (Enemies.Count == 0)
-	        signal.Won = true;
-        
-        if (Players.Count == 0 || Enemies.Count == 0)
-        {
-	        _nodeManager.SignalBus.EmitEndOfCombatSignal(this, ref signal);
-        }
+		_turnManagerSystem.EndCombat(this);
 	}
-
-	/// <summary>
-	/// On the players turn, make their actions visible again
-	/// On the enemies turn, make them choose a random action
-	/// </summary>
-	/// <param name="node">The mob whose turn it is</param>
-	/// <param name="args"></param>
-	private void OnStartOfTurn(Node node, ref StartOfTurnSignal args)
-	{
-		// If either side has no one left, don't let anyone take their turn to prevent infinite loops
-		if (Players.Count == 0 || Enemies.Count == 0)
-			return;
-		
-		if (Players.Contains(node))
-		{
-			_actionsItemList.SetVisible(true);
-			return;
-		}
-
-		if (!_nodeManager.TryGetComponent<MobComponent>(node, out var mobComponent))
-			return;
-		
-		var enemyTurnSignal = new EnemyTurnSignal(Players, Enemies);
-		_nodeManager.SignalBus.EmitEnemyTurnSignal((node, mobComponent), ref enemyTurnSignal);
-		
-		var endOfTurnSignal = new EndOfTurnSignal();
-		_nodeManager.SignalBus.EmitEndOfTurnSignal(node, ref endOfTurnSignal);
-	}
-
+	
 	/// <summary>
 	/// Show off the skill selection scene when skill option is selected
 	/// </summary>
 	private void OnSkillsPressed()
 	{
-		if (_turnManagerSystem.CurrentMobsTurn == null)
-			return;
-		
 		_actionsItemList.SetVisible(false);
-		_skillSystem.GetKnownSkills(_turnManagerSystem.CurrentMobsTurn, out var skills);
+		_skillSystem.GetKnownSkills(_turnManagerSystem.GetActiveMob(), out var skills);
 		
 		var node = _combatSkillSelection.Instantiate<SkillSelectionSceneSystem>();
 		AddChild(node);
 		node.SetSkills(skills);
-		node.EscapePressed += OnEscapePressed;
+		node.EscapePressed += OnEscapePressedClosePopup;
 		node.SkillChosen += OnSkillChosen;
 	}
 
@@ -193,39 +146,85 @@ public partial class CombatSceneSystem : Control
 	/// When a skill is chosen from the list,
 	/// show off targets based on the skill's <see cref="TargetingComponent"/> setting
 	/// </summary>
-	/// <param name="skill"></param>
-	private void OnSkillChosen(string skill)
+	private void OnSkillChosen(Node skill)
 	{
-		if (!_skillSystem.TryGetSkill(skill, out var skillNode))
-			return;
-
-		_chosenSkill = skillNode;
-
-		if (!_nodeManager.TryGetComponent<TargetingComponent>(skillNode, out var targetingComponent))
-			return;
-
-		SetTargets(targetingComponent.ValidTargets, false, true);
+		ShowActionTargets(skill);
 	}
 
 	private void OnSpellsPressed()
 	{
-		if (_turnManagerSystem.CurrentMobsTurn == null)
-			return;
-		
 		_actionsItemList.SetVisible(false);
-		
-		_magicSystem.GetKnownSpells(_turnManagerSystem.CurrentMobsTurn, out var spells);
+		_magicSystem.GetKnownSpells(_turnManagerSystem.GetActiveMob(), out var spells);
 
 		var node = _combatSpellSelection.Instantiate<SpellSelectionSceneSystem>();
 		AddChild(node);
 		node.SetSpells(spells);
-		node.EscapePressed += OnEscapePressed;
+		node.EscapePressed += OnEscapePressedClosePopup;
 		node.SpellChosen += OnSpellChosen;
 	}
 
-	private void OnSpellChosen(string spell)
+	private void OnSpellChosen(Node spell)
 	{
+		ShowActionTargets(spell);
+	}
+
+	private void OnStartOfCombat(ref StartOfCombatSignal args)
+	{
+		_turnManagerSystem.StartTurn();
+	}
+
+	private void OnStartOfTurn(Node<MobComponent> node, ref StartOfTurnSignal args)
+	{
+		var title = _descriptionSystem.GetDisplayName(node);
+		var dialogBox = _dialogBox.Instantiate<DialogBox>();
+		dialogBox.SetDetails(title, args.Summaries);
+		dialogBox.DialogFinished += () =>
+		{
+			if (!_nodeManager.TryGetComponent<HealthComponent>(node, out var healthComponent))
+				return;
+        
+			// Somebody died from a status effect, start the next mob's turn
+			if (healthComponent.Health <= 0)
+				_turnManagerSystem.StartTurn();
+			
+			// If either side has no one left, don't let anyone take their turn to prevent infinite loops
+			if (_turnManagerSystem.Players.Count == 0 || _turnManagerSystem.Enemies.Count == 0)
+				return;
 		
+			if (_turnManagerSystem.Players.Contains(node))
+			{
+				_actionsItemList.SetVisible(true);
+				return;
+			}
+
+			if (_turnManagerSystem.Enemies.Contains(node))
+			{
+				var enemyTurnSignal = new EnemyTurnSignal(_turnManagerSystem.Players, _turnManagerSystem.Enemies);
+				_nodeManager.SignalBus.EmitEnemyTurnSignal(node, ref enemyTurnSignal);
+				OnEnemyTurn(node, ref enemyTurnSignal);
+				return;
+			}
+		};
+		AddChild(dialogBox);
+	}
+
+	private void OnEnemyTurn(Node<MobComponent> node, ref EnemyTurnSignal args)
+	{
+		var title = _descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob());
+		var dialogBox = _dialogBox.Instantiate<DialogBox>();
+		dialogBox.SetDetails(title, args.Summaries);
+		dialogBox.Title.Set("theme_override_colors/font_color", new Color(0.877f, 0.219f, 0.208f));
+		dialogBox.DialogFinished += () => _turnManagerSystem.EndTurn();
+		AddChild(dialogBox);
+	}
+
+	private void OnEndOfTurn(Node<MobComponent> node, ref EndOfTurnSignal args)
+	{
+		var title = _descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob());
+		var dialogBox = _dialogBox.Instantiate<DialogBox>();
+		dialogBox.SetDetails(title, args.Summaries);
+		dialogBox.DialogFinished += () => _turnManagerSystem.StartTurn();
+		AddChild(dialogBox);
 	}
 
 	/// <summary>
@@ -233,35 +232,42 @@ public partial class CombatSceneSystem : Control
 	/// apply the chosen skill's combat effects on the target
 	/// and then proceed the turn order
 	/// </summary>
-	/// <param name="target"></param>
-	private void OnTargetChosen(Node target)
+	private void OnTargetChosenByPlayer(Node target)
 	{
-		if (_chosenSkill == null)
+		if (_chosenAction == null)
 			return;
 
-		// Emit a signal indicating which skill was used and who is being targeted by the skill
-		if (!_nodeManager.TryGetComponent<SkillComponent>(_chosenSkill, out var skillComponent))
+		if (!_nodeManager.TryGetComponent<MobComponent>(_turnManagerSystem.GetActiveMob(), out var mobComponent))
 			return;
 		
-		if (!_nodeManager.TryGetComponent<TargetingComponent>(_chosenSkill, out var targetingComponent))
-			return;
-
-		SetTargets(targetingComponent.ValidTargets, true);
-
-		if (_turnManagerSystem.CurrentMobsTurn == null)
+		// An action has been chosen, signal its usage
+		var useActionSignal = new UseActionSignal(_chosenAction, [target]);
+		useActionSignal.Summaries.Add("Used [b]" + _descriptionSystem.GetDisplayName(_chosenAction!) + "[/b] on [b]" +
+		                              _descriptionSystem.GetDisplayName(target) + "[/b].");
+		_nodeManager.SignalBus.EmitUseActionSignal((_turnManagerSystem.GetActiveMob(), mobComponent), ref useActionSignal);
+		
+		// Hide the targets, so they're no longer selectable
+		HideActionTargets(_chosenAction);
+		
+		// Show off the result of the action if any was reported
+		if (useActionSignal.Summaries.Count <= 0)
 			return;
 		
-		var useSkillSignal = new UseSkillSignal(_turnManagerSystem.CurrentMobsTurn, target);
-		_nodeManager.SignalBus.EmitUseSkillSignal((_chosenSkill, skillComponent), ref useSkillSignal);
-		
-		var endOfTurnSignal = new EndOfTurnSignal();
-		_nodeManager.SignalBus.EmitEndOfTurnSignal(_turnManagerSystem.CurrentMobsTurn, ref endOfTurnSignal);
+		var dialogBox = _dialogBox.Instantiate<DialogBox>();
+		dialogBox.SetDetails(_descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob()), useActionSignal.Summaries);
+		AddChild(dialogBox);
+		dialogBox.DialogFinished += () => _turnManagerSystem.EndTurn();
 	}
 
-	private void SetTargets(TargetingComponent.Targets targets, bool disable, bool focus = false)
+	private void ShowActionTargets(Node action)
 	{
+		_chosenAction = action;
+		
+		if (!_nodeManager.TryGetComponent<TargetingComponent>(action, out var targetingComponent))
+			return;
+
 		var firstChildFocused = false;
-		switch (targets)
+		switch (targetingComponent.ValidTargets)
 		{
 			case TargetingComponent.Targets.All:
 				break;
@@ -270,12 +276,14 @@ public partial class CombatSceneSystem : Control
 				{
 					if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
 						continue;
-					
-					combatMobRepresentationSystem.MobNameLinkButton.SetDisabled(disable);
-					combatMobRepresentationSystem.MobNameLinkButton.FocusMode = disable ? FocusModeEnum.None : FocusModeEnum.All;
 
+					if (combatMobRepresentationSystem.HpProgressBar.Value == 0)
+						continue;
 					
-					if (!focus || firstChildFocused)
+					combatMobRepresentationSystem.MobNameLinkButton.SetDisabled(false);
+					combatMobRepresentationSystem.MobNameLinkButton.FocusMode = FocusModeEnum.All;
+					
+					if (firstChildFocused)
 						continue;
 					
 					combatMobRepresentationSystem.MobNameLinkButton.GrabFocus();
@@ -288,10 +296,13 @@ public partial class CombatSceneSystem : Control
 					if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
 						continue;
 					
-					combatMobRepresentationSystem.MobNameLinkButton.SetDisabled(disable);
-					combatMobRepresentationSystem.MobNameLinkButton.FocusMode = disable ? FocusModeEnum.None : FocusModeEnum.All;
+					if (combatMobRepresentationSystem.HpProgressBar.Value == 0)
+						continue;
 					
-					if (!focus || firstChildFocused)
+					combatMobRepresentationSystem.MobNameLinkButton.SetDisabled(false);
+					combatMobRepresentationSystem.MobNameLinkButton.FocusMode = FocusModeEnum.All;
+					
+					if (firstChildFocused)
 						continue;
 					
 					combatMobRepresentationSystem.MobNameLinkButton.GrabFocus();
@@ -300,13 +311,44 @@ public partial class CombatSceneSystem : Control
 				break;
 		}
 	}
+
+	private void HideActionTargets(Node action)
+	{
+		_chosenAction = null;
+		
+		if (!_nodeManager.TryGetComponent<TargetingComponent>(action, out var targetingComponent))
+			return;
+		
+		switch (targetingComponent.ValidTargets)
+		{
+			case TargetingComponent.Targets.All:
+				break;
+			case TargetingComponent.Targets.Allies:
+				foreach (var child in _playersVBoxContainer.GetChildren())
+				{
+					if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
+						continue;
+					
+					combatMobRepresentationSystem.MobNameLinkButton.SetDisabled(true);
+					combatMobRepresentationSystem.MobNameLinkButton.FocusMode = FocusModeEnum.None;
+				}
+				break;
+			case TargetingComponent.Targets.Enemies:
+				foreach (var child in _enemiesVBoxContainer.GetChildren())
+				{
+					if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
+						continue;
+					
+					combatMobRepresentationSystem.MobNameLinkButton.SetDisabled(true);
+					combatMobRepresentationSystem.MobNameLinkButton.FocusMode = FocusModeEnum.None;
+				}
+				break;
+		}
+	}
 	
 	/// <summary>
 	/// Shows the names and health bars for each given group of mobs
-	/// TODO: Rename _nameAndHealthBar and the name of this function to reflect that they manage each mob representation and their ability to act as a target
 	/// </summary>
-	/// <param name="container">Which side of combat the mob belongs to</param>
-	/// <param name="mobs"></param>
 	private void LoadHealthBars(VBoxContainer container, Array<Node> mobs)
 	{
 		// Clear out any existing children from template
@@ -318,7 +360,8 @@ public partial class CombatSceneSystem : Control
 			var node = _combatMobRepresentation.Instantiate<CombatMobRepresentationSystem>();
 			node.SetMob(mob);
 			container.AddChild(node);
-			node.TargetPressed += OnTargetChosen;
+			node.TargetPressed += OnTargetChosenByPlayer;
+			node.MobNameLinkButton.EscapePressed += OnEscapePressedCancelTargeting;
 		}
 	}
 }
