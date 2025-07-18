@@ -31,6 +31,7 @@ public class NodeSystemManager
     /// </summary>
     public void InitializeNodeSystems(Node mainScene)
     {
+        NodeSystemDictionary.Clear();
         _mainScene = mainScene;
         
         // Get every NodeSystem and call their _SystemReady function since I can't type-hint Godot's _Ready function

@@ -46,7 +46,7 @@ public partial class TurnManagerSystem : NodeSystem
 
     public StartOfTurnSignal? StartTurn()
     {
-        GD.Print("Start of " + _descriptionSystem.GetDisplayName(GetActiveMob()) + "'s turn");
+        // GD.Print("Start of " + _descriptionSystem.GetDisplayName(GetActiveMob()) + "'s turn");
         if (!_nodeManager.TryGetComponent<MobComponent>(GetActiveMob(), out var mobComponent))
             return null;
         
@@ -57,7 +57,7 @@ public partial class TurnManagerSystem : NodeSystem
 
     public EndOfTurnSignal? EndTurn()
     {
-        GD.Print("End of " + _descriptionSystem.GetDisplayName(GetActiveMob()) + "'s turn");
+        // GD.Print("End of " + _descriptionSystem.GetDisplayName(GetActiveMob()) + "'s turn");
         if (!_nodeManager.TryGetComponent<MobComponent>(GetActiveMob(), out var mobComponent))
             return null;
 

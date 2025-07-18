@@ -6,3 +6,4 @@
 /Resources
 *.uid
 *DotSettings.user
+.runsettings

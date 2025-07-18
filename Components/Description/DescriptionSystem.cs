@@ -15,9 +15,6 @@ public partial class DescriptionSystem : NodeSystem
     {
         if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
             return "DEFAULT_NAME";
-
-        if (descriptionComponent.DisplayName == "")
-            GD.Print(node.Name + " has no display name set");
         
         return descriptionComponent.DisplayName;
     }

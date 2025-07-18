@@ -8,7 +8,7 @@ public partial class DialogBox : Control
 	private Tween? _tween;
 	// Smaller number means faster
 	private float _timeSpentPerCharacter = 0.04f;
-	private float _timeWaitedBetweenLines = 0.35f;
+	private float _timeWaitedBetweenLines = 0.30f;
 	
 	[ExportCategory("Owned")]
 	[Export] public Label Title = default!;

@@ -8,8 +8,9 @@
 DisplayName = "Slime"
 
 [node name="HealthComponent" parent="." index="2"]
-MaxHealth = 5
-Health = 5
+MaxHealth = 10
+Health = 10
 
 [node name="MobComponent" parent="." index="4"]
+Abilities = Array[String](["Squishy"])
 Skills = Array[String](["SlimeTackle"])

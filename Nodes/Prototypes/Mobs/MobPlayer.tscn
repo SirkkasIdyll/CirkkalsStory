@@ -12,5 +12,5 @@ MaxHealth = 20
 Health = 20
 
 [node name="MobComponent" parent="." index="4"]
-Skills = Array[String](["SlimeTackle", "DoNothing", "BleedingSlash"])
+Skills = Array[String](["DoNothing", "SlimeTackle", "BleedingSlash"])
 Spells = Array[String](["WeakPoison"])

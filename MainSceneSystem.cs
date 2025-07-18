@@ -31,6 +31,8 @@ public partial class MainSceneSystem : Node2D
     {
         base._ExitTree();
         
+        _nodeManager.SignalBus.ChangeActiveSceneSignal -= OnChangeActiveScene;
+        _nodeManager.SignalBus.EndOfCombatSignal -= OnEndOfCombat;
         _nodeManager.PurgeDictionary();
     }
 

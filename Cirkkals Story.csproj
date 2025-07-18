@@ -4,13 +4,26 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>CS</RootNamespace>
     <Nullable>enable</Nullable>
+
+    <LangVersion>12.0</LangVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
   
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="gdUnit4.api" Version="5.0.0" />
+    <PackageReference Include="gdUnit4.test.adapter" Version="3.0.0" />
+    <PackageReference Include="gdUnit4.analyzers" Version="1.0.0">
+      <PrivateAssets>none</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Remove=".godot\mono\temp\obj\Debug\**" />
     <Compile Remove=".godot\mono\temp\obj\**" />
@@ -28,6 +41,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Content Include=".runsettings" />
     <Content Include="README.md" />
   </ItemGroup>
   
