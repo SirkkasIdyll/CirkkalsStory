@@ -16,12 +16,12 @@ public partial class StartMenuSceneSystem : Control
 	[Export] private AudioStream? _bgm;
 	
 	[ExportCategory("Owned")]
-	[Export] private AudioStreamPlayer2D _cancelSound = default!;
-	[Export] private StandardButton _newGame = default!;
-	[Export] private StandardButton _continue = default!;
-	[Export] private StandardButton _options = default!;
-	[Export] private StandardButton _achievements = default!;
-	[Export] private EscapeButton _quit = default!;
+	[Export] private AudioStreamPlayer2D _cancelSound = null!;
+	[Export] private StandardButton _newGame = null!;
+	[Export] private StandardButton _continue = null!;
+	[Export] private StandardButton _options = null!;
+	[Export] private StandardButton _achievements = null!;
+	[Export] private EscapeButton _quit = null!;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()

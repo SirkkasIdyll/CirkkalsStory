@@ -55,7 +55,10 @@ public partial class NodeManager
         {
             var node = ResourceLoader.Load<CSharpScript>(file).New().Obj;
             if (node is Component component)
+            {
+                component.SetName(component.GetType().Name);
                 CompDictionary.TryAdd(component.GetType().Name, component);
+            }
             else if (node is Node nodeType)
                 nodeType.QueueFree();
         }
@@ -65,7 +68,7 @@ public partial class NodeManager
     /// Recursively retrieve all files that match the scene file extension in a given path
     /// </summary>
     /// <returns>A list of scenes</returns>
-    private List<string> GetFilesByExtension(string path, string extension)
+    public List<string> GetFilesByExtension(string path, string extension)
     {
         List<string> files = [];
         
@@ -136,7 +139,6 @@ public partial class NodeManager
             return false;
         
         var dupe = component.Duplicate();
-        dupe.SetName(typeof(T).Name);
         node.AddChild(dupe);
         dupe.SetOwner(node);
         return true;

@@ -6,7 +6,7 @@ namespace CS.Components.Player;
 // TODO: I don't exactly know where to put this besides this, figure out something more sane later
 public partial class PlayerManagerSystem : NodeSystem
 {
-    private Node _player = default!;
+    private Node _player = null!;
     
     public override void _Ready()
     {

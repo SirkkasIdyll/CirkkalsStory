@@ -17,7 +17,7 @@ public partial class MainSceneSystem : Node2D
     [Export] private PackedScene? _gameOverScene;
     
     [ExportCategory("Owned")]
-    [Export] private CanvasLayer _canvasLayer = default!;
+    [Export] private CanvasLayer _canvasLayer = null!;
 
     public override void _Ready()
     {

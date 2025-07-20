@@ -33,6 +33,16 @@ public partial class HealthComponent : Component
     }
 }
 
+public partial class PreviewHealthAlteredSignal : UserSignalArgs
+{
+    public int Amount;
+
+    public PreviewHealthAlteredSignal(int amount)
+    {
+        Amount = amount;
+    }
+}
+
 public partial class HealthAlteredSignal : UserSignalArgs
 {
     

@@ -9,7 +9,7 @@ namespace CS.Components.StatusEffect;
 
 public partial class StatusEffectSystem : NodeSystem
 {
-    [InjectDependency] private readonly DescriptionSystem _descriptionSystem = default!;
+    [InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
     
     public override void _Ready()
     {

@@ -10,7 +10,7 @@ namespace CS.Components.CombatManager;
 
 public partial class TurnManagerSystem : NodeSystem
 {
-    [InjectDependency] private readonly DescriptionSystem _descriptionSystem = default!;
+    [InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
     
     private Array<Node> _turnOrder = [];
     private Array<Node> _deadMobs = [];
@@ -146,6 +146,18 @@ public partial class UseActionSignal : UserSignalArgs
     public Array<string> Summaries = [];
 
     public UseActionSignal(Node action, Array<Node> targets)
+    {
+        Action = action;
+        Targets = targets;
+    }
+}
+
+public partial class PreviewActionSignal : UserSignalArgs
+{
+    public Node Action;
+    public Array<Node> Targets;
+
+    public PreviewActionSignal(Node action, Array<Node> targets)
     {
         Action = action;
         Targets = targets;

@@ -70,7 +70,7 @@ public class DamageTest
         AutoFree(damageableComponent);
         AutoFree(healthComponent);
         
-        _damageSystem.TryDamageTarget((attack, damageComponent), defender, attacker, out var damageDealt);
+        _damageSystem.TryDamageTarget((attack, damageComponent), defender, attacker, false, out var damageDealt);
         AssertInt(damageDealt).IsEqual(5);
         AssertInt(healthComponent.Health).IsEqual(95);
     }
@@ -133,7 +133,7 @@ public class DamageTest
         AutoFree(damageableComponent);
         AutoFree(healthComponent);
         
-        _damageSystem.TryDamageTarget((attack, damageComponent), defender, attacker, out var damageDealt);
+        _damageSystem.TryDamageTarget((attack, damageComponent), defender, attacker, false, out var damageDealt);
         AssertInt(damageDealt).IsEqual(13);
         AssertInt(healthComponent.Health).IsEqual(87);
     }
@@ -196,7 +196,7 @@ public class DamageTest
         AutoFree(flatAbilityComponent);
         AutoFree(flatDamageResistComponent);
         
-        _damageSystem.TryDamageTarget((attack, damageComponent), defender, attacker, out var damageDealt);
+        _damageSystem.TryDamageTarget((attack, damageComponent), defender, attacker, false, out var damageDealt);
         AssertInt(damageDealt).IsEqual(13);
         AssertInt(healthComponent.Health).IsEqual(87);
     }

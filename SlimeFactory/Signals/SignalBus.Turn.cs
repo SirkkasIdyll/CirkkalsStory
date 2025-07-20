@@ -53,5 +53,11 @@ public partial class SignalBus
     {
         UseActionSignal?.Invoke(node, ref args);
     }
-    
+
+    public delegate void PreviewActionSignalHandler(Node<MobComponent> node, ref PreviewActionSignal args);
+    public event PreviewActionSignalHandler? PreviewActionSignal;
+    public void EmitPreviewActionSignal(Node<MobComponent> node, ref PreviewActionSignal args)
+    {
+        PreviewActionSignal?.Invoke(node, ref args);
+    }
 }

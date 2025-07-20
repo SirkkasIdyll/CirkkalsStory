@@ -11,6 +11,10 @@ DisplayName = "Cirkkal"
 MaxHealth = 20
 Health = 20
 
+[node name="ManaComponent" parent="." index="3"]
+MaxMana = 20
+Mana = 20
+
 [node name="MobComponent" parent="." index="4"]
-Skills = Array[String](["DoNothing", "SlimeTackle", "BleedingSlash"])
+Skills = Array[String](["DoNothing", "BleedingSlash"])
 Spells = Array[String](["WeakPoison"])

@@ -11,11 +11,11 @@ public partial class SignalBus
         CheckSpellCastableSignal?.Invoke(node, ref args);
     }
     
-    public delegate void CastSpellSignalHandler(Node<SpellComponent> node, ref CastSpellSignal args);
-    public event CastSpellSignalHandler? CastSpellSignal;
-    public void EmitCastSpellSignal(Node<SpellComponent> node, ref CastSpellSignal args)
+    public delegate void PreviewManaAlteredSignalHandler(Node<ManaComponent> node, ref PreviewManaAlteredSignal args);
+    public event PreviewManaAlteredSignalHandler? PreviewManaAlteredSignal;
+    public void EmitPreviewManaAlteredSignal(Node<ManaComponent> node, ref PreviewManaAlteredSignal args)
     {
-        CastSpellSignal?.Invoke(node, ref args);
+        PreviewManaAlteredSignal?.Invoke(node, ref args);
     }
 
     public delegate void ManaAlteredSignalHandler(Node<ManaComponent> node, ref ManaAlteredSignal args);

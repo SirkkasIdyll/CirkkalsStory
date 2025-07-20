@@ -20,12 +20,12 @@ public partial class CombatSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
-	private CombatScenarioSystem _combatScenarioSystem = default!;
-	private DescriptionSystem _descriptionSystem = default!;
-	private MagicSystem _magicSystem = default!;
-	private PlayerManagerSystem _playerManagerSystem = default!;
-	private SkillSystem _skillSystem = default!;
-	private TurnManagerSystem _turnManagerSystem = default!;
+	private ScenarioSystem _scenarioSystem = null!;
+	private DescriptionSystem _descriptionSystem = null!;
+	private MagicSystem _magicSystem = null!;
+	private PlayerManagerSystem _playerManagerSystem = null!;
+	private SkillSystem _skillSystem = null!;
+	private TurnManagerSystem _turnManagerSystem = null!;
 
 	private Node? _chosenAction;
 	
@@ -33,18 +33,18 @@ public partial class CombatSceneSystem : Control
 	[Export] private AudioStream? _bgm;
 
 	[ExportCategory("Owned")]
-	[Export] private ActionsItemListSystem _actionsItemList = default!;
-	[Export] private PackedScene _combatMobRepresentation = default!;
-	[Export] private PackedScene _combatSkillSelection = default!;
-	[Export] private PackedScene _combatSpellSelection = default!;
-	[Export] private PackedScene _dialogBox = default!;
-	[Export] private VBoxContainer _enemiesVBoxContainer = default!;
-	[Export] private VBoxContainer _playersVBoxContainer = default!;
+	[Export] private ActionsItemListSystem _actionsItemList = null!;
+	[Export] private PackedScene _combatMobRepresentation = null!;
+	[Export] private PackedScene _combatSkillSelection = null!;
+	[Export] private PackedScene _combatSpellSelection = null!;
+	[Export] private PackedScene _dialogBox = null!;
+	[Export] private VBoxContainer _enemiesVBoxContainer = null!;
+	[Export] private VBoxContainer _playersVBoxContainer = null!;
 	
 	private void _InjectDependencies()
 	{
-		if (_nodeSystemManager.TryGetNodeSystem<CombatScenarioSystem>(out var combatScenarioSystem))
-			_combatScenarioSystem = combatScenarioSystem;
+		if (_nodeSystemManager.TryGetNodeSystem<ScenarioSystem>(out var combatScenarioSystem))
+			_scenarioSystem = combatScenarioSystem;
 		
 		if (_nodeSystemManager.TryGetNodeSystem<DescriptionSystem>(out var descriptionSystem))
 			_descriptionSystem = descriptionSystem;
@@ -76,11 +76,11 @@ public partial class CombatSceneSystem : Control
 
 		var player = _playerManagerSystem.GetPlayer();
 		_turnManagerSystem.Players.Add(player);
-		var enemies = _combatScenarioSystem.GetNextEnemies();
+		var enemies = _scenarioSystem.GetNextEnemies();
 		foreach (var enemy in enemies)
 		{
 			AddChild(enemy);
-			enemy.SetOwner(this);
+			// enemy.SetOwner(this);
 			_turnManagerSystem.Enemies.Add(enemy);
 		}
 		
@@ -180,16 +180,18 @@ public partial class CombatSceneSystem : Control
 		dialogBox.SetDetails(title, args.Summaries);
 		dialogBox.DialogFinished += () =>
 		{
+			if (_turnManagerSystem.Players.Count == 0 || _turnManagerSystem.Enemies.Count == 0)
+			{
+				_turnManagerSystem.EndCombat(this);
+				return;
+			}
+			
 			if (!_nodeManager.TryGetComponent<HealthComponent>(node, out var healthComponent))
 				return;
-        
+			
 			// Somebody died from a status effect, start the next mob's turn
 			if (healthComponent.Health <= 0)
 				_turnManagerSystem.StartTurn();
-			
-			// If either side has no one left, don't let anyone take their turn to prevent infinite loops
-			if (_turnManagerSystem.Players.Count == 0 || _turnManagerSystem.Enemies.Count == 0)
-				return;
 		
 			if (_turnManagerSystem.Players.Contains(node))
 			{
@@ -210,6 +212,12 @@ public partial class CombatSceneSystem : Control
 
 	private void OnEnemyTurn(Node<MobComponent> node, ref EnemyTurnSignal args)
 	{
+		if (_turnManagerSystem.Players.Count == 0 || _turnManagerSystem.Enemies.Count == 0)
+		{
+			_turnManagerSystem.EndCombat(this);
+			return;
+		}
+		
 		var title = _descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob());
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
 		dialogBox.SetDetails(title, args.Summaries);
@@ -220,6 +228,12 @@ public partial class CombatSceneSystem : Control
 
 	private void OnEndOfTurn(Node<MobComponent> node, ref EndOfTurnSignal args)
 	{
+		if (_turnManagerSystem.Players.Count == 0 || _turnManagerSystem.Enemies.Count == 0)
+		{
+			_turnManagerSystem.EndCombat(this);
+			return;
+		}
+		
 		var title = _descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob());
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
 		dialogBox.SetDetails(title, args.Summaries);
@@ -257,6 +271,18 @@ public partial class CombatSceneSystem : Control
 		dialogBox.SetDetails(_descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob()), useActionSignal.Summaries);
 		AddChild(dialogBox);
 		dialogBox.DialogFinished += () => _turnManagerSystem.EndTurn();
+	}
+
+	private void OnTargetPreviewByPlayer(Node target)
+	{
+		if (_chosenAction == null)
+			return;
+		
+		if (!_nodeManager.TryGetComponent<MobComponent>(_turnManagerSystem.GetActiveMob(), out var mobComponent))
+			return;
+		
+		var signal = new PreviewActionSignal(_chosenAction, [target]);
+		_nodeManager.SignalBus.EmitPreviewActionSignal((_turnManagerSystem.GetActiveMob(), mobComponent), ref signal);
 	}
 
 	private void ShowActionTargets(Node action)
@@ -361,6 +387,7 @@ public partial class CombatSceneSystem : Control
 			node.SetMob(mob);
 			container.AddChild(node);
 			node.TargetPressed += OnTargetChosenByPlayer;
+			node.TargetPreview += OnTargetPreviewByPlayer;
 			node.MobNameLinkButton.EscapePressed += OnEscapePressedCancelTargeting;
 		}
 	}

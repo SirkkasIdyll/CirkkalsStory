@@ -46,6 +46,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Folder Include="Nodes\Scenes\AbsorbEnemy\" />
     <Folder Include="Resources\CombatScenarios\1-Basic\" />
   </ItemGroup>
 </Project>

@@ -10,8 +10,8 @@ namespace CS.Components.AI;
 
 public partial class EnemyAISystem : NodeSystem
 {
-    [InjectDependency] private readonly DescriptionSystem _descriptionSystem = default!;
-    [InjectDependency] private readonly SkillSystem _skillManagerSystem = default!;
+    [InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
+    [InjectDependency] private readonly SkillSystem _skillManagerSystem = null!;
     
     public override void _Ready()
     {

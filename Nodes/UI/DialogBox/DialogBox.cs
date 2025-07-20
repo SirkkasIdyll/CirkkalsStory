@@ -11,8 +11,8 @@ public partial class DialogBox : Control
 	private float _timeWaitedBetweenLines = 0.30f;
 	
 	[ExportCategory("Owned")]
-	[Export] public Label Title = default!;
-	[Export] public RichTextLabel Dialog = default!;
+	[Export] public Label Title = null!;
+	[Export] public RichTextLabel Dialog = null!;
 
 	[Signal]
 	public delegate void DialogFinishedEventHandler();

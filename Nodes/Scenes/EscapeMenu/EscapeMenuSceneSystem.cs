@@ -7,10 +7,10 @@ namespace CS.Nodes.Scenes.EscapeMenu;
 public partial class EscapeMenuSceneSystem : Control
 {
 	[ExportCategory("Owned")]
-	[Export] private AudioStreamPlayer2D _cancelSound = default!;
-	[Export] private StandardButton _continue = default!;
-	[Export] private StandardButton _options = default!;
-	[Export] private EscapeButton _quit = default!;
+	[Export] private AudioStreamPlayer2D _cancelSound = null!;
+	[Export] private StandardButton _continue = null!;
+	[Export] private StandardButton _options = null!;
+	[Export] private EscapeButton _quit = null!;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()

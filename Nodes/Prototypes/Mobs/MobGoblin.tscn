@@ -10,3 +10,7 @@ DisplayName = "Goblin"
 [node name="HealthComponent" parent="." index="2"]
 MaxHealth = 15
 Health = 15
+
+[node name="MobComponent" parent="." index="4"]
+Abilities = Array[String](["RoughSkin"])
+Spells = Array[String](["SpitFire"])

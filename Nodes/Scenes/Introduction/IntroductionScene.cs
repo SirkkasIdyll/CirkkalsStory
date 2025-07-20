@@ -15,7 +15,7 @@ public partial class IntroductionScene : Control
 	[Export] private PackedScene? _mobPlayer;
 	
 	[ExportCategory("Owned")]
-	[Export] private StandardButton _acceptButton = default!;
+	[Export] private StandardButton _acceptButton = null!;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()

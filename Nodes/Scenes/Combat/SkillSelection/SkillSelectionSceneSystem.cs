@@ -9,7 +9,7 @@ namespace CS.Nodes.Scenes.Combat.SkillSelection;
 public partial class SkillSelectionSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
-	private SkillSystem _skillSystem = default!;
+	private SkillSystem _skillSystem = null!;
 	
 	/// <summary>
 	/// Key is the display name, value is the actual skill node
@@ -17,11 +17,11 @@ public partial class SkillSelectionSceneSystem : Control
 	private Dictionary<string, Node> _skills = [];
 	
 	[ExportCategory("Owned")]
-	[Export] private SkillSelectionItemListSystem _skillSelectionItemListSystem = default!;
-	[Export] private Label _skillName = default!;
-	[Export] private Label _skillDescription = default!;
-	[Export] private VBoxContainer _effectContainer = default!;
-	[Export] private VBoxContainer _costContainer = default!;
+	[Export] private SkillSelectionItemListSystem _skillSelectionItemListSystem = null!;
+	[Export] private Label _skillName = null!;
+	[Export] private Label _skillDescription = null!;
+	[Export] private VBoxContainer _effectContainer = null!;
+	[Export] private VBoxContainer _costContainer = null!;
 	
 	[Signal]
 	public delegate void SkillChosenEventHandler(Node node);

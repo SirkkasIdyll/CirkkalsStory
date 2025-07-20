@@ -9,7 +9,7 @@ namespace CS.Nodes.Scenes.Combat.SpellSelection;
 public partial class SpellSelectionSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
-	private MagicSystem _magicSystem = default!;
+	private MagicSystem _magicSystem = null!;
 	
 	/// <summary>
 	/// Key is the display name, value is the actual skill node
@@ -17,11 +17,11 @@ public partial class SpellSelectionSceneSystem : Control
 	private Dictionary<string, Node> _spells = [];
 	
 	[ExportCategory("Owned")]
-	[Export] private SpellSelectionItemListSystem _spellSelectionItemListSystem = default!;
-	[Export] private Label _spellName = default!;
-	[Export] private Label _spellDescription = default!;
-	[Export] private VBoxContainer _effectContainer = default!;
-	[Export] private VBoxContainer _costContainer = default!;
+	[Export] private SpellSelectionItemListSystem _spellSelectionItemListSystem = null!;
+	[Export] private Label _spellName = null!;
+	[Export] private Label _spellDescription = null!;
+	[Export] private VBoxContainer _effectContainer = null!;
+	[Export] private VBoxContainer _costContainer = null!;
 	
 	[Signal]
 	public delegate void SpellChosenEventHandler(Node node);
