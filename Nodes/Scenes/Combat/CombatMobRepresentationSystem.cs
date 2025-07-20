@@ -1,8 +1,10 @@
+using CS.Components.CombatManager;
 using CS.Components.Damageable;
 using CS.Components.Description;
 using CS.Components.Magic;
 using CS.Components.Mob;
 using CS.Components.StatusEffect;
+using CS.Nodes.UI.ButtonTypes;
 using CS.SlimeFactory;
 using Godot;
 
@@ -11,18 +13,23 @@ namespace CS.Nodes.Scenes.Combat;
 public partial class CombatMobRepresentationSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
+
+	private const float TimeToUpdateBar = 0.15f;
 	
 	[ExportCategory("Instantiated")]
 	private Node? _mob;
 
 	[ExportCategory("Owned")]
-	[Export] public LinkButton MobNameLinkButton = default!;
-	[Export] private AnimatedSprite2D _cursor = default!;
-	[Export] private ProgressBar _hpProgressBar = default!;
-	[Export] private Label _hpLabel = default!;
-	[Export] private ProgressBar _mpProgressBar = default!;
-	[Export] private Label _mpLabel = default!;
+	[Export] public StandardLinkButton MobNameLinkButton = null!;
+	[Export] private AnimatedSprite2D _cursor = null!;
+	[Export] public ProgressBar HpProgressBar = null!;
+	[Export] private Label _hpLabel = null!;
+	[Export] private ProgressBar _mpProgressBar = null!;
+	[Export] private Label _mpLabel = null!;
 
+	[Signal]
+	public delegate void TargetPreviewEventHandler(Node mob);
+	
 	[Signal]
 	public delegate void TargetPressedEventHandler(Node mob);
 	
@@ -30,7 +37,9 @@ public partial class CombatMobRepresentationSystem : Control
 	public override void _Ready()
 	{
 		_nodeManager.SignalBus.HealthAlteredSignal += OnHealthAltered;
+		_nodeManager.SignalBus.PreviewHealthAlteredSignal += OnPreviewHealthAltered;
 		_nodeManager.SignalBus.ManaAlteredSignal += OnManaAltered;
+		_nodeManager.SignalBus.PreviewManaAlteredSignal += OnPreviewManaAltered;
 		
 		MobNameLinkButton.FocusEntered += OnFocusEntered;
 		MobNameLinkButton.FocusExited += OnFocusExited;
@@ -47,35 +56,86 @@ public partial class CombatMobRepresentationSystem : Control
 		base._ExitTree();
 		
 		_nodeManager.SignalBus.HealthAlteredSignal -= OnHealthAltered;
+		_nodeManager.SignalBus.PreviewHealthAlteredSignal -= OnPreviewHealthAltered;
 		_nodeManager.SignalBus.ManaAlteredSignal -= OnManaAltered;
+		_nodeManager.SignalBus.PreviewManaAlteredSignal -= OnPreviewManaAltered;
 	}
 
+	/// <summary>
+	/// Tells the <see cref="CombatSceneSystem"/> to preview the action on this target
+	/// </summary>
 	private void OnFocusEntered()
 	{
 		_cursor.SetVisible(true);
+		EmitSignalTargetPreview(_mob);
 	}
 
+	/// <summary>
+	/// Clear the preview and reset health back to normal
+	/// </summary>
 	private void OnFocusExited()
 	{
 		_cursor.SetVisible(false);
+
+		if (!_nodeManager.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
+			return;
+		
+		_hpLabel.Text = healthComponent.Health + " / " + healthComponent.MaxHealth;
+		HpProgressBar.Value = (double)healthComponent.Health / healthComponent.MaxHealth * 100;
+
 	}
 	
 	private void OnHealthAltered(Node<HealthComponent> node, ref HealthAlteredSignal args)
 	{
+		// if the signal isn't for the mob that this representation is managing, ignore it
 		if (node.Owner != _mob)
 			return;
 		
 		_hpLabel.Text = node.Comp.Health + " / " + node.Comp.MaxHealth;
-		_hpProgressBar.Value = (double)node.Comp.Health / node.Comp.MaxHealth * 100;
+		var tween = CreateTween();
+		tween.TweenProperty(HpProgressBar, "value", (double) node.Comp.Health / node.Comp.MaxHealth * 100, TimeToUpdateBar);
 	}
+	
+	/// <summary>
+	/// Show potential health change when focused
+	/// </summary>
+	private void OnPreviewHealthAltered(Node<HealthComponent> node, ref PreviewHealthAlteredSignal args)
+	{
+		// if the signal isn't for the mob that this representation is managing, ignore it
+		if (node.Owner != _mob)
+			return;
 
+		var potentialValue = float.Min(float.Max(node.Comp.Health + args.Amount, 0), node.Comp.MaxHealth);
+		_hpLabel.Text = potentialValue + " / " + node.Comp.MaxHealth;
+		var tween = CreateTween();
+		tween.TweenProperty(HpProgressBar, "value", potentialValue / node.Comp.MaxHealth * 100, TimeToUpdateBar);
+		MobNameLinkButton.FocusExited += tween.Kill;
+	}
+	
 	private void OnManaAltered(Node<ManaComponent> node, ref ManaAlteredSignal args)
 	{
+		// if the signal isn't for the mob that this representation is managing, ignore it
 		if (node.Owner != _mob)
 			return;
 
 		_mpLabel.Text = node.Comp.Mana + " / " + node.Comp.MaxMana;
-		_mpProgressBar.Value = (double)node.Comp.Mana / node.Comp.MaxMana * 100;
+		var tween = CreateTween();
+		tween.TweenProperty(_mpProgressBar, "value", (double) node.Comp.Mana / node.Comp.MaxMana * 100, TimeToUpdateBar);
+	}
+
+	/// <summary>
+	/// Show potential mana usage when using action
+	/// </summary>
+	private void OnPreviewManaAltered(Node<ManaComponent> node, ref PreviewManaAlteredSignal args)
+	{
+		if (node.Owner != _mob)
+			return;
+		
+		var potentialValue = float.Min(float.Max(node.Comp.Mana + args.Amount, 0), node.Comp.MaxMana);
+		_mpLabel.Text = potentialValue + " / " + node.Comp.MaxMana;
+		var tween = CreateTween();
+		tween.TweenProperty(_mpProgressBar, "value", potentialValue / node.Comp.MaxMana * 100, TimeToUpdateBar);
+		MobNameLinkButton.FocusExited += tween.Kill;
 	}
 
 	private void OnMouseEntered()
@@ -121,7 +181,7 @@ public partial class CombatMobRepresentationSystem : Control
 
 		MobNameLinkButton.Text = descriptionComponent.DisplayName;
 		_hpLabel.Text = healthComponent.Health + " / " + healthComponent.MaxHealth;
-		_hpProgressBar.Value = (double) healthComponent.Health / healthComponent.MaxHealth * 100;
+		HpProgressBar.Value = (double) healthComponent.Health / healthComponent.MaxHealth * 100;
 
 		if (manaComponent.MaxMana == 0)
 		{

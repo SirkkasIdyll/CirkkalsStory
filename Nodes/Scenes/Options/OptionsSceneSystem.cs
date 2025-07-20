@@ -13,9 +13,9 @@ public partial class OptionsSceneSystem : Control
 	public Control? PreviousScene;
 	
 	[ExportCategory("Owned")]
-	[Export] private AudioStreamPlayer2D _cancelSound = default!;
-	[Export] private StandardButton _backButton = default!;
-	[Export] private StandardButton _resetButton = default!;
+	[Export] private AudioStreamPlayer2D _cancelSound = null!;
+	[Export] private StandardButton _backButton = null!;
+	[Export] private StandardButton _resetButton = null!;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()

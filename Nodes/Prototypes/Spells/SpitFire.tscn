@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://bct735rmr2sac"]
+
+[ext_resource type="PackedScene" uid="uid://dhu3c7ivg5ahy" path="res://Nodes/Prototypes/Spells/BaseSpell.tscn" id="1_1o4x8"]
+[ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="2_cfgq5"]
+
+[node name="SpitFire" instance=ExtResource("1_1o4x8")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Spit fire"
+Description = "You spit a bit of fire at the enemy."
+
+[node name="ManaCostComponent" parent="." index="2"]
+ManaCost = 5
+
+[node name="DamageComponent" type="Node2D" parent="." index="4"]
+script = ExtResource("2_cfgq5")
+Damage = 5.0
+DamageCategory = 1
+DamageType = 3

@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://dsoldoqjy6bpq"]
+
+[ext_resource type="PackedScene" uid="uid://2ulrdr7e6iow" path="res://Nodes/Prototypes/Abilities/BaseAbility.tscn" id="1_mo1ko"]
+[ext_resource type="Script" uid="uid://4y7rutpscwh5" path="res://Components/Damageable/FlatDamageResistComponent.cs" id="2_mkpy3"]
+
+[node name="RoughSkin" instance=ExtResource("1_mo1ko")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Rough Skin"
+Description = "Your lizard-like skin reduces the amount of fire damage you take."
+
+[node name="FlatDamageResistComponent" type="Node2D" parent="." index="2"]
+script = ExtResource("2_mkpy3")
+FlatDamageTypeResistance = Dictionary[int, float]({
+3: 2.0
+})

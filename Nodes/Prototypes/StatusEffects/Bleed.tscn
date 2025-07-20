@@ -1,19 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://02un0me2llcu"]
+[gd_scene load_steps=3 format=3 uid="uid://blv3louwyx4tm"]
 
 [ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="1_7cbcr"]
-[ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="1_sfvw4"]
-[ext_resource type="Script" uid="uid://b2hpgbh12fjcd" path="res://Components/StatusEffect/StatusEffectComponent.cs" id="3_m7c2a"]
+[ext_resource type="PackedScene" uid="uid://djn36g8g325x4" path="res://Nodes/Prototypes/StatusEffects/BaseStatusEffect.tscn" id="1_8dy66"]
 
-[node name="Bleed" type="Node2D"]
+[node name="Bleed" instance=ExtResource("1_8dy66")]
 
-[node name="DamageComponent" type="Node2D" parent="."]
-script = ExtResource("1_7cbcr")
-Damage = 5
-
-[node name="DescriptionComponent" type="Node2D" parent="."]
-script = ExtResource("1_sfvw4")
+[node name="DescriptionComponent" parent="." index="0"]
 DisplayName = "Bleed"
+Description = "Take internal damage every turn until the bleeding stops."
 
-[node name="StatusEffectComponent" type="Node2D" parent="."]
-script = ExtResource("3_m7c2a")
+[node name="StatusEffectComponent" parent="." index="1"]
 TurnsPerApplication = 2
+
+[node name="DamageComponent" type="Node2D" parent="." index="2"]
+script = ExtResource("1_7cbcr")
+DamageType = 7

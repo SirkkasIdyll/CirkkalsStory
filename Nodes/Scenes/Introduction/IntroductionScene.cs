@@ -12,11 +12,10 @@ public partial class IntroductionScene : Control
 	[ExportCategory("Instantiated")]
 	[Export] private AudioStream? _bgm;
 	[Export] private PackedScene? _nextScene;
+	[Export] private PackedScene? _mobPlayer;
 	
 	[ExportCategory("Owned")]
-	[Export] private StandardButton _acceptButton = default!;
-	[Export] private TextEdit _textField = default!;
-
+	[Export] private StandardButton _acceptButton = null!;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -34,11 +33,6 @@ public partial class IntroductionScene : Control
 
 	private void OnAcceptButtonPressed()
 	{
-		var mobName = _textField.Text;
-		/*var jsonString = JsonSerializer.Serialize(mobName);
-		using var file = FileAccess.Open("user://example_file.dat", FileAccess.ModeFlags.Write);
-		file.StoreString(jsonString);*/
-		
 		if (_nextScene != null)
 		{
 			var signal = new ChangeActiveSceneSignal(_nextScene);

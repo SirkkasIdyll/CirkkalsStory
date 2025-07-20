@@ -3,12 +3,12 @@
 [ext_resource type="Script" uid="uid://ggixe6gwqamu" path="res://Nodes/Scenes/Combat/CombatSceneSystem.cs" id="1_y778k"]
 [ext_resource type="AudioStream" uid="uid://birwbjmxflecy" path="res://Resources/Sounds/57-Spanish-Duet-FULL-SM387.wav" id="2_tp54h"]
 [ext_resource type="PackedScene" uid="uid://byc6u3b0pbhv7" path="res://Nodes/Scenes/Combat/SkillSelection/SkillSelectionScene.tscn" id="3_y778k"]
+[ext_resource type="PackedScene" uid="uid://dgnel5p0sir2t" path="res://Nodes/UI/DialogBox/DialogBox.tscn" id="4_1tkx5"]
 [ext_resource type="PackedScene" uid="uid://p3cx4x7ahdxg" path="res://Nodes/Scenes/Combat/CombatMobRepresentation.tscn" id="4_tp54h"]
-[ext_resource type="PackedScene" uid="uid://hkavjwdmu5da" path="res://Nodes/Prototypes/Mobs/MobPlaceholder.tscn" id="5_f4cj5"]
 [ext_resource type="Script" uid="uid://cjtek16utmv1j" path="res://Nodes/Scenes/Combat/ActionsItemListSystem.cs" id="5_o60ty"]
 [ext_resource type="PackedScene" uid="uid://b6lg3dwd6hear" path="res://Nodes/Scenes/Combat/SpellSelection/SpellSelectionScene.tscn" id="5_tp54h"]
 
-[node name="CombatScene" type="Control" node_paths=PackedStringArray("Players", "_actionsItemList", "_enemiesVBoxContainer", "_playersVBoxContainer")]
+[node name="CombatScene" type="Control" node_paths=PackedStringArray("_actionsItemList", "_enemiesVBoxContainer", "_playersVBoxContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,11 +17,11 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_y778k")
 _bgm = ExtResource("2_tp54h")
-Players = [NodePath("MobPlaceholder")]
 _actionsItemList = NodePath("ActionsItemList")
 _combatMobRepresentation = ExtResource("4_tp54h")
 _combatSkillSelection = ExtResource("3_y778k")
 _combatSpellSelection = ExtResource("5_tp54h")
+_dialogBox = ExtResource("4_1tkx5")
 _enemiesVBoxContainer = NodePath("MarginContainer/EnemiesVBoxContainer")
 _playersVBoxContainer = NodePath("MarginContainer2/PlayersVBoxContainer")
 
@@ -87,7 +87,3 @@ item_1/text = "Spells"
 item_2/text = "Flee"
 script = ExtResource("5_o60ty")
 metadata/_edit_use_anchors_ = true
-
-[node name="Timer" type="Timer" parent="."]
-
-[node name="MobPlaceholder" parent="." instance=ExtResource("5_f4cj5")]

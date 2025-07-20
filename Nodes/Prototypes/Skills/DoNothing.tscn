@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://ca4pxdwrnys8k"]
+
+[ext_resource type="PackedScene" uid="uid://d24gatuy1upn6" path="res://Nodes/Prototypes/Skills/BaseSkill.tscn" id="1_f1crx"]
+
+[node name="DoNothing" instance=ExtResource("1_f1crx")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Do Nothing"
+Description = "Vegetate."

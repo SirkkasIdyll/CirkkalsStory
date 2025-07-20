@@ -4,20 +4,13 @@
 
 [node name="MobSlime" instance=ExtResource("1_ckb4q")]
 
-[node name="DamageableComponent" parent="." index="0"]
-DamageTypeResistance = Dictionary[int, float]({
-0: 0.0,
-1: 1.0,
-2: 1.0,
-3: 1.0,
-4: 1.0,
-5: 1.0,
-6: 1.0
-})
-
 [node name="DescriptionComponent" parent="." index="1"]
 DisplayName = "Slime"
 
 [node name="HealthComponent" parent="." index="2"]
-MaxHealth = 5
-Health = 5
+MaxHealth = 10
+Health = 10
+
+[node name="MobComponent" parent="." index="4"]
+Abilities = Array[String](["Squishy"])
+Skills = Array[String](["SlimeTackle"])

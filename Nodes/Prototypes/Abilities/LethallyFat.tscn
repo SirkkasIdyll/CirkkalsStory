@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://hqa1abp8ptot"]
+
+[ext_resource type="PackedScene" uid="uid://2ulrdr7e6iow" path="res://Nodes/Prototypes/Abilities/BaseAbility.tscn" id="1_jt2gm"]
+[ext_resource type="Script" uid="uid://cqdpyx7usiyly" path="res://Components/Damage/FlatDamageIncreaseComponent.cs" id="2_ckcub"]
+
+[node name="LethallyFat" instance=ExtResource("1_jt2gm")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Lethally Fat"
+
+[node name="FlatDamageIncreaseComponent" type="Node2D" parent="." index="2"]
+script = ExtResource("2_ckcub")
+FlatDamageTypeIncrease = Dictionary[int, float]({
+0: 500.0
+})

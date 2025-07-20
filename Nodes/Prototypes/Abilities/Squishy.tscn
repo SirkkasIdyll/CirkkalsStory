@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bif5rdb3ne3ac"]
+
+[ext_resource type="PackedScene" uid="uid://2ulrdr7e6iow" path="res://Nodes/Prototypes/Abilities/BaseAbility.tscn" id="1_22h18"]
+[ext_resource type="Script" uid="uid://4y7rutpscwh5" path="res://Components/Damageable/FlatDamageResistComponent.cs" id="2_6u46h"]
+
+[node name="Squishy" instance=ExtResource("1_22h18")]
+
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Squishy"
+Description = "Your squishiness causes you to take less blunt damage."
+
+[node name="FlatDamageResistComponent" type="Node2D" parent="." index="2"]
+script = ExtResource("2_6u46h")
+FlatDamageTypeResistance = Dictionary[int, float]({
+0: 10.0
+})

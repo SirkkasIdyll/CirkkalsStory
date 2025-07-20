@@ -1,6 +1,5 @@
 using CS.Components.Description;
 using CS.Components.Magic;
-using CS.Components.Skills;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -10,18 +9,22 @@ namespace CS.Nodes.Scenes.Combat.SpellSelection;
 public partial class SpellSelectionSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
-	private MagicSystem _magicSystem = default!;
-	private Array<string> _spells = [];
+	private MagicSystem _magicSystem = null!;
+	
+	/// <summary>
+	/// Key is the display name, value is the actual skill node
+	/// </summary>
+	private Dictionary<string, Node> _spells = [];
 	
 	[ExportCategory("Owned")]
-	[Export] private SpellSelectionItemListSystem _spellSelectionItemListSystem = default!;
-	[Export] private Label _spellName = default!;
-	[Export] private Label _spellDescription = default!;
-	[Export] private VBoxContainer _effectContainer = default!;
-	[Export] private VBoxContainer _costContainer = default!;
+	[Export] private SpellSelectionItemListSystem _spellSelectionItemListSystem = null!;
+	[Export] private Label _spellName = null!;
+	[Export] private Label _spellDescription = null!;
+	[Export] private VBoxContainer _effectContainer = null!;
+	[Export] private VBoxContainer _costContainer = null!;
 	
 	[Signal]
-	public delegate void SpellChosenEventHandler(string spell);
+	public delegate void SpellChosenEventHandler(Node node);
 	
 	[Signal]
 	public delegate void EscapePressedEventHandler(Node node);
@@ -87,7 +90,10 @@ public partial class SpellSelectionSceneSystem : Control
 	/// <param name="index"></param>
 	private void OnItemActivated(long index)
 	{
-		EmitSignalSpellChosen(_spellSelectionItemListSystem.GetItemText((int) index).Replace(" ", string.Empty));
+		if (!_spells.TryGetValue(_spellSelectionItemListSystem.GetItemText((int)index), out var spellNode))
+			return;
+		
+		EmitSignalSpellChosen(spellNode);
 		SetVisible(false);
 	}
 
@@ -97,7 +103,7 @@ public partial class SpellSelectionSceneSystem : Control
 	/// <param name="spellName">The skill to be further inspected</param>
 	private void OnPreviewSpell(string spellName)
 	{
-		if (!_magicSystem.TryGetSpell(spellName, out var spellNode))
+		if (!_spells.TryGetValue(spellName, out var spellNode))
 			return;
 
 		if (!NodeManager.Instance.TryGetComponent<DescriptionComponent>(spellNode, out var descriptionComponent))
@@ -125,6 +131,7 @@ public partial class SpellSelectionSceneSystem : Control
 			if (!NodeManager.Instance.TryGetComponent<DescriptionComponent>(spellNode, out var descriptionComponent))
 				return;
 			
+			_spells.Add(descriptionComponent.DisplayName, spellNode);
 			_spellSelectionItemListSystem?.AddItem(descriptionComponent.DisplayName);
 		}
 		

@@ -31,6 +31,7 @@ public class NodeSystemManager
     /// </summary>
     public void InitializeNodeSystems(Node mainScene)
     {
+        NodeSystemDictionary.Clear();
         _mainScene = mainScene;
         
         // Get every NodeSystem and call their _SystemReady function since I can't type-hint Godot's _Ready function
@@ -51,11 +52,26 @@ public class NodeSystemManager
         }
     }
 
+    /// <summary>
+    /// After all systems are initialized, system dependencies can be injected without worry of order of initialization
+    /// </summary>
     public void InjectNodeSystemDependencies()
     {
         foreach (var nodeSystem in NodeSystemDictionary.Values)
         {
-            nodeSystem._InjectDependencies();
+            var fields = nodeSystem.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance ).Where(t => t.GetCustomAttribute<InjectDependency>(false) != null);
+            foreach (var field in fields)
+            {
+                if (NodeSystemDictionary.TryGetValue(field.FieldType.Name, out var dependency))
+                    field.SetValue(nodeSystem, dependency);
+
+                if (field.FieldType.Name == NodeManager.Instance.GetType().Name)
+                    field.SetValue(nodeSystem, NodeManager.Instance);
+                
+                if (field.FieldType.Name == NodeSystemManager.Instance.GetType().Name)
+                    field.SetValue(nodeSystem, NodeSystemManager.Instance);
+                // GD.Print("Injected " + nodeSystem.Name + " as a dependency");
+            }
         }
     }
 
@@ -76,3 +92,11 @@ public class NodeSystemManager
         return nodeSystem != null;
     }
 }
+
+/// <summary>
+/// <see cref="NodeSystemManager"/> will run the _InjectDepencies() function on each NodeSystem
+/// Each <see cref="NodeSystem"/> will go through its PRIVATE field instances with this attribute
+/// and assign the appropriate system to it
+/// </summary>
+[AttributeUsage(AttributeTargets.Field)]
+public class InjectDependency : Attribute { }

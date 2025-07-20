@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://cdc0v34gmhjey"]
+
+[ext_resource type="PackedScene" uid="uid://djn36g8g325x4" path="res://Nodes/Prototypes/StatusEffects/BaseStatusEffect.tscn" id="1_iynrk"]
+[ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="2_518jp"]
+
+[node name="Poison" instance=ExtResource("1_iynrk")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Poison"
+Description = "Take poison damage every turn."
+
+[node name="StatusEffectComponent" parent="." index="1"]
+TurnsPerApplication = 5
+
+[node name="DamageComponent" type="Node2D" parent="." index="2"]
+script = ExtResource("2_518jp")
+DamageCategory = 1
+DamageType = 6

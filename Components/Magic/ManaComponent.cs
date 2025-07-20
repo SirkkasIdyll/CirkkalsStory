@@ -29,6 +29,16 @@ public partial class ManaComponent : Component
     }
 }
 
+public partial class PreviewManaAlteredSignal : UserSignalArgs
+{
+    public int Amount;
+
+    public PreviewManaAlteredSignal(int amount)
+    {
+        Amount = amount;
+    }
+}
+
 public partial class ManaAlteredSignal : UserSignalArgs
 {
     

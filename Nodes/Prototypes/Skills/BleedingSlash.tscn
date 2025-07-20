@@ -1,34 +1,28 @@
-[gd_scene load_steps=7 format=3 uid="uid://bpthgm81l4ap7"]
+[gd_scene load_steps=5 format=3 uid="uid://dbag6w5ygrva6"]
 
 [ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="1_j45vb"]
-[ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="3_8xmuw"]
-[ext_resource type="Script" uid="uid://bo8urbmvfmp8c" path="res://Components/Skills/SkillComponent.cs" id="4_p5p5g"]
+[ext_resource type="PackedScene" uid="uid://d24gatuy1upn6" path="res://Nodes/Prototypes/Skills/BaseSkill.tscn" id="1_vbuy0"]
 [ext_resource type="Script" uid="uid://b8w88sas3vvem" path="res://Components/StatusEffect/StatusEffectApplicatorComponent.cs" id="5_j45vb"]
-[ext_resource type="Script" uid="uid://cmvfomctvourc" path="res://Components/Damageable/TargetingComponent.cs" id="5_q1ux5"]
-[ext_resource type="PackedScene" uid="uid://02un0me2llcu" path="res://Nodes/Prototypes/StatusEffects/Bleed.tscn" id="5_uxeh1"]
+[ext_resource type="PackedScene" uid="uid://blv3louwyx4tm" path="res://Nodes/Prototypes/StatusEffects/Bleed.tscn" id="5_uxeh1"]
 
-[node name="BleedingSlash" type="Node2D"]
+[node name="BleedingSlash" instance=ExtResource("1_vbuy0")]
 
-[node name="DamageComponent" type="Node2D" parent="."]
-script = ExtResource("1_j45vb")
-Damage = 5
-DamageType = 1
-
-[node name="DescriptionComponent" type="Node2D" parent="."]
-script = ExtResource("3_8xmuw")
-DisplayName = "Bleeding Slash"
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Bleeding slash"
 Description = "A swiping attack aimed at the enemy's most vulnerable spots, causing them to take damage for several turns."
 
-[node name="SkillComponent" type="Node2D" parent="."]
-script = ExtResource("4_p5p5g")
+[node name="DamageComponent" type="Node2D" parent="." index="3"]
+script = ExtResource("1_j45vb")
+Damage = 3.0
+DamageType = 1
 
-[node name="StatusEffectApplicatorComponent" type="Node2D" parent="." node_paths=PackedStringArray("StatusEffect")]
+[node name="StatusEffectApplicatorComponent" type="Node2D" parent="." index="4" node_paths=PackedStringArray("StatusEffect")]
 script = ExtResource("5_j45vb")
 StatusEffect = NodePath("Bleed")
 
-[node name="Bleed" parent="StatusEffectApplicatorComponent" instance=ExtResource("5_uxeh1")]
+[node name="Bleed" parent="StatusEffectApplicatorComponent" index="0" instance=ExtResource("5_uxeh1")]
 
-[node name="TargetingComponent" type="Node2D" parent="."]
-script = ExtResource("5_q1ux5")
+[node name="DamageComponent" parent="StatusEffectApplicatorComponent/Bleed" index="2"]
+Damage = 3.0
 
 [editable path="StatusEffectApplicatorComponent/Bleed"]

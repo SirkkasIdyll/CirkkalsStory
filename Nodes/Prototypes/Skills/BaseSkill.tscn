@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="1_pfat6"]
 [ext_resource type="Script" uid="uid://bo8urbmvfmp8c" path="res://Components/Skills/SkillComponent.cs" id="2_r6o2y"]
-[ext_resource type="Script" uid="uid://cmvfomctvourc" path="res://Components/Damageable/TargetingComponent.cs" id="3_u5tph"]
+[ext_resource type="Script" uid="uid://bv5dayjerv8qj" path="res://Components/Damage/TargetingComponent.cs" id="3_u5tph"]
 
 [node name="BaseSkill" type="Node2D"]
 

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using CS.Components.CombatManager;
 using CS.Components.Mob;
 using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
 using Godot;
 using Godot.Collections;
 
@@ -15,10 +15,27 @@ public partial class MagicSystem : NodeSystem
     {
         base._Ready();
 
+        _nodeManager.SignalBus.PreviewActionSignal += OnPreviewAction;
+        _nodeManager.SignalBus.UseActionSignal += OnUseAction;
         _nodeManager.SignalBus.CheckSpellCastableSignal += OnCheckSpellCastable;
-        _nodeManager.SignalBus.CastSpellSignal += OnCastSpellSignal;
         
         LoadDictionary();
+    }
+    
+    private void OnUseAction(Node<MobComponent> node, ref UseActionSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<SpellComponent>(args.Action, out var spellComponent))
+            return;
+        
+        CastSpell(node, (args.Action, spellComponent), false);
+    }
+
+    private void OnPreviewAction(Node<MobComponent> node, ref PreviewActionSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<SpellComponent>(args.Action, out var spellComponent))
+            return;
+        
+        CastSpell(node, (args.Action, spellComponent), true);
     }
     
     private void OnCheckSpellCastable(Node<SpellComponent> node, ref CheckSpellCastableSignal args)
@@ -35,18 +52,24 @@ public partial class MagicSystem : NodeSystem
         args.Castable = true;
     }
 
-    private void OnCastSpellSignal(Node<SpellComponent> node, ref CastSpellSignal args)
+    private void CastSpell(Node<MobComponent> node, Node<SpellComponent> spell, bool preview)
     {
-        if (!_nodeManager.TryGetComponent<ManaCostComponent>(node, out var manaCostComponent))
+        if (!_nodeManager.TryGetComponent<ManaComponent>(node, out var spellcasterManaComponent))
             return;
         
-        if (!_nodeManager.TryGetComponent<ManaComponent>(args.Spellcaster, out var spellcasterManaComponent))
+        if (!_nodeManager.TryGetComponent<ManaCostComponent>(spell, out var manaCostComponent))
             return;
 
+        if (preview)
+        {
+            var previewSignal = new PreviewManaAlteredSignal(-manaCostComponent.ManaCost);
+            _nodeManager.SignalBus.EmitPreviewManaAlteredSignal((node, spellcasterManaComponent), ref previewSignal);
+            return;
+        }
+        
         spellcasterManaComponent.Mana -= manaCostComponent.ManaCost;
-
         var signal = new ManaAlteredSignal();
-        _nodeManager.SignalBus.EmitManaAlteredSignal((args.Spellcaster, spellcasterManaComponent), ref signal);
+        _nodeManager.SignalBus.EmitManaAlteredSignal((node, spellcasterManaComponent), ref signal);
     }
     
     /// <summary>

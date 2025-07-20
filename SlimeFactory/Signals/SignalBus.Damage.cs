@@ -5,6 +5,13 @@ namespace CS.SlimeFactory.Signals;
 
 public partial class SignalBus
 {
+    public delegate void PreviewHealthAlteredSignalHandler(Node<HealthComponent> node, ref PreviewHealthAlteredSignal args);
+    public event PreviewHealthAlteredSignalHandler? PreviewHealthAlteredSignal;
+    public void EmitPreviewHealthAlteredSignal(Node<HealthComponent> node, ref PreviewHealthAlteredSignal args)
+    {
+        PreviewHealthAlteredSignal?.Invoke(node, ref args);
+    }
+    
     public delegate void HealthAlteredSignalHandler(Node<HealthComponent> node, ref HealthAlteredSignal args);
     public event HealthAlteredSignalHandler? HealthAlteredSignal;
     public void EmitHealthAlteredSignal(Node<HealthComponent> node, ref HealthAlteredSignal args)

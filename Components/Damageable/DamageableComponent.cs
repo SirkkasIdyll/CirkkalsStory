@@ -31,16 +31,23 @@ public partial class DamageableComponent : Component
         { DamageType.Fire , 1f},
         { DamageType.Water , 1f},
         { DamageType.Ice , 1f},
-        { DamageType.Poison , 1f}
+        { DamageType.Poison , 1f},
+        { DamageType.Internal, 1f}
     };
 }
 
+/// <summary>
+/// When adding a new DamageCategory, add it to the resistance dictionary
+/// </summary>
 public enum DamageCategory
 {
     Physical,
     Magical
 }
 
+/// <summary>
+/// When adding a new DamageType, add it to the resistance dictionary. Otherwise nothing takes that form of damage.
+/// </summary>
 public enum DamageType
 {
     Blunt,
@@ -50,4 +57,5 @@ public enum DamageType
     Water,
     Ice,
     Poison,
+    Internal
 }

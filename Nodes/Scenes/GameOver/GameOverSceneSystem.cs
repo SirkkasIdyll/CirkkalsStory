@@ -14,7 +14,7 @@ public partial class GameOverSceneSystem : Control
 	[Export] private PackedScene? _nextScene;
 	
 	[ExportCategory("Owned")]
-	[Export] private StandardButton _acceptButton = default!;
+	[Export] private StandardButton _acceptButton = null!;
 	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -28,6 +28,8 @@ public partial class GameOverSceneSystem : Control
 		
 		_acceptButton.Pressed += OnAcceptButtonPressed;
 		_acceptButton.GrabFocus();
+		
+		_nodeManager.SignalBus.EmitGameOverSignal();
 	}
 
 	private void OnAcceptButtonPressed()

@@ -9,18 +9,22 @@ namespace CS.Nodes.Scenes.Combat.SkillSelection;
 public partial class SkillSelectionSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
-	private SkillSystem _skillSystem = default!;
-	private Array<string> _skills = [];
+	private SkillSystem _skillSystem = null!;
+	
+	/// <summary>
+	/// Key is the display name, value is the actual skill node
+	/// </summary>
+	private Dictionary<string, Node> _skills = [];
 	
 	[ExportCategory("Owned")]
-	[Export] private SkillSelectionItemListSystem _skillSelectionItemListSystem = default!;
-	[Export] private Label _skillName = default!;
-	[Export] private Label _skillDescription = default!;
-	[Export] private VBoxContainer _effectContainer = default!;
-	[Export] private VBoxContainer _costContainer = default!;
+	[Export] private SkillSelectionItemListSystem _skillSelectionItemListSystem = null!;
+	[Export] private Label _skillName = null!;
+	[Export] private Label _skillDescription = null!;
+	[Export] private VBoxContainer _effectContainer = null!;
+	[Export] private VBoxContainer _costContainer = null!;
 	
 	[Signal]
-	public delegate void SkillChosenEventHandler(string skill);
+	public delegate void SkillChosenEventHandler(Node node);
 	
 	[Signal]
 	public delegate void EscapePressedEventHandler(Node node);
@@ -86,7 +90,10 @@ public partial class SkillSelectionSceneSystem : Control
 	/// <param name="index"></param>
 	private void OnItemActivated(long index)
 	{
-		EmitSignalSkillChosen(_skillSelectionItemListSystem.GetItemText((int) index).Replace(" ", string.Empty));
+		if (!_skills.TryGetValue(_skillSelectionItemListSystem.GetItemText((int)index), out var skillNode))
+			return;
+		
+		EmitSignalSkillChosen(skillNode);
 		SetVisible(false);
 	}
 
@@ -96,9 +103,9 @@ public partial class SkillSelectionSceneSystem : Control
 	/// <param name="skillName">The skill to be further inspected</param>
 	private void OnPreviewSkill(string skillName)
 	{
-		if (!_skillSystem.TryGetSkill(skillName, out var skillNode))
+		if (!_skills.TryGetValue(skillName, out var skillNode))
 			return;
-
+		
 		if (!NodeManager.Instance.TryGetComponent<DescriptionComponent>(skillNode, out var descriptionComponent))
 			return;
 
@@ -106,10 +113,6 @@ public partial class SkillSelectionSceneSystem : Control
 		descriptionComponent.CombatCosts.Clear();
 		var signal = new ReloadCombatDescriptionSignal();
 		_nodeManager.SignalBus.EmitReloadCombatDescriptionSignal((skillNode, descriptionComponent), ref signal);
-
-		/*var jsonString = Json.Stringify(descriptionComponent);
-		using var file = FileAccess.Open("user://example_file.dat", FileAccess.ModeFlags.Write);
-		file.StoreString(jsonString);*/
 	}
 
 	/// <summary>
@@ -127,6 +130,7 @@ public partial class SkillSelectionSceneSystem : Control
 			if (!NodeManager.Instance.TryGetComponent<DescriptionComponent>(skillNode, out var descriptionComponent))
 				return;
 			
+			_skills.Add(descriptionComponent.DisplayName, skillNode);
 			_skillSelectionItemListSystem?.AddItem(descriptionComponent.DisplayName);
 		}
 		

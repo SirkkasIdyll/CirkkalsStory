@@ -15,7 +15,7 @@ public partial class VolumeHSliderSystem : HSlider, IConfigSystem
 
 	
 	[ExportCategory("Owned")]
-	[Export] private Label _valueLabel = default!; // Label that shows the current volume level
+	[Export] private Label _valueLabel = null!; // Label that shows the current volume level
 	
 	public override void _Ready()
 	{

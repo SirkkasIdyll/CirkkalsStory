@@ -15,7 +15,7 @@ public partial class DescriptionSystem : NodeSystem
     {
         if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
             return "DEFAULT_NAME";
-
+        
         return descriptionComponent.DisplayName;
     }
 }
