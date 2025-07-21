@@ -1,5 +1,6 @@
 using CS.Components.Description;
 using CS.Components.Skills;
+using CS.Nodes.UI.Tooltip;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -9,14 +10,16 @@ namespace CS.Nodes.Scenes.Combat.SkillSelection;
 public partial class SkillSelectionSceneSystem : Control
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
+	private DescriptionSystem _descriptionSystem = null!;
 	private SkillSystem _skillSystem = null!;
 	
 	/// <summary>
 	/// Key is the display name, value is the actual skill node
 	/// </summary>
 	private Dictionary<string, Node> _skills = [];
-	
+
 	[ExportCategory("Owned")]
+	[Export] private PackedScene _customTooltip = null!;
 	[Export] private SkillSelectionItemListSystem _skillSelectionItemListSystem = null!;
 	[Export] private Label _skillName = null!;
 	[Export] private Label _skillDescription = null!;
@@ -31,20 +34,15 @@ public partial class SkillSelectionSceneSystem : Control
 	
 	public override void _Ready()
 	{
-		if (NodeSystemManager.Instance.TryGetNodeSystem<SkillSystem>(out var nodeSystem))
-			_skillSystem = nodeSystem;
+		if (NodeSystemManager.Instance.TryGetNodeSystem<DescriptionSystem>(out var descriptionSystem))
+			_descriptionSystem = descriptionSystem;
+		
+		if (NodeSystemManager.Instance.TryGetNodeSystem<SkillSystem>(out var skillSystem))
+			_skillSystem = skillSystem;
 
 		_skillSelectionItemListSystem.PreviewSkill += OnPreviewSkill;
 		_skillSelectionItemListSystem.ItemActivated += OnItemActivated;
 		_skillSelectionItemListSystem.EscapePressed += OnEscapePressed;
-		_nodeManager.SignalBus.ReloadCombatDescriptionSignal += OnReloadCombatDescription;
-	}
-
-	public override void _ExitTree()
-	{
-		base._ExitTree();
-		
-		_nodeManager.SignalBus.ReloadCombatDescriptionSignal -= OnReloadCombatDescription;
 	}
 
 	private void OnEscapePressed()
@@ -52,36 +50,19 @@ public partial class SkillSelectionSceneSystem : Control
 		EmitSignalEscapePressed(this);
 	}
 
-	private void OnReloadCombatDescription(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args)
+	private void OnMetaHovered(Variant name)
 	{
-		foreach (var child in _effectContainer.GetChildren())
-		{
-			if (child.Name != "Spacer")
-				child.QueueFree();
-		}
+		if (!_nodeManager.NodeDictionary.TryGetValue(name.AsString(), out var node))
+			return;
 
-		foreach (var child in _costContainer.GetChildren())
-		{
-			if (child.Name != "Spacer")
-				child.QueueFree();
-		}
-
-		_skillName.SetText(node.Comp.DisplayName);
-		_skillDescription.SetText(node.Comp.Description);
-
-		foreach (var effect in node.Comp.CombatEffects)	
-		{
-			var label = new Label();
-			label.SetText(effect);
-			_effectContainer.AddChild(label);
-		}
-
-		foreach (var cost in node.Comp.CombatCosts)
-		{
-			var label = new Label();
-			label.SetText(cost);
-			_costContainer.AddChild(label);
-		}
+		var tooltip = _customTooltip.Instantiate<CustomTooltip>();
+		tooltip.SetTooltipTitle(_descriptionSystem.GetDisplayName(node));
+		tooltip.SetTooltipDescription(_descriptionSystem.GetDescription(node));
+		tooltip.SetTooltipBulletpoints(_descriptionSystem.GetEffects(node));
+		AddChild(tooltip);
+		var mousePosition = GetViewport().GetMousePosition();
+		tooltip.Popup(new Rect2I((int)mousePosition.X - 16, (int)mousePosition.Y - 16, 0, 0));
+		tooltip.MouseExited += tooltip.QueueFree;
 	}
 	
 	/// <summary>
@@ -106,13 +87,40 @@ public partial class SkillSelectionSceneSystem : Control
 		if (!_skills.TryGetValue(skillName, out var skillNode))
 			return;
 		
-		if (!NodeManager.Instance.TryGetComponent<DescriptionComponent>(skillNode, out var descriptionComponent))
-			return;
+		foreach (var child in _effectContainer.GetChildren())
+		{
+			if (child.Name != "Spacer")
+				child.QueueFree();
+		}
 
-		descriptionComponent.CombatEffects.Clear();
-		descriptionComponent.CombatCosts.Clear();
-		var signal = new ReloadCombatDescriptionSignal();
-		_nodeManager.SignalBus.EmitReloadCombatDescriptionSignal((skillNode, descriptionComponent), ref signal);
+		foreach (var child in _costContainer.GetChildren())
+		{
+			if (child.Name != "Spacer")
+				child.QueueFree();
+		}
+
+		_skillName.SetText(_descriptionSystem.GetDisplayName(skillNode));
+		_skillDescription.SetText(_descriptionSystem.GetDescription(skillNode));
+
+		foreach (var effect in _descriptionSystem.GetEffects(skillNode))	
+		{
+			var label = new RichTextLabel();
+			label.BbcodeEnabled = true;
+			label.SetFitContent(true);
+			label.SetText(effect);
+			label.MetaHoverStarted += OnMetaHovered;
+			_effectContainer.AddChild(label);
+		}
+
+		foreach (var cost in _descriptionSystem.GetCosts(skillNode))
+		{
+			var label = new RichTextLabel();
+			label.BbcodeEnabled = true;
+			label.SetFitContent(true);
+			label.SetText(cost);
+			label.SetHorizontalAlignment(HorizontalAlignment.Right);
+			_costContainer.AddChild(label);
+		}
 	}
 
 	/// <summary>

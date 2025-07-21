@@ -74,6 +74,35 @@ public class DamageTest
         AssertInt(damageDealt).IsEqual(5);
         AssertInt(healthComponent.Health).IsEqual(95);
     }
+
+    [TestCase]
+    public void TestPercentageDamage()
+    {
+        var attacker = new Node();
+        AddNode(attacker);
+        
+        var attack = new Node();
+        AssertBool(_nodeManager.TryAddComponent<PercentageDamageComponent>(attack)).IsTrue();
+        AssertBool(_nodeManager.TryGetComponent<PercentageDamageComponent>(attack, out var percentageDamageComponent)).IsTrue();
+        percentageDamageComponent!.PercentDamage = 25;
+        AddNode(attack);
+        AutoFree(percentageDamageComponent);
+        
+        var defender = new Node();
+        AssertBool(_nodeManager.TryAddComponent<DamageableComponent>(defender)).IsTrue();
+        AssertBool(_nodeManager.TryGetComponent<DamageableComponent>(defender, out var damageableComponent)).IsTrue();
+        AssertBool(_nodeManager.TryAddComponent<HealthComponent>(defender)).IsTrue();
+        AssertBool(_nodeManager.TryGetComponent<HealthComponent>(defender, out var healthComponent)).IsTrue();
+        healthComponent!.MaxHealth = 100;
+        healthComponent!.Health = 100;
+        AddNode(defender);
+        AutoFree(damageableComponent);
+        AutoFree(healthComponent);
+        
+        _damageSystem.TryDamageTarget((attack, percentageDamageComponent), defender, attacker, false, out var damageDealt);
+        AssertInt(damageDealt).IsEqual(25);
+        AssertInt(healthComponent.Health).IsEqual(75);
+    }
     
     /// <summary>
     /// Attack an enemy, enemy should take expected damage

@@ -24,15 +24,20 @@ public partial class DescriptionComponent : Component
     /// <summary>
     /// What kind of effects the ability has when used in combat
     /// </summary>
-    public Array<string> CombatEffects = new();
+    public Array<string> Effects = new();
     
     /// <summary>
     /// What the ability costs to use when in combat
     /// </summary>
-    public Array<string> CombatCosts = new();
+    public Array<string> Costs = new();
 }
 
-public partial class ReloadCombatDescriptionSignal : UserSignalArgs
+public partial class GetActionEffectsDescriptionSignal : UserSignalArgs
+{
+    
+}
+
+public partial class GetActionCostsDescriptionSignal : UserSignalArgs
 {
     
 }

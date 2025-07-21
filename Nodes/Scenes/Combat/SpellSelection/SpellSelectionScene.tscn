@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://b6lg3dwd6hear"]
+[gd_scene load_steps=6 format=3 uid="uid://b6lg3dwd6hear"]
 
 [ext_resource type="Theme" uid="uid://bofxw0bub14i4" path="res://Resources/Themes/default.tres" id="1_indg6"]
 [ext_resource type="Script" uid="uid://b3bndolqtmmvt" path="res://Nodes/Scenes/Combat/SpellSelection/SpellSelectionSceneSystem.cs" id="2_t7x41"]
 [ext_resource type="Script" uid="uid://bf0h4am7leig4" path="res://Nodes/Scenes/Combat/SpellSelection/SpellSelectionItemListSystem.cs" id="3_dmohm"]
+[ext_resource type="PackedScene" uid="uid://cpyn8cwvg8yve" path="res://Nodes/UI/Tooltip/CustomTooltip.tscn" id="3_kqxid"]
 [ext_resource type="PackedScene" uid="uid://djj4j1dplagri" path="res://Nodes/UI/Utility/SpacerScene.tscn" id="4_7vjd6"]
 
 [node name="SpellSelection" type="Control" node_paths=PackedStringArray("_spellSelectionItemListSystem", "_spellName", "_spellDescription", "_effectContainer", "_costContainer")]
@@ -14,6 +15,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_indg6")
 script = ExtResource("2_t7x41")
+_customTooltip = ExtResource("3_kqxid")
 _spellSelectionItemListSystem = NodePath("HBoxContainer/PanelContainer/ItemList")
 _spellName = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/SpellName")
 _spellDescription = NodePath("HBoxContainer/PanelContainer2/MarginContainer/VBoxContainer/SpellDescription")

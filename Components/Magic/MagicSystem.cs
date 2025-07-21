@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CS.Components.CombatManager;
+using CS.Components.Damage;
+using CS.Components.Description;
 using CS.Components.Mob;
 using CS.SlimeFactory;
 using Godot;
@@ -15,11 +17,19 @@ public partial class MagicSystem : NodeSystem
     {
         base._Ready();
 
+        _nodeManager.SignalBus.GetActionCostsDescriptionSignal += OnGetActionCostsDescriptionSignal;
         _nodeManager.SignalBus.PreviewActionSignal += OnPreviewAction;
         _nodeManager.SignalBus.UseActionSignal += OnUseAction;
-        _nodeManager.SignalBus.CheckSpellCastableSignal += OnCheckSpellCastable;
         
         LoadDictionary();
+    }
+    
+    private void OnGetActionCostsDescriptionSignal(Node<DescriptionComponent> node, ref GetActionCostsDescriptionSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<ManaCostComponent>(node, out var manaCostComponent))
+            return;
+
+        node.Comp.Costs.Add("Mana Cost: " + manaCostComponent.ManaCost);
     }
     
     private void OnUseAction(Node<MobComponent> node, ref UseActionSignal args)
@@ -38,21 +48,21 @@ public partial class MagicSystem : NodeSystem
         CastSpell(node, (args.Action, spellComponent), true);
     }
     
-    private void OnCheckSpellCastable(Node<SpellComponent> node, ref CheckSpellCastableSignal args)
+    public bool IsSpellCastable(Node<MobComponent> node, Node<SpellComponent> spell)
     {
-        if (!_nodeManager.TryGetComponent<ManaCostComponent>(node, out var manaCostComponent))
-            return;
+        if (!_nodeManager.TryGetComponent<ManaCostComponent>(spell, out var manaCostComponent))
+            return false;
         
-        if (!_nodeManager.TryGetComponent<ManaComponent>(args.Spellcaster, out var spellcasterManaComponent))
-            return;
+        if (!_nodeManager.TryGetComponent<ManaComponent>(node, out var spellcasterManaComponent))
+            return false;
 
-        if (manaCostComponent.ManaCost >= spellcasterManaComponent.Mana)
-            return;
-        
-        args.Castable = true;
+        if (manaCostComponent.ManaCost > spellcasterManaComponent.Mana)
+            return false;
+
+        return true;
     }
 
-    private void CastSpell(Node<MobComponent> node, Node<SpellComponent> spell, bool preview)
+    public void CastSpell(Node<MobComponent> node, Node<SpellComponent> spell, bool preview)
     {
         if (!_nodeManager.TryGetComponent<ManaComponent>(node, out var spellcasterManaComponent))
             return;

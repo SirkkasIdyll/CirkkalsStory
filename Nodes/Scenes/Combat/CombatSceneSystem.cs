@@ -109,6 +109,14 @@ public partial class CombatSceneSystem : Control
 	{
 		if (_chosenAction != null)
 			HideActionTargets(_chosenAction);
+
+		foreach (var child in _playersVBoxContainer.GetChildren())
+		{
+			if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
+				continue;
+			
+			combatMobRepresentationSystem.CancelPreview();
+		}
 		
 		_actionsItemList.SetVisible(true);
 	}
@@ -158,7 +166,7 @@ public partial class CombatSceneSystem : Control
 
 		var node = _combatSpellSelection.Instantiate<SpellSelectionSceneSystem>();
 		AddChild(node);
-		node.SetSpells(spells);
+		node.SetSpells(spells, _turnManagerSystem.GetActiveMob());
 		node.EscapePressed += OnEscapePressedClosePopup;
 		node.SpellChosen += OnSpellChosen;
 	}

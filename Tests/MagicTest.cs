@@ -53,4 +53,32 @@ public class MagicTest
             }
         }
     }
+
+    [TestCase]
+    public void TestManaUsage()
+    {
+        var spell = new Node();
+        AssertBool(_nodeManager.TryAddComponent<SpellComponent>(spell)).IsTrue();
+        AssertBool(_nodeManager.TryGetComponent<SpellComponent>(spell, out var spellComponent)).IsTrue();
+        AssertBool(_nodeManager.TryAddComponent<ManaCostComponent>(spell)).IsTrue();
+        AssertBool(_nodeManager.TryGetComponent<ManaCostComponent>(spell, out var manaCostComponent)).IsTrue();
+        manaCostComponent!.ManaCost = 5;
+        AddNode(spell);
+        AutoFree(spellComponent);
+        AutoFree(manaCostComponent);
+        
+        var spellcaster = new Node();
+        AssertBool(_nodeManager.TryAddComponent<MobComponent>(spellcaster)).IsTrue();
+        AssertBool(_nodeManager.TryGetComponent<MobComponent>(spellcaster, out var mobComponent)).IsTrue();
+        AssertBool(_nodeManager.TryAddComponent<ManaComponent>(spellcaster)).IsTrue();
+        AssertBool(_nodeManager.TryGetComponent<ManaComponent>(spellcaster, out var manaComponent)).IsTrue();
+        manaComponent!.MaxMana = 100;
+        manaComponent!.Mana = 100;
+        AddNode(spellcaster);
+        AutoFree(mobComponent);
+        AutoFree(manaComponent);
+        
+        _magicSystem.CastSpell((spellcaster, mobComponent!), (spell, spellComponent!), false);
+        AssertInt(manaComponent.Mana).IsEqual(95);
+    }
 }
