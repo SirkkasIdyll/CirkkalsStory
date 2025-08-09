@@ -1,13 +1,16 @@
-﻿using CS.SlimeFactory;
+﻿using CS.Components.Player;
+using CS.SlimeFactory;
 using Godot;
 
 namespace CS.Components.Interaction;
 
 public partial class InteractSystem : NodeSystem
 {
-    public ShaderMaterial OutlineShader = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/OutlineCanvasGroup.tres");
-    public Vector4 InRangeColor = new Vector4(0.99f, 0.956f, 0.832f, 0.647f);
-    public Vector4 OutOfRangeColor = new Vector4(0.811f, 0.327f, 0.289f, 0.779f);
+    [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
+    
+    public ShaderMaterial InRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/InRangeOutline.tres");
+    public ShaderMaterial OutOfRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/OutOfRangeOutline.tres");
+
     
     public override void _Ready()
     {
@@ -17,32 +20,32 @@ public partial class InteractSystem : NodeSystem
         _nodeManager.SignalBus.HideInteractOutlineSignal += OnHideInteractOutline;
     }
 
-    /*public override void _Input(InputEvent @event)
+    public override void _Input(InputEvent @event)
     {
-        if (SpriteGroup == null)
-            return;
-
-        if (SpriteGroup.Material != OutlineShader)
-            return;
-
-        /*if (!Sprite.IsPixelOpaque(ToLocal(GetGlobalMousePosition())))
-            return;#1#
-
+        base._Input(@event);
+        
         if ((@event is not InputEventMouseButton inputEventMouse || !inputEventMouse.Pressed ||
              inputEventMouse.ButtonIndex != MouseButton.Left) && !Input.IsActionPressed("interact"))
             return;
-                
-        if (!_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerSystem))
-            return;
-                    
-        var signal = new InteractWithSignal(playerSystem.GetPlayer());
-        _nodeManager.SignalBus.EmitInteractWithSignal((GetParent(), this), ref signal);
-    }*/
 
-    // TODO: This is bad, the single shader is 
-    public override void _Process(double delta)
+        // TODO: Kind of evil hardcoded player interaction
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
+                out var canInteractComponent))
+            return;
+
+        if (canInteractComponent.InteractTarget == null)
+            return;
+        
+        if (!_nodeManager.TryGetComponent<InteractableComponent>(canInteractComponent.InteractTarget,
+                out var interactableComponent))
+            return;
+        
+        TryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent), (canInteractComponent.InteractTarget, interactableComponent));
+    }
+
+    public override void _PhysicsProcess(double delta)
     {
-        base._Process(delta);
+        base._PhysicsProcess(delta);
         
         _nodeManager.NodeQuery<CanInteractComponent>(out var dict);
         foreach (var (owner, component) in dict)
@@ -52,18 +55,17 @@ public partial class InteractSystem : NodeSystem
             
             if (owner is not Node2D user || component.InteractTarget is not Node2D target)
                 continue;
-
-            if (target.GlobalPosition.DistanceTo(user.GlobalPosition) < component.MaxInteractDistance)
-                OutlineShader.SetShaderParameter("line_colour", InRangeColor);
-            else
-                OutlineShader.SetShaderParameter("line_colour", OutOfRangeColor);
             
             var spriteGroup = target.GetNodeOrNull<CanvasGroup>("SpriteGroup");
             
             if (spriteGroup == null)
                 continue;
 
-            spriteGroup.Material = OutlineShader;
+            if (target.GlobalPosition.DistanceTo(user.GlobalPosition) < component.MaxInteractDistance)
+                spriteGroup.Material = InRangeOutline;
+            else
+                spriteGroup.Material = OutOfRangeOutline;
+
         }
     }
 
@@ -87,5 +89,19 @@ public partial class InteractSystem : NodeSystem
             return;
         
         spriteGroup.Material = null;
+    }
+
+    private void TryInteract(Node<CanInteractComponent> node, Node<InteractableComponent> target)
+    {
+        if (node.Owner is not Node2D nodeA || target.Owner is not Node2D nodeB)
+            return;
+        
+        var distance = nodeA.GlobalPosition.DistanceTo(nodeB.GlobalPosition);
+        
+        if (node.Comp.MaxInteractDistance < distance)
+            return;
+            
+        var signal = new InteractWithSignal(node);
+        _nodeManager.SignalBus.EmitInteractWithSignal(target, ref signal);
     }
 }

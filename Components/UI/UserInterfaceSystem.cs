@@ -54,7 +54,7 @@ public partial class UserInterfaceSystem : NodeSystem
         
         node.Comp.UserInterface = node.Comp.UserInterfaceScene.Instantiate<Control>();
         node.Comp.User = user;
-        node.Comp.TreeExited += () => CloseAttachedUserInterface(node);
+        node.Comp.UserInterface.TreeExited += () => CloseAttachedUserInterface(node);
         GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(node.Comp.UserInterface);
     }
 
