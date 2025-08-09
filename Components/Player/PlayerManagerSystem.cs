@@ -12,16 +12,21 @@ public partial class PlayerManagerSystem : NodeSystem
     {
         base._Ready();
 
-        if (_nodeManager.TrySpawnNode("MobPlayer", out var node))
+        /*if (_nodeManager.TrySpawnNode("MobPlayer", out var node))
         {
             _player = node;
             AddChild(_player);
             _player.SetOwner(this);
-        }
+        }*/
     }
 
     public Node GetPlayer()
     {
         return _player;
+    }
+
+    public void SetPlayer(Node player)
+    {
+        _player = player;
     }
 }

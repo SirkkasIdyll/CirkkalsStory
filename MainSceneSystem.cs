@@ -10,7 +10,7 @@ public partial class MainSceneSystem : Node2D
     private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
     private readonly NodeManager _nodeManager = NodeManager.Instance;
 
-    private Control? _activeScene;
+    private Node? _activeScene;
 
     [ExportCategory("Instantiated")]
     [Export] private PackedScene? _escapeMenuSceneSystem;
@@ -21,6 +21,10 @@ public partial class MainSceneSystem : Node2D
 
     public override void _Ready()
     {
+        GetViewport().SetPhysicsObjectPicking(true);
+        GetViewport().SetPhysicsObjectPickingSort(true);
+        GetViewport().SetPhysicsObjectPickingFirstOnly(true);
+        
         _nodeSystemManager.InitializeNodeSystems(this);
         _nodeSystemManager.InjectNodeSystemDependencies();
         _nodeManager.SignalBus.ChangeActiveSceneSignal += OnChangeActiveScene;
@@ -57,10 +61,11 @@ public partial class MainSceneSystem : Node2D
     {
         // Add new scene to scene tree
         var prevScene = _activeScene;
-        var newScene = args.NewScene.Instantiate<Control>();
+        var newScene = args.NewScene.Instantiate();
         _activeScene = newScene;
-        _canvasLayer.AddChild(newScene);
-        _activeScene.SetOwner(_canvasLayer);
+        AddChild(newScene); 
+        /*_canvasLayer.AddChild(newScene);
+        _activeScene.SetOwner(_canvasLayer);*/
         
         // Fade out previous scene before deleting it entirely
         if (prevScene != null)

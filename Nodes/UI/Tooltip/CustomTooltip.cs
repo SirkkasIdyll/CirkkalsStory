@@ -13,6 +13,7 @@ public partial class CustomTooltip : PopupPanel
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		MouseExited += QueueFree;
 	}
 
 	public void SetTooltipTitle(string title)

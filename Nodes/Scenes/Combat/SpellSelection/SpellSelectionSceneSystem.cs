@@ -72,11 +72,10 @@ public partial class SpellSelectionSceneSystem : Control
 		var tooltip = _customTooltip.Instantiate<CustomTooltip>();
 		tooltip.SetTooltipTitle(_descriptionSystem.GetDisplayName(node));
 		tooltip.SetTooltipDescription(_descriptionSystem.GetDescription(node));
-		tooltip.SetTooltipBulletpoints(_descriptionSystem.GetEffects(node));
+		// tooltip.SetTooltipBulletpoints(_descriptionSystem.GetEffects(node));
 		AddChild(tooltip);
 		var mousePosition = GetViewport().GetMousePosition();
 		tooltip.Popup(new Rect2I((int)mousePosition.X - 16, (int)mousePosition.Y - 16, 0, 0));
-		tooltip.MouseExited += tooltip.QueueFree;
 	}
 
 	/// <summary>

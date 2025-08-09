@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Text.RegularExpressions;
 using CS.SlimeFactory.Signals;
 using Godot;
@@ -16,6 +17,7 @@ public partial class NodeManager
     public readonly SignalBus SignalBus = SignalBus.Instance;
     public readonly Dictionary<string, Node> NodeDictionary = [];
     public readonly Dictionary<string, Component> CompDictionary = [];
+    public readonly HashSet<Dictionary<Node, Component>> ActiveNodeComps = [];
     private const string PathToNodePrototypes = "res://Nodes/Prototypes/";
     private const string PathToComponents = "res://Components/";
     
@@ -40,10 +42,8 @@ public partial class NodeManager
         foreach (var file in nodeFiles)
         {
             var node = ResourceLoader.Load<PackedScene>(file).Instantiate();
-            if (node.GetParent() == null)
+            if (!node.Name.ToString().StartsWith("Base"))
                 NodeDictionary.TryAdd(node.Name, node);
-            else
-                node.QueueFree();
         }
     }
 
@@ -152,6 +152,14 @@ public partial class NodeManager
         var children = node.GetChildren();
         component = node.GetNodeOrNull<T>($"{typeof(T).Name}");
         return component != null;
+    }
+
+    public void NodeQuery<T>(out Dictionary<Node, T> result) where T : Component
+    {
+        result = new Dictionary<Node, T>();
+        foreach (var dict in ActiveNodeComps)
+            if (dict.First().Value is T component)
+                result.Add(dict.First().Key, component);
     }
 }
 

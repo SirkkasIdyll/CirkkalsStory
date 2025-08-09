@@ -1,0 +1,31 @@
+[gd_scene load_steps=5 format=3 uid="uid://yp6skaqfkgkr"]
+
+[ext_resource type="PackedScene" uid="uid://drjnmswp52ljh" path="res://Nodes/Prototypes/Objects/BaseObject.tscn" id="1_qektd"]
+[ext_resource type="Texture2D" uid="uid://j726n7clqv12" path="res://Resources/Sprites/Lamp.png" id="2_tmwp3"]
+
+[sub_resource type="Gradient" id="Gradient_qektd"]
+offsets = PackedFloat32Array(0, 0.730028)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_tmwp3"]
+gradient = SubResource("Gradient_qektd")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="Lamp" instance=ExtResource("1_qektd")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Lamp"
+
+[node name="PointLight2D" type="PointLight2D" parent="." index="1"]
+color = Color(1, 0.945098, 0.878431, 1)
+blend_mode = 2
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_tmwp3")
+texture_scale = 6.0
+
+[node name="Sprite2D" type="Sprite2D" parent="SpriteGroup" index="0"]
+texture = ExtResource("2_tmwp3")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="3"]
+polygon = PackedVector2Array(2.6, -6.6, -2.6, -6.6, -2.6, -5.3, -5.6, -3.3, -5.6, 0.4, -3.6, 1.3, -3.6, 2.6, -1.6, 2.6, -1.6, 6.4, -5.6, 6.4, -5.6, 8, 5.6, 8, 5.6, 6.4, 1.6, 6.4, 1.6, 2.6, 3.6, 2.6, 3.6, 1.3, 5.6, 0.4, 5.6, -3.3, 2.6, -5.3)

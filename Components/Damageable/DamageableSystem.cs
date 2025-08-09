@@ -1,4 +1,5 @@
-﻿using CS.Components.Ability;
+﻿using System;
+using CS.Components.Ability;
 using CS.Components.Damage;
 using CS.Components.Mob;
 using CS.SlimeFactory;
@@ -107,7 +108,7 @@ public partial class DamageableSystem : NodeSystem
             damage = float.Max(damage / multiplier - flat, 0);
         }
 
-        damageTaken = (int)damage;
+        damageTaken = (int)Math.Ceiling(damage);
         
         if (preview)
         {
@@ -116,7 +117,7 @@ public partial class DamageableSystem : NodeSystem
             return;
         }
         
-        node.Comp.Health -= (int)damage;
+        node.Comp.Health -= damageTaken;
         var signal = new HealthAlteredSignal();
         _nodeManager.SignalBus.EmitHealthAlteredSignal(node, ref signal);
     }

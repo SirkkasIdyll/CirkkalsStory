@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1d8hbecyutid"]
+[gd_scene load_steps=3 format=3 uid="uid://c1d8hbecyutid"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_ckb4q"]
+[ext_resource type="Texture2D" uid="uid://btsapgdq5s3qm" path="res://Resources/Sprites/MobSlime.png" id="2_u1fka"]
 
 [node name="MobSlime" instance=ExtResource("1_ckb4q")]
 
@@ -14,3 +15,6 @@ Health = 10
 [node name="MobComponent" parent="." index="4"]
 Abilities = Array[String](["Squishy"])
 Skills = Array[String](["SlimeTackle"])
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="5"]
+texture = ExtResource("2_u1fka")

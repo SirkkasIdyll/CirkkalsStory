@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://drjnmswp52ljh"]
+
+[ext_resource type="Script" uid="uid://bykh3netx6yka" path="res://Components/Description/DescriptionComponent.cs" id="1_a118a"]
+
+[node name="BaseObject" type="RigidBody2D"]
+collision_layer = 2
+collision_mask = 3
+input_pickable = true
+gravity_scale = 0.0
+
+[node name="DescriptionComponent" type="Node2D" parent="."]
+script = ExtResource("1_a118a")
+
+[node name="SpriteGroup" type="CanvasGroup" parent="."]

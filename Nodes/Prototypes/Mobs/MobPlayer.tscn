@@ -1,15 +1,52 @@
-[gd_scene load_steps=2 format=3 uid="uid://buqgt44k0b5gc"]
+[gd_scene load_steps=11 format=3 uid="uid://buqgt44k0b5gc"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kbtkb"]
+[ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="2_opdnh"]
+[ext_resource type="Script" uid="uid://bxjdo37wkcuk7" path="res://Components/Movement/MovementComponent.cs" id="3_klnpo"]
+[ext_resource type="Texture2D" uid="uid://cbilvywpkwuxk" path="res://Resources/Sprites/bnuuySheet.png" id="3_tl3vd"]
+[ext_resource type="AudioStream" uid="uid://dyc6gj2kewjcm" path="res://Resources/Sounds/FootstepsWoodSoli 6017_62_1_short.wav" id="4_klnpo"]
+[ext_resource type="Script" uid="uid://ctw2xmwbf73hi" path="res://Components/Interaction/CanInteractComponent.cs" id="6_mtcbf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_opdnh"]
+atlas = ExtResource("3_tl3vd")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_klnpo"]
+atlas = ExtResource("3_tl3vd")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_mtcbf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_opdnh")
+}],
+"loop": true,
+"name": &"back",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_klnpo")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8wxkm"]
+radius = 3.5
+height = 12.0
 
 [node name="MobPlayer" instance=ExtResource("1_kbtkb")]
+collision_layer = 8
 
 [node name="DescriptionComponent" parent="." index="1"]
 DisplayName = "Cirkkal"
 
 [node name="HealthComponent" parent="." index="2"]
-MaxHealth = 20
-Health = 20
+MaxHealth = 100
+Health = 100
 
 [node name="ManaComponent" parent="." index="3"]
 MaxMana = 20
@@ -18,3 +55,23 @@ Mana = 20
 [node name="MobComponent" parent="." index="4"]
 Skills = Array[String](["DoNothing", "BleedingSlash"])
 Spells = Array[String](["WeakPoison"])
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="SpriteGroup" index="0"]
+sprite_frames = SubResource("SpriteFrames_mtcbf")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="6"]
+position = Vector2(0, 18)
+shape = SubResource("CapsuleShape2D_8wxkm")
+
+[node name="MovementComponent" type="Node2D" parent="." index="7" node_paths=PackedStringArray("SoundEffect")]
+script = ExtResource("3_klnpo")
+SoundEffect = NodePath("FootstepSFX")
+
+[node name="FootstepSFX" type="AudioStreamPlayer2D" parent="MovementComponent" index="0"]
+stream = ExtResource("4_klnpo")
+volume_db = -12.0
+bus = &"SFX"
+script = ExtResource("2_opdnh")
+
+[node name="CanInteractComponent" type="Node2D" parent="." index="8"]
+script = ExtResource("6_mtcbf")

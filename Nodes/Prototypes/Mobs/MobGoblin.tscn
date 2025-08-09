@@ -14,3 +14,5 @@ Health = 15
 [node name="MobComponent" parent="." index="4"]
 Abilities = Array[String](["RoughSkin"])
 Spells = Array[String](["SpitFire"])
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="5"]

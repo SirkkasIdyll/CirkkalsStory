@@ -94,7 +94,7 @@ public partial class StartMenuSceneSystem : Control
 	/// </summary>
 	private void OnNewGameButtonPressed()
 	{
-		var newGameScene = ResourceLoader.Load<PackedScene>("res://Nodes/Scenes/Introduction/IntroductionScene.tscn");
+		var newGameScene = ResourceLoader.Load<PackedScene>("res://Nodes/Scenes/Unknown/Temp.tscn");
 
 		var duration = 0.2f;
 		var tween = CreateTween().BindNode(this);

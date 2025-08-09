@@ -49,7 +49,7 @@ public class SkillTest
 
             foreach (var skillName in mobComponent.Skills)
             {
-                AssertBool(_skillSystem.TryGetSkill(skillName, out var skill))
+                AssertBool(_skillSystem.SkillExists(skillName))
                     .OverrideFailureMessage(node.Name + " has invalid skill called " + skillName).IsTrue();
             }
         }

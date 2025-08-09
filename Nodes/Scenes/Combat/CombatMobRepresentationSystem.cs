@@ -173,7 +173,7 @@ public partial class CombatMobRepresentationSystem : Control
 			HpProgressBar.Value = (double)healthComponent.Health / healthComponent.MaxHealth * 100;
 		}
 
-		if (_nodeManager.TryGetComponent<ManaComponent>(_mob, out var manaComponent))
+		if (_nodeManager.TryGetComponent<ManaComponent>(_mob!, out var manaComponent))
 		{
 			_mpLabel.Text = manaComponent.Mana + " / " + manaComponent.MaxMana;
 			_mpProgressBar.Value = (double)manaComponent.Mana / manaComponent.MaxMana * 100;
@@ -200,6 +200,10 @@ public partial class CombatMobRepresentationSystem : Control
 		
 		if (!_nodeManager.TryGetComponent<ManaComponent>(_mob, out var manaComponent))
 			return;
+		
+		if (_mob is Node2D node2D)
+			node2D.SetPosition(new Vector2(GlobalPosition.X + GetSize().X / 2, GlobalPosition.Y - node2D.GetNode<Sprite2D>("Sprite2D").Texture.GetHeight() * node2D.GetNode<Sprite2D>("Sprite2D").Scale.Y / 2 - 20));
+
 
 		MobNameLinkButton.Text = descriptionComponent.DisplayName;
 		_hpLabel.Text = healthComponent.Health + " / " + healthComponent.MaxHealth;

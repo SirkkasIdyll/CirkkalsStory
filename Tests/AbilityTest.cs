@@ -48,7 +48,7 @@ public class AbilityTest
 
             foreach (var abilityName in mobComponent.Abilities)
             {
-                AssertBool(_abilitySystem.TryGetAbility(abilityName, out var ability))
+                AssertBool(_abilitySystem.AbilityExists(abilityName))
                     .OverrideFailureMessage(node.Name + " has invalid ability called " + abilityName).IsTrue();
             }
         }

@@ -48,7 +48,7 @@ public class MagicTest
 
             foreach (var spellName in mobComponent.Spells)
             {
-                AssertBool(_magicSystem.TryGetSpell(spellName, out var spell))
+                AssertBool(_magicSystem.SpellExists(spellName))
                     .OverrideFailureMessage(node.Name + " has invalid spell called " + spellName).IsTrue();
             }
         }

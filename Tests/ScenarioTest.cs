@@ -1,4 +1,4 @@
-﻿using CS.Resources.CombatScenarios;
+﻿using CS.Resources.Encounters;
 using CS.SlimeFactory;
 using GdUnit4;using static GdUnit4.Assertions;
 using Godot;
@@ -9,15 +9,15 @@ namespace CS.Tests;
 public class ScenarioTest
 {
     private readonly NodeManager _nodeManager = NodeManager.Instance;
-    private const string CombatScenarioFilePath = "res://Resources/CombatScenarios/";
+    private const string EncounterFilePath = "res://Resources/Encounters/";
 
     [TestCase]
     public void ValidateCombatScenarios()
     {
-        var files = _nodeManager.GetFilesByExtension(CombatScenarioFilePath, ".tres");
+        var files = _nodeManager.GetFilesByExtension(EncounterFilePath, ".tres");
         foreach (var file in files)
         {
-            var combatScenarioResource = ResourceLoader.Load<CombatScenarioResource>(file);
+            var combatScenarioResource = ResourceLoader.Load<CombatEncounterResource>(file);
             foreach (var mobName in combatScenarioResource.Mobs)
             {
                 AssertBool(_nodeManager.NodeDictionary.TryGetValue(mobName, out var node))

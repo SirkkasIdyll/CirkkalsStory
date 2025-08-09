@@ -1,6 +1,7 @@
 ﻿using System;
-using CS.Resources.CombatScenarios;
-using CS.Resources.RandomScenarios;
+using System.Collections.Generic;
+using CS.Resources.Encounters;
+using CS.Resources.Events;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -9,9 +10,10 @@ namespace CS.Components.CombatManager;
 
 public partial class ScenarioSystem : NodeSystem
 {
-    private const string CombatScenarioPath = "res://Resources/CombatScenarios/";
-    private const string RandomScenarioPath = "res://Resources/RandomScenarios/";
-    private int _stage = 1;
+    private const string EncountersPath = "res://Resources/Encounters/";
+    private const string EventsPath = "res://Resources/Events/";
+    private List<StoryEvent> _storyEvents = [];
+    private int _stage = 2;
     private int _counter = 1;
     
     public Array<String> PreviousEnemies = [];
@@ -19,6 +21,8 @@ public partial class ScenarioSystem : NodeSystem
     public override void _Ready()
     {
         base._Ready();
+        
+        LoadEvents();
 
         _nodeManager.SignalBus.EndOfCombatSignal += OnEndOfCombat;
         _nodeManager.SignalBus.GameOverSignal += OnGameOverSignal;
@@ -28,23 +32,12 @@ public partial class ScenarioSystem : NodeSystem
     {
         if (!args.Won)
             return;
+
+        var storyEvent = GetEventBasedOnCurrentProgress();
+        if (storyEvent == null)
+            return;
         
-        // Example file path: res://Resources/RandomScenarios/1-Basic/
-        var path = RandomScenarioPath + _stage + "-";
-        if (_counter <= 3)
-            path += "Basic/";
-        else
-            path += "Boss/";
-        using var dir = DirAccess.Open(path);
-        
-        // The possible mob resources to spawn
-        var files = dir.GetFiles();
-        
-        // Choose a random resource to spawn
-        var random = files[Random.Shared.Next(0, files.Length)];
-        var randomScenarioResource = ResourceLoader.Load<RandomScenarioResource>(path + random);
-        
-        var signal = new ChangeActiveSceneSignal(randomScenarioResource.PackedScene!);
+        var signal = new ChangeActiveSceneSignal(storyEvent.PackedScene);
         _nodeManager.SignalBus.EmitChangeActiveSceneSignal(args.CombatScene, ref signal);
     }
 
@@ -52,6 +45,60 @@ public partial class ScenarioSystem : NodeSystem
     {
         _stage = 1;
         _counter = 1;
+    }
+
+    /// <summary>
+    /// Get all events in the events folder
+    /// </summary>
+    private void LoadEvents()
+    {
+        // The possible mob resources to spawn
+        var files = _nodeManager.GetFilesByExtension(EventsPath, ".tres");
+
+        foreach (var file in files)
+        {
+            var storyEvent = ResourceLoader.Load<StoryEvent>(file);
+            _storyEvents.Add(storyEvent);
+        }
+    }
+    
+    /// <summary>
+    /// Picks an event based on current stage and counter
+    /// </summary>
+    private StoryEvent? GetEventBasedOnCurrentProgress()
+    {
+        // Create a list of valid events to choose from based on all events in the game
+        // based on current stage and counter
+        List<StoryEvent> validEvents = [];
+        foreach (var storyEvent in _storyEvents)
+        {
+            if (storyEvent.Stage != _stage && storyEvent.Stage != 0)
+                continue;
+
+            if (storyEvent.Counter != _counter && storyEvent.Counter != 0)
+                continue;
+
+            if (storyEvent.Mandatory)
+                return storyEvent;
+            
+            validEvents.Add(storyEvent);
+        }
+
+        // We just simply don't have anything left
+        if (validEvents.Count == 0)
+            return null;
+        
+        // Pick an event based on the pick weight of the events
+        // and remove the event from further choosing if the event is unique
+        var weights = new float[validEvents.Count];
+        for (var i = 0; i < validEvents.Count; i++)
+            weights[i] = validEvents[i].PickWeight;
+        var rng = new RandomNumberGenerator();
+        var index = (int)rng.RandWeighted(weights);
+        var chosenEvent = validEvents[index];
+        if (chosenEvent.Unique)
+            _storyEvents.Remove(chosenEvent);
+        return chosenEvent;
     }
 
     public Array<Node> GetNextEnemies()
@@ -68,7 +115,7 @@ public partial class ScenarioSystem : NodeSystem
         }
         
         // Example file path: res://Resources/CombatScenarios/1-Basic/
-        var path = CombatScenarioPath + _stage + "-";
+        var path = EncountersPath + _stage + "-";
         if (_counter <= 3)
             path += "Basic/";
         else
@@ -80,7 +127,7 @@ public partial class ScenarioSystem : NodeSystem
         
         // Choose a random resource to spawn
         var random = files[Random.Shared.Next(0, files.Length)];
-        var combatScenarioResource = ResourceLoader.Load<CombatScenarioResource>(path + random);
+        var combatScenarioResource = ResourceLoader.Load<CombatEncounterResource>(path + random);
         
         // Try spawning the mobs listed in the resource and add them to the result
         var mobs = combatScenarioResource.Mobs;
@@ -96,6 +143,4 @@ public partial class ScenarioSystem : NodeSystem
         _counter++;
         return enemies;
     }
-    
-    
 }

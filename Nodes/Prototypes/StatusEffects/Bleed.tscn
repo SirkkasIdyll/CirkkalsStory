@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://blv3louwyx4tm"]
 
-[ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="1_7cbcr"]
 [ext_resource type="PackedScene" uid="uid://djn36g8g325x4" path="res://Nodes/Prototypes/StatusEffects/BaseStatusEffect.tscn" id="1_8dy66"]
+[ext_resource type="Script" uid="uid://bb0dfwpjihomj" path="res://Components/Damage/PercentageDamageComponent.cs" id="2_8dy66"]
 
 [node name="Bleed" instance=ExtResource("1_8dy66")]
 
@@ -10,8 +10,9 @@ DisplayName = "Bleed"
 Description = "Take internal damage every turn until the bleeding stops."
 
 [node name="StatusEffectComponent" parent="." index="1"]
-TurnsPerApplication = 2
+TurnsPerApplication = 4
 
-[node name="DamageComponent" type="Node2D" parent="." index="2"]
-script = ExtResource("1_7cbcr")
+[node name="PercentageDamageComponent" type="Node2D" parent="." index="2"]
+script = ExtResource("2_8dy66")
+PercentDamage = 2.5
 DamageType = 7
