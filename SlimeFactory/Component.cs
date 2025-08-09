@@ -9,6 +9,7 @@ namespace CS.SlimeFactory;
 
 public abstract partial class Component : Node2D, IComponent
 {
+    private readonly NodeManager _nodeManager = NodeManager.Instance;
     private const string SerializeAttributeName = "Serialize";
     
     /// <summary>
@@ -20,6 +21,17 @@ public abstract partial class Component : Node2D, IComponent
         
         SetName(GetType().Name);
         SetOwner(GetParent());
+
+        var dict = new Dictionary<Node, Component> { { GetParent(), this } };
+        _nodeManager.ActiveNodeComps.Add(dict);
+    }
+
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+
+        var dict = new Dictionary<Node, Component> { { GetParent(), this } };
+        _nodeManager.ActiveNodeComps.Remove(dict);
     }
 
     public string Serialize()

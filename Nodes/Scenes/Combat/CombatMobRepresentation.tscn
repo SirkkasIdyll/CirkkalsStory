@@ -1,9 +1,9 @@
 [gd_scene load_steps=18 format=3 uid="uid://p3cx4x7ahdxg"]
 
 [ext_resource type="Script" uid="uid://bgnkis1kmhvm6" path="res://Nodes/Scenes/Combat/CombatMobRepresentationSystem.cs" id="1_bjixq"]
-[ext_resource type="Texture2D" uid="uid://ouestvtbjjua" path="res://Resources/Sprite-0005.png" id="1_tdbus"]
+[ext_resource type="Texture2D" uid="uid://ouestvtbjjua" path="res://Resources/Sprites/Sprite-0005.png" id="1_tdbus"]
 [ext_resource type="Script" uid="uid://dofh0vcxqq1w3" path="res://Nodes/UI/ButtonTypes/StandardLinkButton.cs" id="2_ip3j3"]
-[ext_resource type="Texture2D" uid="uid://lly7ts1efjjf" path="res://Resources/Sprite-0006-Sheet.png" id="4_ip3j3"]
+[ext_resource type="Texture2D" uid="uid://lly7ts1efjjf" path="res://Resources/Sprites/Sprite-0006-Sheet.png" id="4_ip3j3"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_c141r"]
 
@@ -144,6 +144,7 @@ text = "9999 / 9999"
 horizontal_alignment = 1
 
 [node name="Cursor" type="AnimatedSprite2D" parent="."]
+visible = false
 sprite_frames = SubResource("SpriteFrames_7qmtw")
 autoplay = "default"
 frame_progress = 0.948542

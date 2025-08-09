@@ -77,7 +77,7 @@ public partial class CombatMobRepresentationSystem : Control
 	{
 		_cursor.SetVisible(false);
 
-		if (!_nodeManager.TryGetComponent<HealthComponent>(_mob, out var healthComponent))
+		if (!_nodeManager.TryGetComponent<HealthComponent>(_mob!, out var healthComponent))
 			return;
 		
 		_hpLabel.Text = healthComponent.Health + " / " + healthComponent.MaxHealth;
@@ -135,7 +135,6 @@ public partial class CombatMobRepresentationSystem : Control
 		_mpLabel.Text = potentialValue + " / " + node.Comp.MaxMana;
 		var tween = CreateTween();
 		tween.TweenProperty(_mpProgressBar, "value", potentialValue / node.Comp.MaxMana * 100, TimeToUpdateBar);
-		MobNameLinkButton.FocusExited += tween.Kill;
 	}
 
 	private void OnMouseEntered()
@@ -166,6 +165,29 @@ public partial class CombatMobRepresentationSystem : Control
 		EmitSignalTargetPressed(_mob);
 	}
 
+	public void CancelPreview()
+	{
+		if (_nodeManager.TryGetComponent<HealthComponent>(_mob!, out var healthComponent))
+		{
+			_hpLabel.Text = healthComponent.Health + " / " + healthComponent.MaxHealth;
+			HpProgressBar.Value = (double)healthComponent.Health / healthComponent.MaxHealth * 100;
+		}
+
+		if (_nodeManager.TryGetComponent<ManaComponent>(_mob!, out var manaComponent))
+		{
+			_mpLabel.Text = manaComponent.Mana + " / " + manaComponent.MaxMana;
+			_mpProgressBar.Value = (double)manaComponent.Mana / manaComponent.MaxMana * 100;
+		}
+	}
+	
+	private void PositionCursor()
+	{
+		var position = MobNameLinkButton.GetPosition();
+		position.X -= 15;
+		position.Y += 20;
+		_cursor.SetPosition(position);
+	}
+
 	public void SetMob(Node node)
 	{
 		_mob = node;
@@ -178,6 +200,10 @@ public partial class CombatMobRepresentationSystem : Control
 		
 		if (!_nodeManager.TryGetComponent<ManaComponent>(_mob, out var manaComponent))
 			return;
+		
+		if (_mob is Node2D node2D)
+			node2D.SetPosition(new Vector2(GlobalPosition.X + GetSize().X / 2, GlobalPosition.Y - node2D.GetNode<Sprite2D>("Sprite2D").Texture.GetHeight() * node2D.GetNode<Sprite2D>("Sprite2D").Scale.Y / 2 - 20));
+
 
 		MobNameLinkButton.Text = descriptionComponent.DisplayName;
 		_hpLabel.Text = healthComponent.Health + " / " + healthComponent.MaxHealth;
@@ -191,13 +217,5 @@ public partial class CombatMobRepresentationSystem : Control
 		
 		_mpLabel.Text = manaComponent.Mana + " / " + manaComponent.MaxMana;
 		_mpProgressBar.Value = (double)manaComponent.Mana / manaComponent.MaxMana * 100;
-	}
-
-	private void PositionCursor()
-	{
-		var position = MobNameLinkButton.GetPosition();
-		position.X -= 15;
-		position.Y += 20;
-		_cursor.SetPosition(position);
 	}
 }

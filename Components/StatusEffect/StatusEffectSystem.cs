@@ -17,10 +17,10 @@ public partial class StatusEffectSystem : NodeSystem
         
         _nodeManager.SignalBus.StartOfTurnSignal += OnStartOfTurn;
         _nodeManager.SignalBus.UseActionSignal += OnUseAction;
-        _nodeManager.SignalBus.ReloadCombatDescriptionSignal += OnReloadCombatDescription;
+        _nodeManager.SignalBus.GetActionEffectsDescriptionSignal += OnGetActionEffectsDescription;
     }
 
-    private void OnReloadCombatDescription(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args)
+    private void OnGetActionEffectsDescription(Node<DescriptionComponent> node, ref GetActionEffectsDescriptionSignal args)
     {
         if (!_nodeManager.TryGetComponent<StatusEffectApplicatorComponent>(node, out var statusEffectApplicatorComponent))
             return;
@@ -29,8 +29,8 @@ public partial class StatusEffectSystem : NodeSystem
             return;
 
         var statusEffectName = _descriptionSystem.GetDisplayName(statusEffectApplicatorComponent.StatusEffect);
-        var combatEffect = $"Apply {statusEffectName}";
-        node.Comp.CombatEffects.Add(combatEffect);
+        var combatEffect = $"Apply [url={statusEffectApplicatorComponent.StatusEffect.Name}][b]{statusEffectName}[/b][/url]";
+        node.Comp.Effects.Add(combatEffect);
     }
     
     /// <summary>
@@ -111,7 +111,11 @@ public partial class StatusEffectSystem : NodeSystem
 
         // If the mob isn't currently afflicted with the status effect, apply a duplicate of it
         if (!mobComponent.StatusEffects.ContainsKey(statusEffect.Name))
-            mobComponent.StatusEffects.Add(statusEffect.Name, statusEffect.Duplicate());
+        {
+            var dupe = statusEffect.Duplicate();
+            mobComponent.StatusEffects.Add(statusEffect.Name, dupe);
+            mobComponent.AddChild(dupe);
+        }
 
         // Get the status effect from the mob and refresh the duration of it
         statusEffect = mobComponent.StatusEffects[statusEffect.Name];

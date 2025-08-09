@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://cvv8otsc37cqg"]
+[gd_scene load_steps=9 format=3 uid="uid://cvv8otsc37cqg"]
 
 [ext_resource type="Script" uid="uid://ggixe6gwqamu" path="res://Nodes/Scenes/Combat/CombatSceneSystem.cs" id="1_y778k"]
 [ext_resource type="AudioStream" uid="uid://birwbjmxflecy" path="res://Resources/Sounds/57-Spanish-Duet-FULL-SM387.wav" id="2_tp54h"]
@@ -7,8 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://p3cx4x7ahdxg" path="res://Nodes/Scenes/Combat/CombatMobRepresentation.tscn" id="4_tp54h"]
 [ext_resource type="Script" uid="uid://cjtek16utmv1j" path="res://Nodes/Scenes/Combat/ActionsItemListSystem.cs" id="5_o60ty"]
 [ext_resource type="PackedScene" uid="uid://b6lg3dwd6hear" path="res://Nodes/Scenes/Combat/SpellSelection/SpellSelectionScene.tscn" id="5_tp54h"]
+[ext_resource type="Texture2D" uid="uid://8gnb4vvafxci" path="res://Resources/Sprites/TempBG.png" id="7_1tkx5"]
 
-[node name="CombatScene" type="Control" node_paths=PackedStringArray("_actionsItemList", "_enemiesVBoxContainer", "_playersVBoxContainer")]
+[node name="CombatScene" type="Control" node_paths=PackedStringArray("_actionsItemList", "_enemiesMarginContainer", "_playersMarginContainer", "_bg")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,46 +23,47 @@ _combatMobRepresentation = ExtResource("4_tp54h")
 _combatSkillSelection = ExtResource("3_y778k")
 _combatSpellSelection = ExtResource("5_tp54h")
 _dialogBox = ExtResource("4_1tkx5")
-_enemiesVBoxContainer = NodePath("MarginContainer/EnemiesVBoxContainer")
-_playersVBoxContainer = NodePath("MarginContainer2/PlayersVBoxContainer")
+_enemiesMarginContainer = NodePath("MarginContainer")
+_playersMarginContainer = NodePath("MarginContainer2")
+_bg = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+texture = ExtResource("7_1tkx5")
 
 [node name="MarginContainer2" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -26.0
-offset_right = 116.0
-offset_bottom = 26.0
-grow_vertical = 2
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 70.0
+offset_top = -72.0
+offset_right = 186.0
+grow_vertical = 0
 theme_override_constants/margin_left = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="PlayersVBoxContainer" type="VBoxContainer" parent="MarginContainer2"]
-layout_mode = 2
-
-[node name="MobRepresentation" parent="MarginContainer2/PlayersVBoxContainer" instance=ExtResource("4_tp54h")]
+[node name="MobRepresentation" parent="MarginContainer2" instance=ExtResource("4_tp54h")]
 layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 6
+anchors_preset = 3
 anchor_left = 1.0
-anchor_top = 0.5
+anchor_top = 1.0
 anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -116.0
-offset_top = -26.0
-offset_bottom = 26.0
+anchor_bottom = 1.0
+offset_left = -188.0
+offset_top = -72.0
+offset_right = -72.0
 grow_horizontal = 0
-grow_vertical = 2
+grow_vertical = 0
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 
-[node name="EnemiesVBoxContainer" type="VBoxContainer" parent="MarginContainer"]
-layout_mode = 2
-
-[node name="MobRepresentation" parent="MarginContainer/EnemiesVBoxContainer" instance=ExtResource("4_tp54h")]
+[node name="MobRepresentation" parent="MarginContainer" instance=ExtResource("4_tp54h")]
 layout_mode = 2
 
 [node name="ActionsItemList" type="ItemList" parent="."]
@@ -72,9 +74,8 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -48.0
-offset_top = -58.0
 offset_right = 48.0
-offset_bottom = 58.0
+offset_bottom = 116.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 32

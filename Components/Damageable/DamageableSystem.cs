@@ -1,4 +1,5 @@
-﻿using CS.Components.Ability;
+﻿using System;
+using CS.Components.Ability;
 using CS.Components.Damage;
 using CS.Components.Mob;
 using CS.SlimeFactory;
@@ -69,6 +70,54 @@ public partial class DamageableSystem : NodeSystem
         }
         
         node.Comp.Health -= (int)damage;
+        var signal = new HealthAlteredSignal();
+        _nodeManager.SignalBus.EmitHealthAlteredSignal(node, ref signal);
+    }
+    
+        /// <summary>
+    /// Try to make the node take damage
+    /// </summary>
+    /// <param name="node">The mob taking damage</param>
+    /// <param name="attack">The attack being aimed at the target</param>
+    /// <param name="preview">When true, does not actually deal damage, only previews the damage</param>
+    /// <param name="damageTaken">How much damage is taken after calculations</param>
+    public void TryTakeDamage(Node<HealthComponent> node, Node<PercentageDamageComponent> attack, bool preview, out int damageTaken)
+    {
+        damageTaken = 0;
+        var damage = node.Comp.MaxHealth * (attack.Comp.PercentDamage / 100);
+        
+        // Can't damage a target that isn't damageable
+        if (!_nodeManager.TryGetComponent<DamageableComponent>(node, out var damageableComponent))
+            return;
+        
+        // Modify damage based on damage category resistance
+        damageableComponent.DamageCategoryResistance.TryGetValue(attack.Comp.DamageCategory,
+            out var damageCategoryResistance);
+        damage *= damageCategoryResistance;
+        
+        // Modify damage based on damage type resistance
+        damageableComponent.DamageTypeResistance.TryGetValue(attack.Comp.DamageType, out var damageTypeResistance);
+        damage *= damageTypeResistance;
+
+        if (_nodeManager.TryGetComponent<MobComponent>(node, out var mobComponent))
+        {
+            var multiplier = GetDamageResistMultiplier((node, mobComponent), attack.Comp.DamageCategory,
+                attack.Comp.DamageType);
+            var flat = GetFlatDamageResist((node, mobComponent), attack.Comp.DamageCategory, attack.Comp.DamageType);
+            
+            damage = float.Max(damage / multiplier - flat, 0);
+        }
+
+        damageTaken = (int)Math.Ceiling(damage);
+        
+        if (preview)
+        {
+            var previewSignal = new PreviewHealthAlteredSignal(-damageTaken);
+            _nodeManager.SignalBus.EmitPreviewHealthAlteredSignal(node, ref previewSignal);
+            return;
+        }
+        
+        node.Comp.Health -= damageTaken;
         var signal = new HealthAlteredSignal();
         _nodeManager.SignalBus.EmitHealthAlteredSignal(node, ref signal);
     }

@@ -38,8 +38,9 @@ public partial class CombatSceneSystem : Control
 	[Export] private PackedScene _combatSkillSelection = null!;
 	[Export] private PackedScene _combatSpellSelection = null!;
 	[Export] private PackedScene _dialogBox = null!;
-	[Export] private VBoxContainer _enemiesVBoxContainer = null!;
-	[Export] private VBoxContainer _playersVBoxContainer = null!;
+	[Export] private MarginContainer _enemiesMarginContainer = null!;
+	[Export] private MarginContainer _playersMarginContainer = null!;
+	[Export] private TextureRect _bg = null!;
 	
 	private void _InjectDependencies()
 	{
@@ -76,6 +77,7 @@ public partial class CombatSceneSystem : Control
 
 		var player = _playerManagerSystem.GetPlayer();
 		_turnManagerSystem.Players.Add(player);
+		player.Reparent(this);
 		var enemies = _scenarioSystem.GetNextEnemies();
 		foreach (var enemy in enemies)
 		{
@@ -91,8 +93,8 @@ public partial class CombatSceneSystem : Control
 		_nodeManager.SignalBus.StartOfTurnSignal += OnStartOfTurn;
 		_nodeManager.SignalBus.EndOfTurnSignal += OnEndOfTurn;
 		_actionsItemList.SetVisible(false);
-		LoadHealthBars(_playersVBoxContainer, _turnManagerSystem.Players);
-		LoadHealthBars(_enemiesVBoxContainer, _turnManagerSystem.Enemies);
+		LoadHealthBars(_playersMarginContainer, _turnManagerSystem.Players);
+		LoadHealthBars(_enemiesMarginContainer, _turnManagerSystem.Enemies);
 		_turnManagerSystem.StartCombat();
 	}
 
@@ -109,6 +111,14 @@ public partial class CombatSceneSystem : Control
 	{
 		if (_chosenAction != null)
 			HideActionTargets(_chosenAction);
+
+		foreach (var child in _playersMarginContainer.GetChildren())
+		{
+			if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
+				continue;
+			
+			combatMobRepresentationSystem.CancelPreview();
+		}
 		
 		_actionsItemList.SetVisible(true);
 	}
@@ -158,7 +168,7 @@ public partial class CombatSceneSystem : Control
 
 		var node = _combatSpellSelection.Instantiate<SpellSelectionSceneSystem>();
 		AddChild(node);
-		node.SetSpells(spells);
+		node.SetSpells(spells, _turnManagerSystem.GetActiveMob());
 		node.EscapePressed += OnEscapePressedClosePopup;
 		node.SpellChosen += OnSpellChosen;
 	}
@@ -175,6 +185,9 @@ public partial class CombatSceneSystem : Control
 
 	private void OnStartOfTurn(Node<MobComponent> node, ref StartOfTurnSignal args)
 	{
+		if (node.Owner is Node2D node2D)
+			GD.Print(node2D.GlobalPosition);
+		
 		var title = _descriptionSystem.GetDisplayName(node);
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
 		dialogBox.SetDetails(title, args.Summaries);
@@ -298,7 +311,7 @@ public partial class CombatSceneSystem : Control
 			case TargetingComponent.Targets.All:
 				break;
 			case TargetingComponent.Targets.Allies:
-				foreach (var child in _playersVBoxContainer.GetChildren())
+				foreach (var child in _playersMarginContainer.GetChildren())
 				{
 					if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
 						continue;
@@ -317,7 +330,7 @@ public partial class CombatSceneSystem : Control
 				}
 				break;
 			case TargetingComponent.Targets.Enemies:
-				foreach (var child in _enemiesVBoxContainer.GetChildren())
+				foreach (var child in _enemiesMarginContainer.GetChildren())
 				{
 					if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
 						continue;
@@ -350,7 +363,7 @@ public partial class CombatSceneSystem : Control
 			case TargetingComponent.Targets.All:
 				break;
 			case TargetingComponent.Targets.Allies:
-				foreach (var child in _playersVBoxContainer.GetChildren())
+				foreach (var child in _playersMarginContainer.GetChildren())
 				{
 					if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
 						continue;
@@ -360,7 +373,7 @@ public partial class CombatSceneSystem : Control
 				}
 				break;
 			case TargetingComponent.Targets.Enemies:
-				foreach (var child in _enemiesVBoxContainer.GetChildren())
+				foreach (var child in _enemiesMarginContainer.GetChildren())
 				{
 					if (child is not CombatMobRepresentationSystem combatMobRepresentationSystem)
 						continue;
@@ -375,7 +388,7 @@ public partial class CombatSceneSystem : Control
 	/// <summary>
 	/// Shows the names and health bars for each given group of mobs
 	/// </summary>
-	private void LoadHealthBars(VBoxContainer container, Array<Node> mobs)
+	private void LoadHealthBars(MarginContainer container, Array<Node> mobs)
 	{
 		// Clear out any existing children from template
 		foreach (var child in container.GetChildren())
@@ -384,8 +397,8 @@ public partial class CombatSceneSystem : Control
 		foreach (var mob in mobs)
 		{
 			var node = _combatMobRepresentation.Instantiate<CombatMobRepresentationSystem>();
-			node.SetMob(mob);
 			container.AddChild(node);
+			node.SetMob(mob);
 			node.TargetPressed += OnTargetChosenByPlayer;
 			node.TargetPreview += OnTargetPreviewByPlayer;
 			node.MobNameLinkButton.EscapePressed += OnEscapePressedCancelTargeting;

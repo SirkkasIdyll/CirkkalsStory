@@ -18,8 +18,3 @@ script = ExtResource("2_k6vpd")
 StatusEffect = NodePath("Poison")
 
 [node name="Poison" parent="StatusEffectApplicatorComponent" index="0" instance=ExtResource("3_b0csx")]
-
-[node name="DamageComponent" parent="StatusEffectApplicatorComponent/Poison" index="2"]
-Damage = 3.0
-
-[editable path="StatusEffectApplicatorComponent/Poison"]

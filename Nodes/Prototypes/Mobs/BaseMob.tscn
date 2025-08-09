@@ -22,3 +22,5 @@ script = ExtResource("6_km1gv")
 
 [node name="MobComponent" type="Node2D" parent="."]
 script = ExtResource("7_ysox8")
+
+[node name="SpriteGroup" type="CanvasGroup" parent="."]

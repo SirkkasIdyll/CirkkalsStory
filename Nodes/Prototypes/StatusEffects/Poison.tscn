@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cdc0v34gmhjey"]
 
 [ext_resource type="PackedScene" uid="uid://djn36g8g325x4" path="res://Nodes/Prototypes/StatusEffects/BaseStatusEffect.tscn" id="1_iynrk"]
-[ext_resource type="Script" uid="uid://dfl6n5oe8vxpe" path="res://Components/Damage/DamageComponent.cs" id="2_518jp"]
+[ext_resource type="Script" uid="uid://bb0dfwpjihomj" path="res://Components/Damage/PercentageDamageComponent.cs" id="2_iynrk"]
 
 [node name="Poison" instance=ExtResource("1_iynrk")]
 
@@ -10,9 +10,9 @@ DisplayName = "Poison"
 Description = "Take poison damage every turn."
 
 [node name="StatusEffectComponent" parent="." index="1"]
-TurnsPerApplication = 5
+TurnsPerApplication = 3
 
-[node name="DamageComponent" type="Node2D" parent="." index="2"]
-script = ExtResource("2_518jp")
-DamageCategory = 1
+[node name="PercentageDamageComponent" type="Node2D" parent="." index="2"]
+script = ExtResource("2_iynrk")
+PercentDamage = 5.0
 DamageType = 6

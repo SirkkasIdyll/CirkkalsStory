@@ -19,54 +19,94 @@ public partial class DamageSystem : NodeSystem
     {
         base._Ready();
 
-        _nodeManager.SignalBus.ReloadCombatDescriptionSignal += OnReloadCombatDescription;
-        _nodeManager.SignalBus.UseActionSignal += OnUseAction;
+        _nodeManager.SignalBus.GetActionEffectsDescriptionSignal += OnGetActionEffectsDescription;
         _nodeManager.SignalBus.PreviewActionSignal += OnPreviewAction;
         _nodeManager.SignalBus.ProcStatusEffectSignal += OnProcStatusEffect;
+        _nodeManager.SignalBus.UseActionSignal += OnUseAction;
     }
 
-    private void OnReloadCombatDescription(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args)
+    private void OnGetActionEffectsDescription(Node<DescriptionComponent> node, ref GetActionEffectsDescriptionSignal args)
     {
-        if (!_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
+        if (_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
+        {
+            node.Comp.Effects.Add(damageComponent.DamageCategory.ToString());
+            node.Comp.Effects.Add("Type:" + damageComponent.DamageType);
+            node.Comp.Effects.Add("Damage: " + damageComponent.Damage);
             return;
+        }
 
-        node.Comp.CombatEffects.Add("Category: " + damageComponent.DamageCategory);
-        node.Comp.CombatEffects.Add("Type: " + damageComponent.DamageType);
-        node.Comp.CombatEffects.Add("Damage: " + damageComponent.Damage);
+        if (_nodeManager.TryGetComponent<PercentageDamageComponent>(node, out var percentageDamageComponent))
+        {
+            node.Comp.Effects.Add(percentageDamageComponent.DamageCategory.ToString());
+            node.Comp.Effects.Add("Type:" + percentageDamageComponent.DamageType);
+            node.Comp.Effects.Add("Damage: " + percentageDamageComponent.PercentDamage + "% HP");
+            return;
+        }
+    }
+    
+    private void OnPreviewAction(Node<MobComponent> node, ref PreviewActionSignal args)
+    {
+        if (_nodeManager.TryGetComponent<DamageComponent>(args.Action, out var damageComponent))
+        {
+            foreach (var target in args.Targets)
+                TryDamageTarget((args.Action, damageComponent), target, node, true, out var potentialDamageDealt);
+            
+            return;
+        }
+
+        if (_nodeManager.TryGetComponent<PercentageDamageComponent>(args.Action, out var percentageDamageComponent))
+        {
+            foreach (var target in args.Targets)
+                TryDamageTarget((args.Action, percentageDamageComponent), target, node, true, out var potentialDamageDealt);
+
+            return;
+        }
     }
 
     private void OnProcStatusEffect(Node<StatusEffectComponent> node, ref ProcStatusEffectSignal args)
     {
-        if (!_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
+        if (_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
+        {
+            TryDamageTarget((node, damageComponent), args.Target, node, false, out var damageDealt);
+            args.Summaries.Add("[b]" + _descriptionSystem.GetDisplayName(args.Target) + "[/b] took " + damageDealt + " damage from [b]" + _descriptionSystem.GetDisplayName(node)+ "[/b].");
             return;
-        
-        TryDamageTarget((node, damageComponent), args.Target, node, false, out var damageDealt);
-        args.Summaries.Add("[b]" + _descriptionSystem.GetDisplayName(args.Target) + "[/b] took " + damageDealt + " damage from [b]" + _descriptionSystem.GetDisplayName(node)+ "[/b].");
+        }
+
+        if (_nodeManager.TryGetComponent<PercentageDamageComponent>(node, out var percentageDamageComponent))
+        {
+            TryDamageTarget((node, percentageDamageComponent), args.Target, node, false, out var damageDealt);
+            args.Summaries.Add("[b]" + _descriptionSystem.GetDisplayName(args.Target) + "[/b] took " + damageDealt + " damage from [b]" + _descriptionSystem.GetDisplayName(node)+ "[/b].");
+            return;
+        }
     }
     
     private void OnUseAction(Node<MobComponent> node, ref UseActionSignal args)
     {
-        if (!_nodeManager.TryGetComponent<DamageComponent>(args.Action, out var damageComponent))
-            return;
-
-        foreach (var target in args.Targets)
+        if (_nodeManager.TryGetComponent<DamageComponent>(args.Action, out var damageComponent))
         {
-            TryDamageTarget((args.Action, damageComponent), target, node, false, out var damageDealt);
-            args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
-        }
-    }
-
-    private void OnPreviewAction(Node<MobComponent> node, ref PreviewActionSignal args)
-    {
-        if (!_nodeManager.TryGetComponent<DamageComponent>(args.Action, out var damageComponent))
+            foreach (var target in args.Targets)
+            {
+                TryDamageTarget((args.Action, damageComponent), target, node, false, out var damageDealt);
+                args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
+            }
+            
             return;
+        }
 
-        foreach (var target in args.Targets)
-            TryDamageTarget((args.Action, damageComponent), target, node, true, out var potentialDamageDealt);
+        if (_nodeManager.TryGetComponent<PercentageDamageComponent>(args.Action, out var percentageDamageComponent))
+        {
+            foreach (var target in args.Targets)
+            {
+                TryDamageTarget((args.Action, percentageDamageComponent), target, node, false, out var damageDealt);
+                args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
+            }
+
+            return;
+        }
     }
     
     /// <summary>
-    /// Try to apply damage to a Damageable target
+    /// Try to apply damage to a target
     /// </summary>
     /// <param name="node">Skill being used to damage the defender</param>
     /// <param name="defender">The node being attacked</param>
@@ -91,6 +131,27 @@ public partial class DamageSystem : NodeSystem
         
         _damageableSystem.TryTakeDamage((defender, healthComponent), node, preview, out var damageTaken);
         node.Comp.Damage = originalDamage;
+        damageDealt = damageTaken;
+    }
+    
+    /// <summary>
+    /// Try to apply percentage damage to a target
+    /// </summary>
+    /// <param name="node">Skill being used to damage the defender</param>
+    /// <param name="defender">The node being attacked</param>
+    /// <param name="attacker">The node attacking the defender</param>
+    /// <param name="preview">If true, don't actually damage target, just preview the damage</param>
+    /// <param name="damageDealt">How much damage is dealt to the target</param>
+    public void TryDamageTarget(Node<PercentageDamageComponent> node, Node defender, Node attacker, bool preview,
+        out int damageDealt)
+    {
+        damageDealt = 0;
+        
+        // Can't damage a target that has no health
+        if (!_nodeManager.TryGetComponent<HealthComponent>(defender, out var healthComponent))
+            return;
+        
+        _damageableSystem.TryTakeDamage((defender, healthComponent), node, preview, out var damageTaken);
         damageDealt = damageTaken;
     }
 

@@ -15,20 +15,20 @@ public partial class MobComponent : Component
     /// <summary>
     /// Abilities are passive effects that each mob has. 
     /// </summary>
-    [Export] [Serialize] public Array<string> Abilities = [];
+    [Export] public Array<string> Abilities = [];
     
     /// <summary>
     /// Skills are physical abilities a mob can use during combat
     /// </summary>
-    [Export] [Serialize]  public Array<string> Skills = [];
+    [Export] public Array<string> Skills = [];
     
     /// <summary>
     /// Spells are magical abilities a mob can use during combat
     /// </summary>
-    [Export] [Serialize]  public Array<string> Spells = [];
+    [Export] public Array<string> Spells = [];
 
     /// <summary>
     /// Status effects can be positive or negative
     /// </summary>
-    [Serialize] public Dictionary<string, Node> StatusEffects = [];
+    public Dictionary<string, Node> StatusEffects = [];
 }

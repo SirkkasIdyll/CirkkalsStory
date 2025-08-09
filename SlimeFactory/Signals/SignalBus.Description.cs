@@ -4,11 +4,18 @@ namespace CS.SlimeFactory.Signals;
 
 public partial class SignalBus
 {
-    public delegate void ReloadCombatDescriptionSignalHandler(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args);
-    public event ReloadCombatDescriptionSignalHandler? ReloadCombatDescriptionSignal;
-    public void EmitReloadCombatDescriptionSignal(Node<DescriptionComponent> node, ref ReloadCombatDescriptionSignal args)
+    public delegate void GetActionEffectsDescriptionSignalHandler(Node<DescriptionComponent> node, ref GetActionEffectsDescriptionSignal args);
+    public event GetActionEffectsDescriptionSignalHandler? GetActionEffectsDescriptionSignal;
+    public void EmitGetActionEffectsDescriptionSignal(Node<DescriptionComponent> node, ref GetActionEffectsDescriptionSignal args)
     {
-        ReloadCombatDescriptionSignal?.Invoke(node, ref args);
+        GetActionEffectsDescriptionSignal?.Invoke(node, ref args);
+    }
+    
+    public delegate void GetActionCostsDescriptionSignalHandler(Node<DescriptionComponent> node, ref GetActionCostsDescriptionSignal args);
+    public event GetActionCostsDescriptionSignalHandler? GetActionCostsDescriptionSignal;
+    public void EmitGetActionCostsDescriptionSignal(Node<DescriptionComponent> node, ref GetActionCostsDescriptionSignal args)
+    {
+        GetActionCostsDescriptionSignal?.Invoke(node, ref args);
     }
 
     public delegate void UpdateDisplayNameSignalHandler(Node<DescriptionComponent> node,
