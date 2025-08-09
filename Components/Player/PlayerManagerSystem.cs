@@ -7,19 +7,13 @@ namespace CS.Components.Player;
 public partial class PlayerManagerSystem : NodeSystem
 {
     private Node _player = null!;
-    
-    public override void _Ready()
-    {
-        base._Ready();
 
-        /*if (_nodeManager.TrySpawnNode("MobPlayer", out var node))
-        {
-            _player = node;
-            AddChild(_player);
-            _player.SetOwner(this);
-        }*/
-    }
-
+    /// <summary>
+    /// TODO: HUNT DOWN ALL USAGES OF THIS AND UNCURSE IT
+    /// UNCURSE IT BY MAKING SESSIONS A THING, ALTHOUGH THIS IS KIND OF A SESSION
+    /// 
+    /// </summary>
+    /// <returns></returns>
     public Node GetPlayer()
     {
         return _player;

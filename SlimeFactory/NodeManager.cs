@@ -154,6 +154,12 @@ public partial class NodeManager
         return component != null;
     }
 
+    /// <summary>
+    /// Returns a dict of all the currently active nodes in the <see cref="SceneTree"/>
+    /// with the corresponding component
+    /// </summary>
+    /// <param name="result"></param>
+    /// <typeparam name="T"></typeparam>
     public void NodeQuery<T>(out Dictionary<Node, T> result) where T : Component
     {
         result = new Dictionary<Node, T>();

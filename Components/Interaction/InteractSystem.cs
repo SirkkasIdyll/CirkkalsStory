@@ -24,11 +24,9 @@ public partial class InteractSystem : NodeSystem
     {
         base._Input(@event);
         
-        if ((@event is not InputEventMouseButton inputEventMouse || !inputEventMouse.Pressed ||
-             inputEventMouse.ButtonIndex != MouseButton.Left) && !Input.IsActionPressed("interact"))
+        if (!@event.IsActionPressed("interact"))
             return;
-
-        // TODO: Kind of evil hardcoded player interaction
+        
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
                 out var canInteractComponent))
             return;
@@ -62,14 +60,15 @@ public partial class InteractSystem : NodeSystem
                 continue;
 
             if (target.GlobalPosition.DistanceTo(user.GlobalPosition) < component.MaxInteractDistance)
+            {
                 spriteGroup.Material = InRangeOutline;
-            else
-                spriteGroup.Material = OutOfRangeOutline;
-
+                continue;
+            }
+            
+            spriteGroup.Material = OutOfRangeOutline;
         }
     }
 
-    /// Something something process CanInteractComponent, get range, set color
     private void OnShowInteractOutline(Node<CanInteractComponent> node, ref ShowInteractOutlineSignal args)
     {
         if (!_nodeManager.HasComponent<InteractableComponent>(args.InteractTarget))
