@@ -47,6 +47,7 @@ public partial class InteractSystem : NodeSystem
     {
         base._PhysicsProcess(delta);
         
+        // Highlight currently focused interact target
         _nodeManager.NodeQuery<CanInteractComponent>(out var dict);
         foreach (var (owner, component) in dict)
         {
@@ -60,11 +61,8 @@ public partial class InteractSystem : NodeSystem
             
             if (spriteGroup == null)
                 continue;
-
-            if (!_gridCoordinateSystem.TryGetDistance(user, target, out var distance))
-                continue;
             
-            if (distance < component.MaxInteractDistance)
+            if (InRangeUnobstructed(user, target, component.MaxInteractDistance))
             {
                 spriteGroup.Material = InRangeOutline;
                 continue;
@@ -74,6 +72,11 @@ public partial class InteractSystem : NodeSystem
         }
     }
 
+    /// <summary>
+    /// Adds the target to the list of currently tracked targets to show an outline for
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="args"></param>
     private void OnShowInteractOutline(Node<CanInteractComponent> node, ref ShowInteractOutlineSignal args)
     {
         if (!_nodeManager.HasComponent<InteractableComponent>(args.InteractTarget))
@@ -82,6 +85,9 @@ public partial class InteractSystem : NodeSystem
         node.Comp.InteractTarget = args.InteractTarget;
     }
     
+    /// <summary>
+    /// Removes the target from the list of currently tracked targets and sets the CanvasGroup material to null
+    /// </summary>
     private void OnHideInteractOutline(Node<CanInteractComponent> node, ref HideInteractOutlineSignal args)
     {
         if (node.Comp.InteractTarget == args.InteractTarget)
@@ -93,6 +99,32 @@ public partial class InteractSystem : NodeSystem
             return;
         
         spriteGroup.Material = null;
+    }
+
+    /// <summary>
+    /// First check if the nodes are within range of each other
+    /// then create a raycast from the origin to the target to check for obstructions
+    /// Currently just checks if there's an impassable in the way
+    /// </summary>
+    private bool InRangeUnobstructed(Node origin, Node target, float range, uint collisionMask = 1)
+    {
+        if (!_gridCoordinateSystem.TryGetDistance(origin, target, out var distance))
+            return false;
+
+        if (range < distance)
+            return false;
+
+        if (origin is not PhysicsBody2D node2DA || target is not PhysicsBody2D node2DB)
+            return false;
+
+        var spaceState = GetWorld2D().DirectSpaceState;
+        var query = PhysicsRayQueryParameters2D.Create(node2DA.GlobalPosition, node2DB.GlobalPosition, collisionMask, [node2DA.GetRid()]);
+        var result = spaceState.IntersectRay(query);
+        
+        if (result == null || result.Count != 0)
+            return false;
+
+        return true;
     }
 
     private void TryInteract(Node<CanInteractComponent> node, Node<InteractableComponent> target)

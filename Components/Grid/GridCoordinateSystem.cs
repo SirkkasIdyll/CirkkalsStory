@@ -7,6 +7,12 @@ namespace CS.Components.Grid;
 /// <summary>
 /// For the sake of simplification, distance will be assumed to be in tiles
 /// A tile is a 32x32 block.
+///
+/// Negative X is left
+/// Negative Y is up
+/// Position X is right
+/// Positive Y is down
+/// (0,0) is the first tile in the positive-positive region
 /// </summary>
 public partial class GridCoordinateSystem : NodeSystem
 {
