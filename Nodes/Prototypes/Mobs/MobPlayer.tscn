@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://buqgt44k0b5gc"]
+[gd_scene load_steps=17 format=3 uid="uid://buqgt44k0b5gc"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kbtkb"]
 [ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="2_opdnh"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cbilvywpkwuxk" path="res://Resources/Sprites/bnuuySheet.png" id="3_tl3vd"]
 [ext_resource type="AudioStream" uid="uid://dyc6gj2kewjcm" path="res://Resources/Sounds/FootstepsWoodSoli 6017_62_1_short.wav" id="4_klnpo"]
 [ext_resource type="Script" uid="uid://ctw2xmwbf73hi" path="res://Components/Interaction/CanInteractComponent.cs" id="6_mtcbf"]
+[ext_resource type="Shader" uid="uid://cyowv87u2bat5" path="res://Resources/Shaders/Temp.gdshader" id="7_0n3qf"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_opdnh"]
 atlas = ExtResource("3_tl3vd")
@@ -37,6 +38,27 @@ animations = [{
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8wxkm"]
 radius = 3.5
 height = 12.0
+
+[sub_resource type="Gradient" id="Gradient_mtcbf"]
+offsets = PackedFloat32Array(0, 0.588406, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_0n3qf"]
+gradient = SubResource("Gradient_mtcbf")
+width = 500
+height = 500
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_l16d8"]
+shader = ExtResource("7_0n3qf")
+
+[sub_resource type="Gradient" id="Gradient_6mltn"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_va6o6"]
+gradient = SubResource("Gradient_6mltn")
 
 [node name="MobPlayer" instance=ExtResource("1_kbtkb")]
 collision_layer = 8
@@ -75,3 +97,19 @@ script = ExtResource("2_opdnh")
 
 [node name="CanInteractComponent" type="Node2D" parent="." index="8"]
 script = ExtResource("6_mtcbf")
+
+[node name="PointLight2D" type="PointLight2D" parent="." index="9"]
+visible = false
+range_item_cull_mask = 16
+shadow_enabled = true
+shadow_item_cull_mask = 17
+texture = SubResource("GradientTexture2D_0n3qf")
+texture_scale = 2.0
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="10"]
+visible = false
+light_mask = 16
+z_index = 10
+material = SubResource("ShaderMaterial_l16d8")
+scale = Vector2(500, 500)
+texture = SubResource("GradientTexture2D_va6o6")

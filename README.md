@@ -13,7 +13,7 @@ This is a small project I'm working on to familiarize myself with the Godot engi
 - Delete unused template functions like _Ready() and _Process().
 - Parents use signal from children, then call functions from their children to update them. Children do not ever need to be aware of their parents.
 - Events subscribed from the SignalBus need to be manually disconnected in _ExitTree(), failure to do so will make the node unavailable to be freed and cause bugs.
-
+- CODE IN _PROCESS OR _PHYSICSPROCESS PROBABLY NEEDS CONTINUE, NOT RETURN
 
 ### Naming Practices
 

@@ -172,22 +172,12 @@ layout_mode = 2
 theme_type_variation = &"HeaderSmall"
 text = "Resolution"
 
-[node name="Resolution" type="OptionButton" parent="PanelContainer/VBoxContainer/MarginContainer/FlowContainer/PanelContainer/MarginContainer/VBoxContainer" groups=["config_options"]]
+[node name="Resolution2" type="OptionButton" parent="PanelContainer/VBoxContainer/MarginContainer/FlowContainer/PanelContainer/MarginContainer/VBoxContainer" groups=["config_options"]]
 layout_mode = 2
-selected = 2
-item_count = 6
-popup/item_0/text = "640x360"
+selected = 0
+item_count = 1
+popup/item_0/text = "1280x960"
 popup/item_0/id = 0
-popup/item_1/text = "1280x720"
-popup/item_1/id = 2
-popup/item_2/text = "1920x1080"
-popup/item_2/id = 3
-popup/item_3/text = "2560x1440"
-popup/item_3/id = 4
-popup/item_4/text = "3200x1800"
-popup/item_4/id = 5
-popup/item_5/text = "3840x2160"
-popup/item_5/id = 6
 script = ExtResource("5_344th")
 
 [node name="MarginContainer2" type="MarginContainer" parent="PanelContainer/VBoxContainer"]
