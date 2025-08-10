@@ -10,7 +10,7 @@ public partial class CanInteractComponent : Component
     /// The max distance the node can be to successfully interact with objects
     /// </summary>
     [Export]
-    public float MaxInteractDistance = 2.5f;
+    public float MaxInteractDistance = 2.25f;
     
     /// <summary>
     /// The target to potentially interact with
