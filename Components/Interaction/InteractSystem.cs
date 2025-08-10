@@ -1,4 +1,5 @@
-﻿using CS.Components.Player;
+﻿using CS.Components.Grid;
+using CS.Components.Player;
 using CS.SlimeFactory;
 using Godot;
 
@@ -7,6 +8,7 @@ namespace CS.Components.Interaction;
 public partial class InteractSystem : NodeSystem
 {
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
+    [InjectDependency] private readonly GridCoordinateSystem _gridCoordinateSystem = null!;
     
     public ShaderMaterial InRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/InRangeOutline.tres");
     public ShaderMaterial OutOfRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/OutOfRangeOutline.tres");
@@ -59,7 +61,10 @@ public partial class InteractSystem : NodeSystem
             if (spriteGroup == null)
                 continue;
 
-            if (target.GlobalPosition.DistanceTo(user.GlobalPosition) < component.MaxInteractDistance)
+            if (!_gridCoordinateSystem.TryGetDistance(user, target, out var distance))
+                continue;
+            
+            if (distance < component.MaxInteractDistance)
             {
                 spriteGroup.Material = InRangeOutline;
                 continue;
@@ -94,8 +99,9 @@ public partial class InteractSystem : NodeSystem
     {
         if (node.Owner is not Node2D nodeA || target.Owner is not Node2D nodeB)
             return;
-        
-        var distance = nodeA.GlobalPosition.DistanceTo(nodeB.GlobalPosition);
+
+        if (!_gridCoordinateSystem.TryGetDistance(nodeA, nodeB, out var distance))
+            return;
         
         if (node.Comp.MaxInteractDistance < distance)
             return;

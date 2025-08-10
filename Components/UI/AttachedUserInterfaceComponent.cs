@@ -17,7 +17,7 @@ public partial class AttachedUserInterfaceComponent : Component
     /// Closes the UI if the user gets farther than this distance to the node
     /// </summary>
     [Export]
-    public float MaxUseDistance = 75f;
+    public float MaxUseDistance = 2.5f;
     
     public Control? UserInterface;
     public Node? User;

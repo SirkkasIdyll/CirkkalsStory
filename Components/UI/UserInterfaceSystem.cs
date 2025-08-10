@@ -1,4 +1,5 @@
-﻿using CS.Components.Interaction;
+﻿using CS.Components.Grid;
+using CS.Components.Interaction;
 using CS.SlimeFactory;
 using Godot;
 
@@ -6,6 +7,8 @@ namespace CS.Components.UI;
 
 public partial class UserInterfaceSystem : NodeSystem
 {
+    [InjectDependency] private readonly GridCoordinateSystem _gridCoordinateSystem = null!;
+    
     public override void _Ready()
     {
         base._Ready();
@@ -27,8 +30,11 @@ public partial class UserInterfaceSystem : NodeSystem
 
             if (owner is not Node2D objectNode || component.User is not Node2D userNode)
                 continue;
-
-            if (objectNode.GlobalPosition.DistanceTo(userNode.GlobalPosition) < component.MaxUseDistance)
+            
+            if (!_gridCoordinateSystem.TryGetDistance(userNode, objectNode, out var distance))
+                continue;
+            
+            if (distance < component.MaxUseDistance)
                 continue;
             
             CloseAttachedUserInterface((owner, component));

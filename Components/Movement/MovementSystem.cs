@@ -40,31 +40,55 @@ public partial class MovementSystem : NodeSystem
         else
             characterBody.Velocity = inputDirection * movementComponent.RunningSpeed;
 
+        var spriteGroup = characterBody.GetNode<CanvasGroup>("SpriteGroup");
         var sprite = characterBody.GetNode<AnimatedSprite2D>("SpriteGroup/AnimatedSprite2D");
         
         if (sprite != null)
         {
-            if (inputDirection == Vector2.Left)
-                sprite.FlipH = true;
-            else if (inputDirection == Vector2.Right)
-                sprite.FlipH = false;
-
-            if (inputDirection == Vector2.Up)
-                sprite.Animation = "back";
-            else if (inputDirection == Vector2.Down)
-                sprite.Animation = "default";
-
             if (float.Abs(characterBody.GlobalPosition.X - GetGlobalMousePosition().X) <= 250 &&
                 float.Abs(characterBody.GlobalPosition.Y - GetGlobalMousePosition().Y) <= 250)
             {
-                if (characterBody.GlobalPosition.X > GetGlobalMousePosition().X)
-                    sprite.FlipH = true;
+                /*if (characterBody.GlobalPosition.X > GetGlobalMousePosition().X)
+                    spriteGroup.Scale = spriteGroup.Scale with { X = -1 };
                 else
-                    sprite.FlipH = false;
+                    spriteGroup.Scale = spriteGroup.Scale with { X = 1 };*/
+                
+                if (characterBody.GlobalPosition.X > GetGlobalMousePosition().X)
+                {
+                    var tween = CreateTween();
+                    tween.SetEase(Tween.EaseType.Out);
+                    tween.TweenProperty(spriteGroup, "scale", new Vector2(-1, 1), 0.1f);
+                }
+                else
+                {
+                    var tween = CreateTween();
+                    tween.SetEase(Tween.EaseType.Out);
+                    tween.TweenProperty(spriteGroup, "scale", new Vector2(1, 1), 0.1f);
+                }
                 
                 if (characterBody.GlobalPosition.Y - 50 > GetGlobalMousePosition().Y)
                     sprite.Animation = "back";
                 else
+                    sprite.Animation = "default";
+            }
+            else
+            {
+                if (inputDirection == Vector2.Left)
+                {
+                    var tween = CreateTween();
+                    tween.SetEase(Tween.EaseType.Out);
+                    tween.TweenProperty(spriteGroup, "scale", new Vector2(-1, 1), 0.1f);
+                }
+                else if (inputDirection == Vector2.Right)
+                {
+                    var tween = CreateTween();
+                    tween.SetEase(Tween.EaseType.Out);
+                    tween.TweenProperty(spriteGroup, "scale", new Vector2(1, 1), 0.1f);
+                }
+
+                if (inputDirection == Vector2.Up)
+                    sprite.Animation = "back";
+                else if (inputDirection == Vector2.Down)
                     sprite.Animation = "default";
             }
         }
