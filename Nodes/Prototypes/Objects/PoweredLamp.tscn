@@ -1,0 +1,51 @@
+[gd_scene load_steps=9 format=3 uid="uid://pa16w5mflqpe"]
+
+[ext_resource type="PackedScene" uid="uid://drjnmswp52ljh" path="res://Nodes/Prototypes/Objects/BaseObject.tscn" id="1_n1d3o"]
+[ext_resource type="Texture2D" uid="uid://j726n7clqv12" path="res://Resources/Sprites/Lamp.png" id="2_lgr31"]
+[ext_resource type="Script" uid="uid://pjaieos5ol3i" path="res://Components/Power/PowerCustomerComponent.cs" id="3_lgr31"]
+[ext_resource type="Script" uid="uid://cfv33bp7uma0p" path="res://Components/Power/PoweredLightComponent.cs" id="4_7lygm"]
+[ext_resource type="Script" uid="uid://cvpoqy4a716s6" path="res://Components/Sitting/SeatComponent.cs" id="5_seanw"]
+[ext_resource type="Script" uid="uid://dgdyrma2xaqwd" path="res://Components/Interaction/InteractableComponent.cs" id="6_osjpc"]
+
+[sub_resource type="Gradient" id="Gradient_7lygm"]
+offsets = PackedFloat32Array(0, 0.512397)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_seanw"]
+gradient = SubResource("Gradient_7lygm")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="PoweredLamp" instance=ExtResource("1_n1d3o")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "PoweredLamp"
+
+[node name="Sprite2D" type="Sprite2D" parent="SpriteGroup" index="0"]
+texture = ExtResource("2_lgr31")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="2"]
+visible = false
+polygon = PackedVector2Array(2.6, -6.6, -2.6, -6.6, -2.6, -5.3, -5.6, -3.3, -5.6, 0.4, -3.6, 1.3, -3.6, 2.6, -1.6, 2.6, -1.6, 6.4, -5.6, 6.4, -5.6, 8, 5.6, 8, 5.6, 6.4, 1.6, 6.4, 1.6, 2.6, 3.6, 2.6, 3.6, 1.3, 5.6, 0.4, 5.6, -3.3, 2.6, -5.3)
+
+[node name="PowerCustomerComponent" type="Node2D" parent="." index="3"]
+script = ExtResource("3_lgr31")
+ConsumptionRate = 5.0
+
+[node name="PoweredLightComponent" type="Node2D" parent="." index="4" node_paths=PackedStringArray("PointLight2D")]
+script = ExtResource("4_7lygm")
+PointLight2D = NodePath("PointLight2D")
+
+[node name="PointLight2D" type="PointLight2D" parent="PoweredLightComponent" index="0"]
+blend_mode = 2
+texture = SubResource("GradientTexture2D_seanw")
+
+[node name="SeatComponent" type="Node2D" parent="." index="5"]
+script = ExtResource("5_seanw")
+
+[node name="InteractableComponent" type="Node2D" parent="." index="6" node_paths=PackedStringArray("SpriteGroup", "Area")]
+script = ExtResource("6_osjpc")
+SpriteGroup = NodePath("../SpriteGroup")
+Area = NodePath("..")

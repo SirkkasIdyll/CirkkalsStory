@@ -1,0 +1,31 @@
+[gd_scene load_steps=6 format=3 uid="uid://deypp3wv0pfdd"]
+
+[ext_resource type="PackedScene" uid="uid://drjnmswp52ljh" path="res://Nodes/Prototypes/Objects/BaseObject.tscn" id="1_10rn0"]
+[ext_resource type="Texture2D" uid="uid://n3axtws1bk62" path="res://Resources/Sprites/SmallCrystal.png" id="2_enp8j"]
+[ext_resource type="Script" uid="uid://u0f07glq8xq1" path="res://Components/Power/PowerDistributorComponent.cs" id="3_enp8j"]
+[ext_resource type="Script" uid="uid://cvpoqy4a716s6" path="res://Components/Sitting/SeatComponent.cs" id="4_aq51w"]
+[ext_resource type="Script" uid="uid://dgdyrma2xaqwd" path="res://Components/Interaction/InteractableComponent.cs" id="5_dcq5u"]
+
+[node name="SmallCrystal" instance=ExtResource("1_10rn0")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Small Crystal"
+
+[node name="Sprite2D" type="Sprite2D" parent="SpriteGroup" index="0"]
+texture = ExtResource("2_enp8j")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="2"]
+polygon = PackedVector2Array(-1.6, -8, -1.6, -6.6, -2.6, -6.6, -2.6, -4.6, -3.6, -4.6, -3.6, -2.6, -4.6, -2.6, -4.6, -1.6, -5.6, -1.6, -5.6, 1.6, -4.6, 1.6, -4.6, 3.6, -3.6, 3.6, -3.6, 5.6, -2.6, 5.6, -2.6, 7.6, -1.6, 7.6, -1.6, 8.6, 0.6, 8.6, 0.6, 7.6, 1.6, 7.6, 1.6, 5.6, 2.5, 5.6, 3.5, 1.6, 4.6, 1.6, 4.6, -1.6, 3.6, -1.6, 3.6, -2.6, 2.6, -2.6, 2.6, -4.6, 1.6, -4.6, 1.6, -6.4)
+
+[node name="PowerDistributorComponent" type="Node2D" parent="." index="3"]
+script = ExtResource("3_enp8j")
+DistributionRate = 100.0
+Range = 5.0
+
+[node name="SeatComponent" type="Node2D" parent="." index="4"]
+script = ExtResource("4_aq51w")
+
+[node name="InteractableComponent" type="Node2D" parent="." index="5" node_paths=PackedStringArray("SpriteGroup", "Area")]
+script = ExtResource("5_dcq5u")
+SpriteGroup = NodePath("../SpriteGroup")
+Area = NodePath("..")

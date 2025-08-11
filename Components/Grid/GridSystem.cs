@@ -113,6 +113,21 @@ public partial class GridSystem : NodeSystem
 
         var signal = new NodeUnanchoredFromGridSignal();
         _nodeManager.SignalBus.EmitNodeUnanchoredFromGridSignal(rigidBody2D, ref signal);
+        GD.Print("Unanchored " + rigidBody2D.Name);
+    }
+
+    public void ToggleAnchored(Node node)
+    {
+        if (node is not RigidBody2D rigidBody2D)
+            return;
+
+        if (rigidBody2D.IsFreezeEnabled())
+        {
+            UnanchorFromGrid(node);
+            return;
+        }
+        
+        AnchorToGrid(node);
     }
 
     /// <summary>

@@ -21,7 +21,7 @@ public partial class SittingSystem : NodeSystem
         if (!_nodeManager.TryGetComponent<SeatComponent>(node, out var seatComponent))
             return;
 
-        _gridSystem.AnchorToGrid(node);
+        _gridSystem.ToggleAnchored(node);
         
         /*if (args.Interactee is not CharacterBody2D interacteeBody)
             return;

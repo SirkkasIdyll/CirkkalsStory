@@ -15,7 +15,6 @@ public partial class PowerDistributorComponent : Component
     /// </summary>
     [Export]
     public float DistributionRate;
-    public float PowerToDistribute;
     
     /// <summary>
     /// How far the power distributed reaches
@@ -24,4 +23,5 @@ public partial class PowerDistributorComponent : Component
     public float Range;
 
     public Array<Node> ConnectedTransmitters = [];
+    public float PowerToDistribute;
 }

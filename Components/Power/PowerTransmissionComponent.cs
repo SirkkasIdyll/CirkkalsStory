@@ -23,6 +23,9 @@ public partial class PowerTransmissionComponent : Component
     public Array<Node> ConnectedGenerators = [];
 }
 
+/// <summary>
+/// UNUSED
+/// </summary>
 public partial class PowerTransmittedSignal : UserSignalArgs
 {
     public float PowerTransmitted;

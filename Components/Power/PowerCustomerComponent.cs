@@ -14,9 +14,8 @@ public partial class PowerCustomerComponent : Component
     /// </summary>
     [Export]
     public float ConsumptionRate;
-    public float PowerConsumed;
-
-    public bool IsSufficientlyPowered;
     
-    public Array<Node> ConnectedDistributors;
+    public Array<Node> ConnectedDistributors = [];
+    public bool IsSufficientlyPowered;
+    public float PowerConsumed;
 }

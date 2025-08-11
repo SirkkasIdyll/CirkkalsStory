@@ -24,6 +24,8 @@ public partial class PowerSystem : NodeSystem
         
         ProcessPowerGenerators(delta);
         ProcessPowerTransmitters(delta);
+        ProcessPowerDistributors(delta);
+        ProcessPowerCustomers(delta);
     }
 
     #region Signal Handlers
@@ -77,7 +79,6 @@ public partial class PowerSystem : NodeSystem
         foreach (var (node, comp) in generators)
         {
             comp.PowerGenerated = comp.PowerRate * (float)delta;
-            GD.Print(comp.PowerGenerated);
         }
     }
 
@@ -87,6 +88,7 @@ public partial class PowerSystem : NodeSystem
         foreach (var (node, comp) in transmitters)
         {
             var maxPossibleTransmitted = comp.TransmissionRate * (float)delta;
+            comp.PowerToTransmit = 0;
             
             foreach (var generator in comp.ConnectedGenerators)
             {
@@ -111,6 +113,7 @@ public partial class PowerSystem : NodeSystem
         foreach (var (node, comp) in distributors)
         {
             var maxPossibleDistributed = comp.DistributionRate * (float)delta;
+            comp.PowerToDistribute = 0;
             
             foreach (var transmitter in comp.ConnectedTransmitters)
             {
@@ -135,6 +138,7 @@ public partial class PowerSystem : NodeSystem
         foreach (var (node, comp) in customers)
         {
             var maxPossibleConsumed = comp.ConsumptionRate * (float)delta;
+            comp.PowerConsumed = 0;
 
             foreach (var distributor in comp.ConnectedDistributors)
             {

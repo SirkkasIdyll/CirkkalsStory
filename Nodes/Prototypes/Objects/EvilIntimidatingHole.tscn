@@ -37,3 +37,4 @@ texture_scale = 13.0
 [node name="PowerGeneratorComponent" type="Node2D" parent="." index="4"]
 script = ExtResource("3_vhtlv")
 PowerRate = 10000.0
+Range = 20.0

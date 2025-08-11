@@ -28,14 +28,19 @@ public partial class PowerGeneratorComponent : Component
     /// </summary>
     [Export]
     public float PowerRate;
-    public float PowerGenerated;
 
     /// <summary>
     /// How far the power generated reaches
     /// </summary>
+    [Export]
     public float Range;
+    
+    public float PowerGenerated;
 }
 
+/// <summary>
+/// UNUSED
+/// </summary>
 public partial class PowerGeneratedSignal : UserSignalArgs
 {
     public float PowerGenerated;
