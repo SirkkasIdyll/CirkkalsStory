@@ -5,6 +5,9 @@ namespace CS.Components.Power;
 
 public partial class PoweredLightComponent : Component
 {
+    [Export] 
+    public PointLight2D? PointLight2D = null;
+    
     /// <summary>
     /// The scale of the light's texture, which increases the range of the light
     /// </summary>
@@ -22,7 +25,4 @@ public partial class PoweredLightComponent : Component
     /// </summary>
     [Export]
     public Color LightColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
-    
-    [ExportCategory("Owned")]
-    [Export] public PointLight2D PointLight2D = null!;
 }

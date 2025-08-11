@@ -16,6 +16,9 @@ public partial class PoweredLightSystem : NodeSystem
         _nodeManager.NodeQuery<PoweredLightComponent>(out var dictionary);
         foreach (var (node, comp) in dictionary)
         {
+            if (comp.PointLight2D == null)
+                return;
+            
             if (!_nodeManager.TryGetComponent<PowerCustomerComponent>(node, out var customerComponent))
                 continue;
 
