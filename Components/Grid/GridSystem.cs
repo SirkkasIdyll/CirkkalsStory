@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.Components.Grid;
@@ -13,8 +14,10 @@ namespace CS.Components.Grid;
 /// Position X is right
 /// Positive Y is down
 /// (0,0) is the first tile in the positive-positive region
+///
+/// Does not support having additional grids/maps at the moment
 /// </summary>
-public partial class GridCoordinateSystem : NodeSystem
+public partial class GridSystem : NodeSystem
 {
     public const float TileSize = 32f;
     
@@ -82,4 +85,51 @@ public partial class GridCoordinateSystem : NodeSystem
         distance = distanceVector.Length();
         return true;
     }
+
+    public void AnchorToGrid(Node node)
+    {
+        if (node is not RigidBody2D rigidBody2D)
+            return;
+
+        var position = GetPosition(rigidBody2D);
+
+        if (position == null)
+            return;
+        
+        SetPosition(rigidBody2D, new Vector2(float.Round(position.Value.X), float.Round(position.Value.Y)));
+        rigidBody2D.SetGlobalRotationDegrees(GetCardinalAngle(rigidBody2D.GetGlobalRotationDegrees()));
+        rigidBody2D.SetFreezeEnabled(true);
+
+        var signal = new NodeAnchoredToGridSignal();
+        _nodeManager.SignalBus.EmitNodeAnchoredToGridSignal(rigidBody2D, ref signal);
+    }
+
+    public void UnanchorFromGrid(Node node)
+    {
+        if (node is not RigidBody2D rigidBody2D)
+            return;
+        
+        rigidBody2D.SetFreezeEnabled(false);
+
+        var signal = new NodeUnanchoredFromGridSignal();
+        _nodeManager.SignalBus.EmitNodeUnanchoredFromGridSignal(rigidBody2D, ref signal);
+    }
+
+    /// <summary>
+    /// It's in degrees, not radians!
+    /// </summary>
+    private float GetCardinalAngle(float degrees)
+    {
+        return float.Round(degrees / 90) * 90;
+    }
+}
+
+public partial class NodeAnchoredToGridSignal : UserSignalArgs
+{
+    
+}
+
+public partial class NodeUnanchoredFromGridSignal : UserSignalArgs
+{
+    
 }

@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://j8wbmaet8hdi"]
+
+[ext_resource type="PackedScene" uid="uid://drjnmswp52ljh" path="res://Nodes/Prototypes/Objects/BaseObject.tscn" id="1_h2bq8"]
+[ext_resource type="Texture2D" uid="uid://dc1gy02g87xp0" path="res://Resources/Sprites/EvilIntimidatingHole.png" id="2_vhtlv"]
+[ext_resource type="Script" uid="uid://dqxxmcj1do5g2" path="res://Components/Power/PowerGeneratorComponent.cs" id="3_vhtlv"]
+
+[sub_resource type="Gradient" id="Gradient_qektd"]
+offsets = PackedFloat32Array(0, 0.730028)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_h2bq8"]
+gradient = SubResource("Gradient_qektd")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="EvilIntimidatingHole" instance=ExtResource("1_h2bq8")]
+collision_layer = 1
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Evil Intimidating Hole"
+
+[node name="Sprite2D" type="Sprite2D" parent="SpriteGroup" index="0"]
+scale = Vector2(3, 3)
+texture = ExtResource("2_vhtlv")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="2"]
+scale = Vector2(3, 3)
+polygon = PackedVector2Array(-10.6, -18.6, -10.6, -17.6, -11.4, -17.6, -12.4, -15.6, -15.6, -15.6, -15.6, -14.6, -16.6, -14.6, -16.6, -12.6, -17.6, -12.6, -17.6, -11.6, -23.6, -11.6, -23.6, -10.6, -29.6, -10.6, -29.6, -9.6, -32.6, -9.6, -32.6, -8.6, -33.6, -8.6, -33.6, -7.4, -37.6, -4.3, -37.6, -1.6, -38.6, -1.6, -38.6, -0.599998, -41.6, -0.599998, -41.6, 0.400002, -44.6, 0.400002, -44.6, 4.6, -43.5, 4.6, -42.5, 9.6, -41.6, 9.6, -41.6, 12.6, -40.6, 12.6, -40.6, 13.4, -41.6, 13.4, -41.6, 16.7, -33.4, 15.5, -33.4, 14.6, -32.6, 14.6, -32.6, 15.6, -28.6, 15.6, -28.6, 16.6, -25.6, 16.6, -25.6, 17.4, -23.6, 18.3, -23.6, 19.6, -20.6, 19.6, -20.6, 20.6, -18.6, 20.6, -18.6, 21.6, -16.6, 21.6, -16.6, 22.4, -14.6, 23.3, -14.6, 24.6, -11.4, 24.6, -11.4, 23.3, -7.4, 20.3, -7.4, 19.6, -4.4, 19.6, -4.4, 18.6, 2.4, 18.6, 2.4, 19.6, 5.4, 19.6, 5.4, 20.6, 8.4, 20.6, 8.4, 21.6, 10.4, 21.6, 10.4, 22.6, 13.4, 22.6, 13.4, 23.6, 17.6, 23.6, 17.6, 22.3, 20.6, 20.3, 20.6, 17.3, 22.6, 16.4, 22.6, 15.6, 25.6, 15.6, 25.6, 14.6, 27.4, 14.6, 27.4, 15.6, 30.6, 15.6, 30.6, 14.3, 32.6, 13.4, 32.6, 12.6, 34.6, 12.6, 34.6, 11.6, 35.6, 11.6, 35.6, 10.6, 38.6, 10.6, 38.6, 9.6, 42.6, 9.6, 42.6, 8.6, 43.6, 8.6, 43.6, 6.6, 44.6, 6.6, 44.6, 2.6, 45.6, 2.6, 45.6, -1.6, 43.6, -1.6, 43.6, -2.4, 41.6, -3.4, 41.6, -5.6, 39.6, -5.6, 39.6, -6.6, 37.6, -6.6, 37.6, -7.6, 35.6, -7.6, 35.6, -8.6, 32.6, -8.6, 32.6, -9.3, 29.6, -11.3, 29.6, -12.6, 26.6, -12.6, 26.6, -13.6, 23.6, -13.6, 23.6, -14.6, 17.6, -14.6, 17.6, -15.5, 12.6, -16.5, 12.6, -17.6, 10.4, -17.6, 10.4, -16.6, 8.6, -16.6, 8.6, -17.6, -5.4, -17.6, -5.4, -18.6)
+
+[node name="PointLight2D2" type="PointLight2D" parent="." index="3"]
+color = Color(0.988926, 0.720052, 0.62067, 1)
+blend_mode = 2
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_h2bq8")
+texture_scale = 13.0
+
+[node name="PowerGeneratorComponent" type="Node2D" parent="." index="4"]
+script = ExtResource("3_vhtlv")
+PowerRate = 10000.0

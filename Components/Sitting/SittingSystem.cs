@@ -1,4 +1,5 @@
-﻿using CS.Components.Interaction;
+﻿using CS.Components.Grid;
+using CS.Components.Interaction;
 using CS.SlimeFactory;
 using Godot;
 
@@ -6,6 +7,8 @@ namespace CS.Components.Sitting;
 
 public partial class SittingSystem : NodeSystem
 {
+    [InjectDependency] private readonly GridSystem _gridSystem = null!;
+    
     public override void _Ready()
     {
         base._Ready();
@@ -18,6 +21,8 @@ public partial class SittingSystem : NodeSystem
         if (!_nodeManager.TryGetComponent<SeatComponent>(node, out var seatComponent))
             return;
 
+        _gridSystem.AnchorToGrid(node);
+        
         /*if (args.Interactee is not CharacterBody2D interacteeBody)
             return;
         

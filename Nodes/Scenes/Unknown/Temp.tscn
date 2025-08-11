@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://m7oi1ohgvdft"]
+[gd_scene load_steps=12 format=4 uid="uid://m7oi1ohgvdft"]
 
 [ext_resource type="Script" uid="uid://uo4mriwgqow8" path="res://Nodes/Scenes/Unknown/TempSystem.cs" id="1_s21w5"]
 [ext_resource type="Texture2D" uid="uid://b5bhtdcnhjkxn" path="res://Resources/Sprites/Tileset32.png" id="2_6mltn"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://q4tieyf88uiy" path="res://Nodes/Prototypes/Objects/MediumChair.tscn" id="6_dffis"]
 [ext_resource type="PackedScene" uid="uid://cpwse4as6ig1b" path="res://Nodes/Prototypes/Mobs/MobCarnivorousPlant.tscn" id="7_6mltn"]
 [ext_resource type="PackedScene" uid="uid://o7hv4otvn8ms" path="res://Nodes/Prototypes/Objects/Box.tscn" id="7_g45lb"]
+[ext_resource type="PackedScene" uid="uid://j8wbmaet8hdi" path="res://Nodes/Prototypes/Objects/EvilIntimidatingHole.tscn" id="8_g45lb"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_g45lb"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -62,6 +63,11 @@ sources/0 = SubResource("TileSetAtlasSource_l2r32")
 [node name="Node2D" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_s21w5")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="."]
+y_sort_enabled = true
+position = Vector2(161, 209)
+color = Color(0.07551, 0.0755101, 0.0755101, 1)
 
 [node name="TileMapLayer2" type="TileMapLayer" parent="."]
 z_index = -1
@@ -120,18 +126,21 @@ position = Vector2(228, 242)
 y_sort_enabled = true
 position = Vector2(441, 178)
 
-[node name="CanvasModulate" type="CanvasModulate" parent="."]
-y_sort_enabled = true
-position = Vector2(161, 209)
-color = Color(0.07551, 0.0755101, 0.0755101, 1)
-
 [node name="MediumChair" parent="." instance=ExtResource("6_dffis")]
 y_sort_enabled = true
-position = Vector2(459, 314)
+position = Vector2(465, 300)
+
+[node name="MediumChair5" parent="." instance=ExtResource("6_dffis")]
+y_sort_enabled = true
+position = Vector2(465, 300)
+
+[node name="MediumChair6" parent="." instance=ExtResource("6_dffis")]
+y_sort_enabled = true
+position = Vector2(466, 301)
 
 [node name="MediumChair2" parent="." instance=ExtResource("6_dffis")]
 y_sort_enabled = true
-position = Vector2(462, 315)
+position = Vector2(455, 295)
 
 [node name="MediumChair3" parent="." instance=ExtResource("6_dffis")]
 y_sort_enabled = true
@@ -142,10 +151,18 @@ y_sort_enabled = true
 position = Vector2(-16, 454)
 
 [node name="MobCarnivorousPlant" parent="." instance=ExtResource("7_6mltn")]
+y_sort_enabled = true
 position = Vector2(522, 336)
 
 [node name="Box" parent="." instance=ExtResource("7_g45lb")]
+y_sort_enabled = true
 position = Vector2(304, 236)
 
 [node name="Box2" parent="." instance=ExtResource("7_g45lb")]
+y_sort_enabled = true
 position = Vector2(301, 300)
+
+[node name="EvilIntimidatingHole" parent="." instance=ExtResource("8_g45lb")]
+z_index = -1
+position = Vector2(879, 174)
+metadata/_edit_lock_ = true

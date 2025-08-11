@@ -8,7 +8,7 @@ namespace CS.Components.Interaction;
 public partial class InteractSystem : NodeSystem
 {
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
-    [InjectDependency] private readonly GridCoordinateSystem _gridCoordinateSystem = null!;
+    [InjectDependency] private readonly GridSystem _gridSystem = null!;
     
     public ShaderMaterial InRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/InRangeOutline.tres");
     public ShaderMaterial OutOfRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/OutOfRangeOutline.tres");
@@ -108,7 +108,7 @@ public partial class InteractSystem : NodeSystem
     /// </summary>
     private bool InRangeUnobstructed(Node origin, Node target, float range, uint collisionMask = 1)
     {
-        if (!_gridCoordinateSystem.TryGetDistance(origin, target, out var distance))
+        if (!_gridSystem.TryGetDistance(origin, target, out var distance))
             return false;
 
         if (range < distance)
@@ -132,7 +132,7 @@ public partial class InteractSystem : NodeSystem
         if (node.Owner is not Node2D nodeA || target.Owner is not Node2D nodeB)
             return;
 
-        if (!_gridCoordinateSystem.TryGetDistance(nodeA, nodeB, out var distance))
+        if (!_gridSystem.TryGetDistance(nodeA, nodeB, out var distance))
             return;
         
         if (node.Comp.MaxInteractDistance < distance)
