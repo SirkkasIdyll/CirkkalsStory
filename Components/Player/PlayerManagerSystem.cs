@@ -11,9 +11,9 @@ public partial class PlayerManagerSystem : NodeSystem
     /// <summary>
     /// TODO: HUNT DOWN ALL USAGES OF THIS AND UNCURSE IT
     /// UNCURSE IT BY MAKING SESSIONS A THING, ALTHOUGH THIS IS KIND OF A SESSION
+    /// NO NULL SAFETY, NOTHING IS GOOD ABOUT THIS
     /// 
     /// </summary>
-    /// <returns></returns>
     public Node GetPlayer()
     {
         return _player;

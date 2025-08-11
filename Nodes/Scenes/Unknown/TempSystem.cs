@@ -20,7 +20,7 @@ public partial class TempSystem : Node2D
 		if (!_nodeManager.TrySpawnNode("MobPlayer", out var node))
 			return;
 
-		if (!_nodeSystemManager.TryGetNodeSystem<GridCoordinateSystem>(out var gridSystem))
+		if (!_nodeSystemManager.TryGetNodeSystem<GridSystem>(out var gridSystem))
 			return;
 		
 		playerManagerSystem.SetPlayer(node);
@@ -35,7 +35,7 @@ public partial class TempSystem : Node2D
 	{
 		base._PhysicsProcess(delta);
 		
-		if (!_nodeSystemManager.TryGetNodeSystem<GridCoordinateSystem>(out var gridSystem))
+		if (!_nodeSystemManager.TryGetNodeSystem<GridSystem>(out var gridSystem))
 			return;
 		
 		if (!_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerManagerSystem))
