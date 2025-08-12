@@ -56,8 +56,8 @@ public partial class SkillSelectionSceneSystem : Control
 			return;
 
 		var tooltip = _customTooltip.Instantiate<CustomTooltip>();
-		tooltip.SetTooltipTitle(_descriptionSystem.GetDisplayName(node));
-		tooltip.SetTooltipDescription(_descriptionSystem.GetDescription(node));
+		/*tooltip.SetTooltipTitle(_descriptionSystem.GetDisplayName(node));
+		tooltip.SetTooltipDescription(_descriptionSystem.GetDescription(node));*/
 		// tooltip.SetTooltipBulletpoints(_descriptionSystem.GetEffects(node));
 		AddChild(tooltip);
 		var mousePosition = GetViewport().GetMousePosition();
@@ -99,8 +99,8 @@ public partial class SkillSelectionSceneSystem : Control
 				child.QueueFree();
 		}
 
-		_skillName.SetText(_descriptionSystem.GetDisplayName(skillNode));
-		_skillDescription.SetText(_descriptionSystem.GetDescription(skillNode));
+		/*_skillName.SetText(_descriptionSystem.GetDisplayName(skillNode));
+		_skillDescription.SetText(_descriptionSystem.GetDescription(skillNode));*/
 
 		foreach (var effect in _descriptionSystem.GetEffects(skillNode))	
 		{

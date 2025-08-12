@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CS.Components.CombatManager;
-using CS.Components.Damage;
 using CS.Components.Description;
 using CS.Components.Mob;
 using CS.SlimeFactory;

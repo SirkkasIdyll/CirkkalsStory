@@ -57,8 +57,8 @@ public partial class EnemyAISystem : NodeSystem
         var skillTarget = targetingComponent.ValidTargets == TargetingComponent.Targets.Enemies ? args.Players.PickRandom() : args.Enemies.PickRandom();
         
         var signal = new UseActionSignal(skillNode, [skillTarget]);
-        signal.Summaries.Add("Used [b]" + _descriptionSystem.GetDisplayName(skillNode!) + "[/b] on [b]" +
-                             _descriptionSystem.GetDisplayName(skillTarget) + "[/b].");
+        /*signal.Summaries.Add("Used [b]" + _descriptionSystem.GetDisplayName(skillNode!) + "[/b] on [b]" +
+                             _descriptionSystem.GetDisplayName(skillTarget) + "[/b].");*/
         _nodeManager.SignalBus.EmitUseActionSignal(node, ref signal);
         args.Summaries.AddRange(signal.Summaries);
     }

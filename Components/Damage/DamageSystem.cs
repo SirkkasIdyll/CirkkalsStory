@@ -68,14 +68,14 @@ public partial class DamageSystem : NodeSystem
         if (_nodeManager.TryGetComponent<DamageComponent>(node, out var damageComponent))
         {
             TryDamageTarget((node, damageComponent), args.Target, node, false, out var damageDealt);
-            args.Summaries.Add("[b]" + _descriptionSystem.GetDisplayName(args.Target) + "[/b] took " + damageDealt + " damage from [b]" + _descriptionSystem.GetDisplayName(node)+ "[/b].");
+            //  args.Summaries.Add("[b]" + _descriptionSystem.GetDisplayName(args.Target) + "[/b] took " + damageDealt + " damage from [b]" + _descriptionSystem.GetDisplayName(node)+ "[/b].");
             return;
         }
 
         if (_nodeManager.TryGetComponent<PercentageDamageComponent>(node, out var percentageDamageComponent))
         {
             TryDamageTarget((node, percentageDamageComponent), args.Target, node, false, out var damageDealt);
-            args.Summaries.Add("[b]" + _descriptionSystem.GetDisplayName(args.Target) + "[/b] took " + damageDealt + " damage from [b]" + _descriptionSystem.GetDisplayName(node)+ "[/b].");
+            // args.Summaries.Add("[b]" + _descriptionSystem.GetDisplayName(args.Target) + "[/b] took " + damageDealt + " damage from [b]" + _descriptionSystem.GetDisplayName(node)+ "[/b].");
             return;
         }
     }
@@ -87,7 +87,7 @@ public partial class DamageSystem : NodeSystem
             foreach (var target in args.Targets)
             {
                 TryDamageTarget((args.Action, damageComponent), target, node, false, out var damageDealt);
-                args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
+                // args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
             }
             
             return;
@@ -98,7 +98,7 @@ public partial class DamageSystem : NodeSystem
             foreach (var target in args.Targets)
             {
                 TryDamageTarget((args.Action, percentageDamageComponent), target, node, false, out var damageDealt);
-                args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
+                // args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
             }
 
             return;

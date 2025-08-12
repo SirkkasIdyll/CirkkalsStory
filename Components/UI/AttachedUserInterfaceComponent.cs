@@ -1,7 +1,5 @@
 ﻿using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
 using Godot;
-using Godot.Collections;
 
 namespace CS.Components.UI;
 

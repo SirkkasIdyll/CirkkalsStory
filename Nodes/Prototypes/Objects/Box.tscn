@@ -13,26 +13,25 @@
 script = ExtResource("2_tw66r")
 UserInterfaceScene = ExtResource("3_tw66r")
 
-[node name="InteractableComponent" type="Node2D" parent="." index="2" node_paths=PackedStringArray("SpriteGroup", "Area")]
+[node name="InteractableComponent" type="Node2D" parent="." index="2" node_paths=PackedStringArray("Area")]
 script = ExtResource("2_0ab3m")
-SpriteGroup = NodePath("../SpriteGroup")
 Area = NodePath("..")
 
 [node name="StorageComponent" type="Node2D" parent="." index="3"]
 script = ExtResource("3_4ddv0")
 StorageLimit = 100.0
 
-[node name="Sprite2D" type="Sprite2D" parent="SpriteGroup" index="0"]
-texture = ExtResource("4_2obsc")
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="5"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="4"]
 polygon = PackedVector2Array(-3.4, -1.6, -6.6, -1.6, -6.6, 0.6, -5.6, 0.6, -5.6, 8, 5.6, 8, 5.6, 0.6, 6.6, 0.6, 6.6, -1.6, 3.4, -1.6, 3.4, -0.6, -3.4, -0.6)
 
-[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="." index="6"]
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="." index="5"]
 polygon = PackedVector2Array(-5.4, -0.6, -7.6, -0.6, -7.6, 0.4, -8, 2.6, -5.4, 2.6)
 
-[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="." index="7"]
+[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="." index="6"]
 polygon = PackedVector2Array(8, 2.6, 8, 0.4, 6.4, 0.4, 6.4, 2.6)
 
-[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="." index="8"]
+[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="." index="7"]
 polygon = PackedVector2Array(5.4, -0.6, 5.4, 1.6, 7.6, 1.6, 7.6, -0.6)
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
+texture = ExtResource("4_2obsc")

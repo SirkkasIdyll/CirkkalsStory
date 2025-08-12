@@ -12,20 +12,25 @@ public partial class DescriptionSystem : NodeSystem
 
     }
 
-    public string GetDisplayName(Node node)
+    public string? TryGetDisplayName(Node node)
     {
         if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
-            return "DEFAULT_NAME";
+            return null;
         
         return descriptionComponent.DisplayName;
     }
     
-    public string GetDescription(Node node)
+    public string? TryGetDescription(Node node)
     {
         if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
-            return "DEFAULT_DESCRIPTION";
+            return null;
         
         return descriptionComponent.Description;
+    }
+
+    public CanvasGroup? TryGetAppearance(Node node)
+    {
+        return node.GetNodeOrNull<CanvasGroup>("CanvasGroup");
     }
 
     /// <summary>

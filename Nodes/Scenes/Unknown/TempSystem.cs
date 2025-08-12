@@ -1,4 +1,3 @@
-using CS.Components.Description;
 using CS.Components.Grid;
 using CS.Components.Player;
 using CS.SlimeFactory;

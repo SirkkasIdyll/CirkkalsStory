@@ -11,9 +11,8 @@
 DisplayName = "Medium Chair"
 Description = "You sit in it. Right?"
 
-[node name="InteractableComponent" type="Node2D" parent="." index="1" node_paths=PackedStringArray("SpriteGroup", "Area")]
+[node name="InteractableComponent" type="Node2D" parent="." index="1" node_paths=PackedStringArray("Area")]
 script = ExtResource("5_jg6cx")
-SpriteGroup = NodePath("../SpriteGroup")
 Area = NodePath("..")
 
 [node name="SeatComponent" type="Node2D" parent="." index="2"]
@@ -22,5 +21,5 @@ script = ExtResource("3_cahjh")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="3"]
 polygon = PackedVector2Array(8.6, -13.5, -0.6, -15.8, -0.6, -1.6, -2.6, -1.6, -2.6, -0.6, -6.6, -0.6, -6.6, 0.4, -10.6, 0.4, -10.6, 4.6, -9.6, 4.6, -9.6, 11.6, -7.4, 11.6, -7.4, 5.6, -6.6, 5.6, -6.6, 6.4, -4.6, 7.3, -4.6, 16, -2.4, 16, -2.4, 7.6, -0.6, 7.6, -0.6, 10.6, 1.6, 10.6, 1.6, 6.6, 4.6, 6.6, 4.6, 5.6, 5.4, 5.6, 5.4, 14.6, 7.6, 14.6, 7.6, 4.6, 8.6, 4.6)
 
-[node name="Sprite2D" type="Sprite2D" parent="SpriteGroup" index="0"]
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
 texture = ExtResource("2_emr4x")

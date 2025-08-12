@@ -1,6 +1,4 @@
-﻿using CS.Components.Description;
-using CS.Components.Player;
-using CS.Nodes.UI.Tooltip;
+﻿using CS.Components.Player;
 using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
 using Godot;
@@ -10,7 +8,7 @@ namespace CS.Components.Interaction;
 public partial class InteractableComponent : Component
 {
     [Export]
-    public CanvasGroup? SpriteGroup;
+    public CanvasGroup? CanvasGroup;
 
     [Export]
     public PhysicsBody2D? Area;
@@ -39,6 +37,8 @@ public partial class InteractableComponent : Component
 
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(playerSystem.GetPlayer(), out var canInteractComponent))
             return;
+        
+        GD.Print("Mouse entered");
         
         var signal = new ShowInteractOutlineSignal(GetParent());
         _nodeManager.SignalBus.EmitShowInteractOutlineSignal((playerSystem.GetPlayer(), canInteractComponent), ref signal);

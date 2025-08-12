@@ -57,18 +57,18 @@ public partial class InteractSystem : NodeSystem
             if (owner is not Node2D user || component.InteractTarget is not Node2D target)
                 continue;
             
-            var spriteGroup = target.GetNodeOrNull<CanvasGroup>("SpriteGroup");
+            var canvasGroup = target.GetNodeOrNull<CanvasGroup>("CanvasGroup");
             
-            if (spriteGroup == null)
+            if (canvasGroup == null)
                 continue;
             
-            if (InRangeUnobstructed(user, target, component.MaxInteractDistance))
+            if (user == target || InRangeUnobstructed(user, target, component.MaxInteractDistance))
             {
-                spriteGroup.Material = InRangeOutline;
+                canvasGroup.Material = InRangeOutline;
                 continue;
             }
             
-            spriteGroup.Material = OutOfRangeOutline;
+            canvasGroup.Material = OutOfRangeOutline;
         }
     }
 
@@ -93,12 +93,12 @@ public partial class InteractSystem : NodeSystem
         if (node.Comp.InteractTarget == args.InteractTarget)
             node.Comp.InteractTarget = null;
         
-        var spriteGroup = args.InteractTarget.GetNodeOrNull<CanvasGroup>("SpriteGroup");
+        var canvasGroup = args.InteractTarget.GetNodeOrNull<CanvasGroup>("CanvasGroup");
 
-        if (spriteGroup == null)
+        if (canvasGroup == null)
             return;
         
-        spriteGroup.Material = null;
+        canvasGroup.Material = null;
     }
 
     /// <summary>

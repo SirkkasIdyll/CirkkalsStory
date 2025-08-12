@@ -40,8 +40,8 @@ public partial class MovementSystem : NodeSystem
         else
             characterBody.Velocity = inputDirection * movementComponent.RunningSpeed;
 
-        var spriteGroup = characterBody.GetNode<CanvasGroup>("SpriteGroup");
-        var sprite = characterBody.GetNode<AnimatedSprite2D>("SpriteGroup/AnimatedSprite2D");
+        var canvasGroup = characterBody.GetNode<CanvasGroup>("CanvasGroup");
+        var sprite = characterBody.GetNode<AnimatedSprite2D>("CanvasGroup/AnimatedSprite2D");
         
         if (sprite != null)
         {
@@ -49,21 +49,21 @@ public partial class MovementSystem : NodeSystem
                 float.Abs(characterBody.GlobalPosition.Y - GetGlobalMousePosition().Y) <= 250)
             {
                 /*if (characterBody.GlobalPosition.X > GetGlobalMousePosition().X)
-                    spriteGroup.Scale = spriteGroup.Scale with { X = -1 };
+                    canvasGroup.Scale = canvasGroup.Scale with { X = -1 };
                 else
-                    spriteGroup.Scale = spriteGroup.Scale with { X = 1 };*/
+                    canvasGroup.Scale = canvasGroup.Scale with { X = 1 };*/
                 
                 if (characterBody.GlobalPosition.X > GetGlobalMousePosition().X)
                 {
                     var tween = CreateTween();
                     tween.SetEase(Tween.EaseType.Out);
-                    tween.TweenProperty(spriteGroup, "scale", new Vector2(-1, 1), 0.1f);
+                    tween.TweenProperty(canvasGroup, "scale", new Vector2(-1, 1), 0.1f);
                 }
                 else
                 {
                     var tween = CreateTween();
                     tween.SetEase(Tween.EaseType.Out);
-                    tween.TweenProperty(spriteGroup, "scale", new Vector2(1, 1), 0.1f);
+                    tween.TweenProperty(canvasGroup, "scale", new Vector2(1, 1), 0.1f);
                 }
                 
                 if (characterBody.GlobalPosition.Y - 50 > GetGlobalMousePosition().Y)
@@ -77,13 +77,13 @@ public partial class MovementSystem : NodeSystem
                 {
                     var tween = CreateTween();
                     tween.SetEase(Tween.EaseType.Out);
-                    tween.TweenProperty(spriteGroup, "scale", new Vector2(-1, 1), 0.1f);
+                    tween.TweenProperty(canvasGroup, "scale", new Vector2(-1, 1), 0.1f);
                 }
                 else if (inputDirection == Vector2.Right)
                 {
                     var tween = CreateTween();
                     tween.SetEase(Tween.EaseType.Out);
-                    tween.TweenProperty(spriteGroup, "scale", new Vector2(1, 1), 0.1f);
+                    tween.TweenProperty(canvasGroup, "scale", new Vector2(1, 1), 0.1f);
                 }
 
                 if (inputDirection == Vector2.Up)
