@@ -5,7 +5,7 @@
 
 [node name="BaseInteractableObject" instance=ExtResource("1_xsbyq")]
 
-[node name="InteractableComponent" type="Node2D" parent="." index="2" node_paths=PackedStringArray("CanvasGroup", "Area")]
+[node name="InteractableComponent" type="Node2D" parent="." index="2" node_paths=PackedStringArray("_canvasGroup", "_area")]
 script = ExtResource("2_02h4d")
-CanvasGroup = NodePath("../CanvasGroup")
-Area = NodePath("..")
+_canvasGroup = NodePath("../CanvasGroup")
+_area = NodePath("..")

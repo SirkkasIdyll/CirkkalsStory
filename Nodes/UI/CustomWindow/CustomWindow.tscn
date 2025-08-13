@@ -64,6 +64,7 @@ layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 16
 
 [node name="Title" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
@@ -73,6 +74,7 @@ theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
 theme_override_styles/focus = SubResource("StyleBoxEmpty_2pm4w")
 theme_override_styles/disabled_mirrored = SubResource("StyleBoxEmpty_fkyde")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_xa650")
@@ -89,6 +91,8 @@ alignment = 0
 
 [node name="CloseButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
+mouse_default_cursor_shape = 2
+theme_override_font_sizes/font_size = 16
 text = "X"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]

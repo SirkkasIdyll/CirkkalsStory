@@ -27,7 +27,7 @@ script = ExtResource("7_ysox8")
 
 [node name="CanvasGroup" type="CanvasGroup" parent="."]
 
-[node name="InteractableComponent" type="Node2D" parent="." node_paths=PackedStringArray("CanvasGroup", "Area")]
+[node name="InteractableComponent" type="Node2D" parent="." node_paths=PackedStringArray("_canvasGroup", "_area")]
 script = ExtResource("6_u3s0h")
-CanvasGroup = NodePath("../CanvasGroup")
-Area = NodePath("..")
+_canvasGroup = NodePath("../CanvasGroup")
+_area = NodePath("..")

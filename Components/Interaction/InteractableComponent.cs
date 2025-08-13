@@ -1,4 +1,5 @@
 ﻿using CS.Components.Player;
+using CS.Nodes.UI.Chyron;
 using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
 using Godot;
@@ -7,12 +8,10 @@ namespace CS.Components.Interaction;
 
 public partial class InteractableComponent : Component
 {
-    [Export]
-    public CanvasGroup? CanvasGroup;
-
-    [Export]
-    public PhysicsBody2D? Area;
+    [Export] private CanvasGroup? _canvasGroup;
+    [Export] private PhysicsBody2D? _area;
     
+    // Having all of this in the component isn't that bad of a sin
     private readonly NodeManager _nodeManager = NodeManager.Instance;
     private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
     
@@ -20,11 +19,11 @@ public partial class InteractableComponent : Component
     {
         base._Ready();
 
-        if (Area == null)
+        if (_area == null)
             return;
         
-        Area.MouseEntered += OnMouseEntered;
-        Area.MouseExited += OnMouseExited;
+        _area.MouseEntered += OnMouseEntered;
+        _area.MouseExited += OnMouseExited;
     }
 
     /// <summary>
@@ -37,8 +36,6 @@ public partial class InteractableComponent : Component
 
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(playerSystem.GetPlayer(), out var canInteractComponent))
             return;
-        
-        GD.Print("Mouse entered");
         
         var signal = new ShowInteractOutlineSignal(GetParent());
         _nodeManager.SignalBus.EmitShowInteractOutlineSignal((playerSystem.GetPlayer(), canInteractComponent), ref signal);
@@ -55,6 +52,7 @@ public partial class InteractableComponent : Component
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(playerSystem.GetPlayer(), out var canInteractComponent))
             return;
         
+        Input.SetDefaultCursorShape(Input.CursorShape.Arrow);
         var signal = new HideInteractOutlineSignal(GetParent());
         _nodeManager.SignalBus.EmitHideInteractOutlineSignal((playerSystem.GetPlayer(), canInteractComponent), ref signal);
     }

@@ -11,9 +11,10 @@
 DisplayName = "Medium Chair"
 Description = "You sit in it. Right?"
 
-[node name="InteractableComponent" type="Node2D" parent="." index="1" node_paths=PackedStringArray("Area")]
+[node name="InteractableComponent" type="Node2D" parent="." index="1" node_paths=PackedStringArray("_canvasGroup", "_area")]
 script = ExtResource("5_jg6cx")
-Area = NodePath("..")
+_canvasGroup = NodePath("../CanvasGroup")
+_area = NodePath("..")
 
 [node name="SeatComponent" type="Node2D" parent="." index="2"]
 script = ExtResource("3_cahjh")

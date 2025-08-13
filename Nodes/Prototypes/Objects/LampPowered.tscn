@@ -18,6 +18,9 @@ fill_from = Vector2(0.5, 0.5)
 
 [node name="LampPowered" instance=ExtResource("1_ydeay")]
 
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Lamp"
+
 [node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
 texture = ExtResource("2_deeup")
 

@@ -13,9 +13,11 @@
 script = ExtResource("2_tw66r")
 UserInterfaceScene = ExtResource("3_tw66r")
 
-[node name="InteractableComponent" type="Node2D" parent="." index="2" node_paths=PackedStringArray("Area")]
+[node name="DescriptionComponent" parent="." index="1"]
+DisplayName = "Box"
+
+[node name="InteractableComponent" type="Node2D" parent="." index="2"]
 script = ExtResource("2_0ab3m")
-Area = NodePath("..")
 
 [node name="StorageComponent" type="Node2D" parent="." index="3"]
 script = ExtResource("3_4ddv0")

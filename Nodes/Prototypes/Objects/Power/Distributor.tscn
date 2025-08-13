@@ -6,6 +6,9 @@
 
 [node name="Distributor" instance=ExtResource("1_0ujmc")]
 
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Distributor"
+
 [node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
 texture = ExtResource("2_p6th0")
 

@@ -1,4 +1,5 @@
-﻿using CS.SlimeFactory;
+﻿using System.Diagnostics.CodeAnalysis;
+using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
@@ -12,25 +13,26 @@ public partial class DescriptionSystem : NodeSystem
 
     }
 
-    public string? TryGetDisplayName(Node node)
+    public bool TryGetDisplayName(Node node, [NotNullWhen(true)] out string? name)
     {
-        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
-            return null;
+        name = null;
         
-        return descriptionComponent.DisplayName;
+        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
+            return false;
+        
+        name = descriptionComponent.DisplayName;
+        return true;
     }
     
-    public string? TryGetDescription(Node node)
+    public bool TryGetDescription(Node node, [NotNullWhen(true)] out string? description)
     {
-        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
-            return null;
+        description = null;
         
-        return descriptionComponent.Description;
-    }
-
-    public CanvasGroup? TryGetAppearance(Node node)
-    {
-        return node.GetNodeOrNull<CanvasGroup>("CanvasGroup");
+        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
+            return false;
+        
+        description = descriptionComponent.Description;
+        return true;
     }
 
     /// <summary>
