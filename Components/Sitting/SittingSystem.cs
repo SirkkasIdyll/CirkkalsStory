@@ -1,7 +1,6 @@
 ﻿using CS.Components.Grid;
 using CS.Components.Interaction;
 using CS.SlimeFactory;
-using Godot;
 
 namespace CS.Components.Sitting;
 

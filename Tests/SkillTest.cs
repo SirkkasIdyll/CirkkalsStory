@@ -1,5 +1,4 @@
-﻿using CS.Components.Ability;
-using CS.Components.Mob;
+﻿using CS.Components.Mob;
 using CS.Components.Skills;
 using CS.SlimeFactory;
 using GdUnit4;

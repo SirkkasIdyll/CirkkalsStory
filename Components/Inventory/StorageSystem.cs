@@ -1,7 +1,4 @@
-﻿using CS.Components.Interaction;
-using CS.Nodes.UI.CustomWindow;
-using CS.SlimeFactory;
-using Godot;
+﻿using CS.SlimeFactory;
 
 namespace CS.Components.Inventory;
 

@@ -1,4 +1,6 @@
-﻿using CS.SlimeFactory;
+﻿using System.Diagnostics.CodeAnalysis;
+using CS.Nodes.UI.Tooltip;
+using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
@@ -6,26 +8,52 @@ namespace CS.Components.Description;
 
 public partial class DescriptionSystem : NodeSystem
 {
+    private PackedScene _customTooltipScene =
+        ResourceLoader.Load<PackedScene>("res://Nodes/UI/Tooltip/CustomTooltip.tscn");
+    
     public override void _Ready()
     {
         base._Ready();
 
     }
 
-    public string GetDisplayName(Node node)
+    public bool TryGetDisplayName(Node node, [NotNullWhen(true)] out string? name)
     {
-        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
-            return "DEFAULT_NAME";
+        name = null;
         
-        return descriptionComponent.DisplayName;
+        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
+            return false;
+        
+        name = descriptionComponent.DisplayName;
+        return true;
     }
     
-    public string GetDescription(Node node)
+    public bool TryGetDescription(Node node, [NotNullWhen(true)] out string? description)
     {
-        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
-            return "DEFAULT_DESCRIPTION";
+        description = null;
         
-        return descriptionComponent.Description;
+        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
+            return false;
+        
+        description = descriptionComponent.Description;
+        return true;
+    }
+
+    public void ShowTooltip(Node node)
+    {
+        if (node is not Node2D node2D)
+            return;
+        
+        if (!_nodeManager.TryGetComponent<DescriptionComponent>(node, out var descriptionComponent))
+            return;
+
+        var customTooltip = _customTooltipScene.Instantiate<CustomTooltip>();
+        customTooltip.SetTooltipTitle(descriptionComponent.DisplayName);
+        customTooltip.SetTooltipDescription(descriptionComponent.Description);
+        customTooltip.SetTooltipBulletpoints(descriptionComponent.DetailedSummary);
+        CanvasLayer.AddChild(customTooltip);
+        var mousePosition = GetViewport().GetMousePosition();
+        customTooltip.SetPosition(new Vector2I((int)mousePosition.X + 16, (int)mousePosition.Y + 16));
     }
 
     /// <summary>

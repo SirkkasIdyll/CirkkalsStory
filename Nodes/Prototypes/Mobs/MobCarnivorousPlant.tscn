@@ -8,5 +8,5 @@
 [node name="DescriptionComponent" parent="." index="1"]
 DisplayName = "Carnivorous Plant"
 
-[node name="Sprite2D" type="Sprite2D" parent="." index="5"]
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
 texture = ExtResource("2_es168")

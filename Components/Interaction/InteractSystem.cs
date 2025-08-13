@@ -1,5 +1,7 @@
-﻿using CS.Components.Grid;
+﻿using CS.Components.Description;
+using CS.Components.Grid;
 using CS.Components.Player;
+using CS.Nodes.UI.Chyron;
 using CS.SlimeFactory;
 using Godot;
 
@@ -7,6 +9,7 @@ namespace CS.Components.Interaction;
 
 public partial class InteractSystem : NodeSystem
 {
+    [InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
     [InjectDependency] private readonly GridSystem _gridSystem = null!;
     
@@ -25,8 +28,8 @@ public partial class InteractSystem : NodeSystem
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
-        
-        if (!@event.IsActionPressed("interact"))
+
+        if (!@event.IsActionPressed("primary_interact") && !@event.IsActionPressed("secondary_interact"))
             return;
         
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
@@ -35,40 +38,69 @@ public partial class InteractSystem : NodeSystem
 
         if (canInteractComponent.InteractTarget == null)
             return;
-        
+    
         if (!_nodeManager.TryGetComponent<InteractableComponent>(canInteractComponent.InteractTarget,
                 out var interactableComponent))
             return;
-        
-        TryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent), (canInteractComponent.InteractTarget, interactableComponent));
+
+        if (@event.IsActionPressed("primary_interact"))
+        {
+            if (Input.IsActionPressed("shift_modifier"))
+            {
+                _descriptionSystem.ShowTooltip(canInteractComponent.InteractTarget);
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+
+            TryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent), (canInteractComponent.InteractTarget, interactableComponent));
+            GetViewport().SetInputAsHandled();
+        }
     }
 
     public override void _PhysicsProcess(double delta)
     {
         base._PhysicsProcess(delta);
-        
+
+        ProcessInteractionOutlines();
+    }
+
+    private void ProcessInteractionOutlines()
+    {
         // Highlight currently focused interact target
         _nodeManager.NodeQuery<CanInteractComponent>(out var dict);
         foreach (var (owner, component) in dict)
         {
+            component.Chyron?.SetVisible(false);
             if (component.InteractTarget == null)
                 continue;
             
             if (owner is not Node2D user || component.InteractTarget is not Node2D target)
                 continue;
             
-            var spriteGroup = target.GetNodeOrNull<CanvasGroup>("SpriteGroup");
+            var canvasGroup = target.GetNodeOrNull<CanvasGroup>("CanvasGroup");
             
-            if (spriteGroup == null)
+            if (canvasGroup == null)
                 continue;
-            
-            if (InRangeUnobstructed(user, target, component.MaxInteractDistance))
+
+            if (IsObstructed(user, target))
+                continue;
+
+            if (!_gridSystem.TryGetDistance(user, target, out var distance))
+                continue;
+
+            if (component.Chyron?.Timer.TimeLeft == 0)
             {
-                spriteGroup.Material = InRangeOutline;
+                component.Chyron?.SetVisible(true);
+            }
+            
+            Input.SetDefaultCursorShape(Input.CursorShape.PointingHand);
+            if (user == target ||  distance < component.MaxInteractDistance)
+            {
+                canvasGroup.Material = InRangeOutline;
                 continue;
             }
             
-            spriteGroup.Material = OutOfRangeOutline;
+            canvasGroup.Material = OutOfRangeOutline;
         }
     }
 
@@ -83,6 +115,19 @@ public partial class InteractSystem : NodeSystem
             return;
         
         node.Comp.InteractTarget = args.InteractTarget;
+
+        if (!_descriptionSystem.TryGetDisplayName(args.InteractTarget, out var name))
+            return;
+
+        node.Comp.Chyron ??= ResourceLoader.Load<PackedScene>("res://Nodes/UI/Chyron/Chyron.tscn")
+            .Instantiate<Chyron>();
+        if (node.Comp.Chyron == null)
+            return;
+        
+        node.Comp.Chyron.SetText(name);
+        if (node.Comp.Chyron.GetParentOrNull<CanvasLayer>() == null)
+            CanvasLayer.AddChild(node.Comp.Chyron);
+        node.Comp.Chyron.Timer.Start(node.Comp.TimeBeforeChyron);
     }
     
     /// <summary>
@@ -91,14 +136,18 @@ public partial class InteractSystem : NodeSystem
     private void OnHideInteractOutline(Node<CanInteractComponent> node, ref HideInteractOutlineSignal args)
     {
         if (node.Comp.InteractTarget == args.InteractTarget)
+        {
             node.Comp.InteractTarget = null;
+            node.Comp.Chyron?.QueueFree();
+            node.Comp.Chyron = null;
+        }
         
-        var spriteGroup = args.InteractTarget.GetNodeOrNull<CanvasGroup>("SpriteGroup");
+        var canvasGroup = args.InteractTarget.GetNodeOrNull<CanvasGroup>("CanvasGroup");
 
-        if (spriteGroup == null)
+        if (canvasGroup == null)
             return;
         
-        spriteGroup.Material = null;
+        canvasGroup.Material = null;
     }
 
     /// <summary>
@@ -127,6 +176,21 @@ public partial class InteractSystem : NodeSystem
         return true;
     }
 
+    private bool IsObstructed(Node origin, Node target, uint collisionMask = 1)
+    {
+        if (origin is not PhysicsBody2D node2DA || target is not PhysicsBody2D node2DB)
+            return false;
+        
+        var spaceState = GetWorld2D().DirectSpaceState;
+        var query = PhysicsRayQueryParameters2D.Create(node2DA.GlobalPosition, node2DB.GlobalPosition, collisionMask, [node2DA.GetRid()]);
+        var result = spaceState.IntersectRay(query);
+        
+        if (result == null || result.Count != 0)
+            return true;
+
+        return false;
+    }
+
     private void TryInteract(Node<CanInteractComponent> node, Node<InteractableComponent> target)
     {
         if (node.Owner is not Node2D nodeA || target.Owner is not Node2D nodeB)
@@ -137,7 +201,7 @@ public partial class InteractSystem : NodeSystem
         
         if (node.Comp.MaxInteractDistance < distance)
             return;
-            
+        
         var signal = new InteractWithSignal(node);
         _nodeManager.SignalBus.EmitInteractWithSignal(target, ref signal);
     }

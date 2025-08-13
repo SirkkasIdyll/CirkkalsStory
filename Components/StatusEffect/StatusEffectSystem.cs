@@ -28,9 +28,9 @@ public partial class StatusEffectSystem : NodeSystem
         if (statusEffectApplicatorComponent.StatusEffect == null)
             return;
 
-        var statusEffectName = _descriptionSystem.GetDisplayName(statusEffectApplicatorComponent.StatusEffect);
-        var combatEffect = $"Apply [url={statusEffectApplicatorComponent.StatusEffect.Name}][b]{statusEffectName}[/b][/url]";
-        node.Comp.Effects.Add(combatEffect);
+        /*var statusEffectName = _descriptionSystem.GetDisplayName(statusEffectApplicatorComponent.StatusEffect);
+        var combatEffect = $"Apply [url={statusEffectApplicatorComponent.StatusEffect.Name}][b]{statusEffectName}[/b][/url]";*/
+        // node.Comp.Effects.Add(combatEffect);
     }
     
     /// <summary>
@@ -55,8 +55,8 @@ public partial class StatusEffectSystem : NodeSystem
         {
             TryApplyStatusEffect((args.Action, statusEffectApplicatorComponent), target, out var appliedEffect);
             
-            if (appliedEffect != null)
-                args.Summaries.Add("Inflicted [b]" + _descriptionSystem.GetDisplayName(appliedEffect) + "[/b] on [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
+            /*if (appliedEffect != null)
+                args.Summaries.Add("Inflicted [b]" + _descriptionSystem.GetDisplayName(appliedEffect) + "[/b] on [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");*/
         }
     }
 

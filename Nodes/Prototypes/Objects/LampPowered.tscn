@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3 uid="uid://wwq64g88ipe4"]
+
+[ext_resource type="PackedScene" uid="uid://bgv86o62nhtgd" path="res://Nodes/Prototypes/Objects/BaseInteractableObject.tscn" id="1_ydeay"]
+[ext_resource type="Texture2D" uid="uid://j726n7clqv12" path="res://Resources/Sprites/Lamp.png" id="2_deeup"]
+[ext_resource type="Script" uid="uid://pjaieos5ol3i" path="res://Components/Power/PowerCustomerComponent.cs" id="3_ju5am"]
+[ext_resource type="Script" uid="uid://cfv33bp7uma0p" path="res://Components/Power/PoweredLightComponent.cs" id="4_u3mb8"]
+
+[sub_resource type="Gradient" id="Gradient_7lygm"]
+offsets = PackedFloat32Array(0, 0.512397)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_seanw"]
+gradient = SubResource("Gradient_7lygm")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[node name="LampPowered" instance=ExtResource("1_ydeay")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Lamp"
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
+texture = ExtResource("2_deeup")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="3"]
+polygon = PackedVector2Array(2.6, -6.6, -2.6, -6.6, -2.6, -5.3, -5.6, -3.3, -5.6, 0.4, -3.6, 1.3, -3.6, 2.6, -1.6, 2.6, -1.6, 6.4, -5.6, 6.4, -5.6, 8, 5.6, 8, 5.6, 6.4, 1.6, 6.4, 1.6, 2.6, 3.6, 2.6, 3.6, 1.3, 5.6, 0.4, 5.6, -3.3, 2.6, -5.3)
+
+[node name="PowerCustomerComponent" type="Node2D" parent="." index="4"]
+script = ExtResource("3_ju5am")
+ConsumptionRate = 5.0
+
+[node name="PoweredLightComponent" type="Node2D" parent="." index="5" node_paths=PackedStringArray("PointLight2D")]
+script = ExtResource("4_u3mb8")
+PointLight2D = NodePath("PointLight2D")
+
+[node name="PointLight2D" type="PointLight2D" parent="PoweredLightComponent" index="0"]
+blend_mode = 2
+texture = SubResource("GradientTexture2D_seanw")

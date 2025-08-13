@@ -9,6 +9,7 @@ namespace CS.SlimeFactory;
 public abstract partial class NodeSystem : Node2D, INodeSystem
 {
     protected readonly NodeManager _nodeManager = NodeManager.Instance;
+    protected CanvasLayer CanvasLayer = null!;
     
     /// <summary>
     /// Adds every constructed <see cref="NodeSystem"/> to the given mainScene when called by the <see cref="NodeSystemManager"/>
@@ -30,5 +31,6 @@ public abstract partial class NodeSystem : Node2D, INodeSystem
         
         SetName(GetType().Name);
         SetOwner(GetParent());
+        CanvasLayer = GetParent().GetNode<CanvasLayer>("CanvasLayer");
     }
 }

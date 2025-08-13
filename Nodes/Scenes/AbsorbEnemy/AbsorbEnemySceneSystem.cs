@@ -6,7 +6,6 @@ using CS.Nodes.UI.ButtonTypes;
 using CS.Nodes.UI.DialogBox;
 using CS.SlimeFactory;
 using Godot;
-using Godot.Collections;
 
 namespace CS.Nodes.Scenes.AbsorbEnemy;
 
@@ -63,11 +62,11 @@ public partial class AbsorbEnemySceneSystem : Control
 		if (!_nodeManager.NodeDictionary.TryGetValue(_enemyAbility, out var ability))
 			return;
 		
-		var summary = "You gained the ability [b]" + _descriptionSystem.GetDisplayName(ability) + "[/b] from the [b]" +
-		              _descriptionSystem.GetDisplayName(_enemyToAbsorb) + ".";
+		/*var summary = "You gained the ability [b]" + _descriptionSystem.GetDisplayName(ability) + "[/b] from the [b]" +
+		              _descriptionSystem.GetDisplayName(_enemyToAbsorb) + ".";*/
 		
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
-		dialogBox.SetDetails("Ability Absorption", summary);
+		// dialogBox.SetDetails("Ability Absorption", summary);
 		dialogBox.DialogFinished += () =>
 		{
 			if (_nextScene != null)
@@ -91,11 +90,11 @@ public partial class AbsorbEnemySceneSystem : Control
 		if (!_nodeManager.NodeDictionary.TryGetValue(_enemySkill, out var skill))
 			return;
 		
-		var summary = "You gained the skill [b]" + _descriptionSystem.GetDisplayName(skill) + "[/b] from the [b]" +
-		              _descriptionSystem.GetDisplayName(_enemyToAbsorb) + ".";
+		/*var summary = "You gained the skill [b]" + _descriptionSystem.GetDisplayName(skill) + "[/b] from the [b]" +
+		              _descriptionSystem.GetDisplayName(_enemyToAbsorb) + ".";*/
 		
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
-		dialogBox.SetDetails("Skill Absorption", summary);
+		// dialogBox.SetDetails("Skill Absorption", summary);
 		dialogBox.DialogFinished += () =>
 		{
 			if (_nextScene != null)
@@ -119,11 +118,11 @@ public partial class AbsorbEnemySceneSystem : Control
 		if (!_nodeManager.NodeDictionary.TryGetValue(_enemySpell, out var spell))
 			return;
 		
-		var summary = "You gained the spell [b]" + _descriptionSystem.GetDisplayName(spell) + "[/b] from the [b]" +
-		              _descriptionSystem.GetDisplayName(_enemyToAbsorb) + ".";
+		/*var summary = "You gained the spell [b]" + _descriptionSystem.GetDisplayName(spell) + "[/b] from the [b]" +
+		              _descriptionSystem.GetDisplayName(_enemyToAbsorb) + ".";*/
 		
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
-		dialogBox.SetDetails("Spell Absorption", summary);
+		// dialogBox.SetDetails("Spell Absorption", summary);
 		dialogBox.DialogFinished += () =>
 		{
 			if (_nextScene != null)

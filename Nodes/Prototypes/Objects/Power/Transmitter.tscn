@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://c64m744ubpq24"]
+
+[ext_resource type="PackedScene" uid="uid://bgv86o62nhtgd" path="res://Nodes/Prototypes/Objects/BaseInteractableObject.tscn" id="1_nq37v"]
+[ext_resource type="Texture2D" uid="uid://h3sgtye1kbac" path="res://Resources/Sprites/Crystal.png" id="2_nnx8y"]
+[ext_resource type="Script" uid="uid://vgijf2mel02f" path="res://Components/Power/PowerTransmissionComponent.cs" id="3_dh04l"]
+
+[node name="Transmitter" instance=ExtResource("1_nq37v")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Transmitter"
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
+texture = ExtResource("2_nnx8y")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="3"]
+polygon = PackedVector2Array(1.6, -16, -1.6, -16, -1.6, -14.6, -2.6, -14.6, -2.6, -12.6, -3.6, -12.6, -3.6, -10.6, -4.6, -10.6, -4.6, -8.6, -5.6, -8.6, -5.6, -5.6, -6.6, -5.6, -6.6, -3.6, -7.6, -3.6, -7.6, -1.6, -8.6, -1.6, -8.6, 2.6, -7.6, 2.6, -7.6, 4.6, -6.6, 4.6, -6.6, 6.6, -5.6, 6.6, -5.6, 8.6, -4.6, 8.6, -4.6, 10.6, -3.6, 10.6, -3.6, 12.6, -2.6, 12.6, -2.6, 14.6, -1.6, 14.6, -1.6, 16, 1.6, 16, 1.6, 14.6, 2.6, 14.6, 2.6, 12.6, 3.6, 12.6, 3.6, 10.6, 4.6, 10.6, 4.6, 8.6, 5.6, 8.6, 5.6, 6.6, 6.5, 6.6, 7.5, 2.6, 8.6, 2.6, 8.6, -1.6, 7.6, -1.6, 7.6, -3.6, 6.6, -3.6, 6.6, -5.6, 5.6, -5.6, 5.6, -7.6, 4.6, -7.6, 4.6, -10.6, 3.6, -10.6, 3.6, -12.6, 2.6, -12.6, 2.6, -14.6, 1.6, -14.6)
+
+[node name="PowerTransmissionComponent" type="Node2D" parent="." index="4"]
+script = ExtResource("3_dh04l")
+TransmissionRate = 500.0
+Range = 10.0

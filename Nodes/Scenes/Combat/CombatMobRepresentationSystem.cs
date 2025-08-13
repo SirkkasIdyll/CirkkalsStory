@@ -1,4 +1,3 @@
-using CS.Components.CombatManager;
 using CS.Components.Damageable;
 using CS.Components.Description;
 using CS.Components.Magic;

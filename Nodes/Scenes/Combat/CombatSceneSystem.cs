@@ -188,9 +188,9 @@ public partial class CombatSceneSystem : Control
 		if (node.Owner is Node2D node2D)
 			GD.Print(node2D.GlobalPosition);
 		
-		var title = _descriptionSystem.GetDisplayName(node);
+		// var title = _descriptionSystem.GetDisplayName(node);
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
-		dialogBox.SetDetails(title, args.Summaries);
+		// dialogBox.SetDetails(title, args.Summaries);
 		dialogBox.DialogFinished += () =>
 		{
 			if (_turnManagerSystem.Players.Count == 0 || _turnManagerSystem.Enemies.Count == 0)
@@ -231,9 +231,9 @@ public partial class CombatSceneSystem : Control
 			return;
 		}
 		
-		var title = _descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob());
+		// var title = _descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob());
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
-		dialogBox.SetDetails(title, args.Summaries);
+		// dialogBox.SetDetails(title, args.Summaries);
 		dialogBox.Title.Set("theme_override_colors/font_color", new Color(0.877f, 0.219f, 0.208f));
 		dialogBox.DialogFinished += () => _turnManagerSystem.EndTurn();
 		AddChild(dialogBox);
@@ -247,9 +247,9 @@ public partial class CombatSceneSystem : Control
 			return;
 		}
 		
-		var title = _descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob());
+		// var title = _descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob());
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
-		dialogBox.SetDetails(title, args.Summaries);
+		// dialogBox.SetDetails(title, args.Summaries);
 		dialogBox.DialogFinished += () => _turnManagerSystem.StartTurn();
 		AddChild(dialogBox);
 	}
@@ -269,8 +269,8 @@ public partial class CombatSceneSystem : Control
 		
 		// An action has been chosen, signal its usage
 		var useActionSignal = new UseActionSignal(_chosenAction, [target]);
-		useActionSignal.Summaries.Add("Used [b]" + _descriptionSystem.GetDisplayName(_chosenAction!) + "[/b] on [b]" +
-		                              _descriptionSystem.GetDisplayName(target) + "[/b].");
+		/*useActionSignal.Summaries.Add("Used [b]" + _descriptionSystem.GetDisplayName(_chosenAction!) + "[/b] on [b]" +
+		                              _descriptionSystem.GetDisplayName(target) + "[/b].");*/
 		_nodeManager.SignalBus.EmitUseActionSignal((_turnManagerSystem.GetActiveMob(), mobComponent), ref useActionSignal);
 		
 		// Hide the targets, so they're no longer selectable
@@ -281,7 +281,7 @@ public partial class CombatSceneSystem : Control
 			return;
 		
 		var dialogBox = _dialogBox.Instantiate<DialogBox>();
-		dialogBox.SetDetails(_descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob()), useActionSignal.Summaries);
+		// dialogBox.SetDetails(_descriptionSystem.GetDisplayName(_turnManagerSystem.GetActiveMob()), useActionSignal.Summaries);
 		AddChild(dialogBox);
 		dialogBox.DialogFinished += () => _turnManagerSystem.EndTurn();
 	}

@@ -1,4 +1,5 @@
-﻿using CS.SlimeFactory;
+﻿using CS.Nodes.UI.Chyron;
+using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
 using Godot;
 
@@ -16,8 +17,25 @@ public partial class CanInteractComponent : Component
     /// The target to potentially interact with
     /// </summary>
     public Node? InteractTarget;
+    
+    /// <summary>
+    /// TODO: Make this Chyron appear below the target being highlighted?, makes a bit more sense
+    /// 
+    /// Shows what is being highlighted to interact with
+    /// </summary>
+    public Chyron? Chyron;
+    
+    /// <summary>
+    /// Time in seconds before the Chyron appears
+    /// </summary>
+    public float TimeBeforeChyron = 0.25f;
+
 }
 
+/// <summary>
+/// Registers the interact target in the <see cref="CanInteractComponent"/> and updates the outline
+/// based on this node's range to the target
+/// </summary>
 public partial class ShowInteractOutlineSignal : UserSignalArgs
 {
     public Node InteractTarget;
@@ -28,7 +46,9 @@ public partial class ShowInteractOutlineSignal : UserSignalArgs
     }
 }
 
-
+/// <summary>
+/// Unregisters the interact target from the <see cref="CanInteractComponent"/> and hides the outline
+/// </summary>
 public partial class HideInteractOutlineSignal : UserSignalArgs
 {
     public Node InteractTarget;

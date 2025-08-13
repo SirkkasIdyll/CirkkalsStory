@@ -70,12 +70,12 @@ public partial class SpellSelectionSceneSystem : Control
 			return;
 
 		var tooltip = _customTooltip.Instantiate<CustomTooltip>();
-		tooltip.SetTooltipTitle(_descriptionSystem.GetDisplayName(node));
-		tooltip.SetTooltipDescription(_descriptionSystem.GetDescription(node));
+		/*tooltip.SetTooltipTitle(_descriptionSystem.GetDisplayName(node));
+		tooltip.SetTooltipDescription(_descriptionSystem.GetDescription(node));*/
 		// tooltip.SetTooltipBulletpoints(_descriptionSystem.GetEffects(node));
 		AddChild(tooltip);
 		var mousePosition = GetViewport().GetMousePosition();
-		tooltip.Popup(new Rect2I((int)mousePosition.X - 16, (int)mousePosition.Y - 16, 0, 0));
+		// tooltip.Popup(new Rect2I((int)mousePosition.X - 16, (int)mousePosition.Y - 16, 0, 0));
 	}
 
 	/// <summary>
@@ -99,8 +99,8 @@ public partial class SpellSelectionSceneSystem : Control
 				child.QueueFree();
 		}
 
-		_spellName.SetText(_descriptionSystem.GetDisplayName(spellNode));
-		_spellDescription.SetText(_descriptionSystem.GetDescription(spellNode));
+		/*_spellName.SetText(_descriptionSystem.GetDisplayName(spellNode));
+		_spellDescription.SetText(_descriptionSystem.GetDescription(spellNode));*/
 		
 		foreach (var effect in _descriptionSystem.GetEffects(spellNode))	
 		{
