@@ -22,6 +22,12 @@ public partial class DescriptionComponent : Component
     [Export(PropertyHint.PlaceholderText, "You don't have to put on the red light")] public string Description = "";
 
     /// <summary>
+    /// Systems can add onto the detailed summary to give an indicator as to their current status,
+    /// like PowerSystems reporting their current power level, or better informing what someone is currently wearing/wielding.
+    /// </summary>
+    public Array<string> DetailedSummary = [];
+
+    /// <summary>
     /// What kind of effects the ability has when used in combat
     /// </summary>
     public Array<string> Effects = new();

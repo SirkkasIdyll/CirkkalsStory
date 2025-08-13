@@ -2,13 +2,7 @@
 
 [ext_resource type="Script" uid="uid://54mqwr5ctbjg" path="res://Nodes/UI/Chyron/Chyron.cs" id="1_x1r2u"]
 [ext_resource type="FontFile" uid="uid://cykvrik0k1efp" path="res://Resources/Fonts/Open_Sans/static/OpenSans_SemiCondensed-BoldItalic.ttf" id="2_06xa2"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_06xa2"]
-bg_color = Color(0, 0, 0, 0.3)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+[ext_resource type="StyleBox" uid="uid://pn37gpxw73tt" path="res://Resources/StyleBox/RoundedBlack.tres" id="2_hafey"]
 
 [node name="Chyron" type="Control" node_paths=PackedStringArray("_panelContainer", "_label", "Timer")]
 layout_mode = 3
@@ -35,7 +29,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_06xa2")
+theme_override_styles/panel = ExtResource("2_hafey")
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -49,7 +43,7 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(0.863239, 0.863239, 0.863239, 1)
 theme_override_fonts/font = ExtResource("2_06xa2")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 24
 text = "This is a Chyron, it's basically a subtitle"
 
 [node name="Timer" type="Timer" parent="."]

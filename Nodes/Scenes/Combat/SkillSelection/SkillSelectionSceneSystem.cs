@@ -61,7 +61,7 @@ public partial class SkillSelectionSceneSystem : Control
 		// tooltip.SetTooltipBulletpoints(_descriptionSystem.GetEffects(node));
 		AddChild(tooltip);
 		var mousePosition = GetViewport().GetMousePosition();
-		tooltip.Popup(new Rect2I((int)mousePosition.X - 16, (int)mousePosition.Y - 16, 0, 0));
+		// tooltip.Popup(new Rect2I((int)mousePosition.X - 16, (int)mousePosition.Y - 16, 0, 0));
 		tooltip.MouseExited += tooltip.QueueFree;
 	}
 	

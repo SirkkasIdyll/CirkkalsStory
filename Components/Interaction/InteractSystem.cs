@@ -28,8 +28,8 @@ public partial class InteractSystem : NodeSystem
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
-        
-        if (!@event.IsActionPressed("interact"))
+
+        if (!@event.IsActionPressed("primary_interact") && !@event.IsActionPressed("secondary_interact"))
             return;
         
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
@@ -38,12 +38,23 @@ public partial class InteractSystem : NodeSystem
 
         if (canInteractComponent.InteractTarget == null)
             return;
-        
+    
         if (!_nodeManager.TryGetComponent<InteractableComponent>(canInteractComponent.InteractTarget,
                 out var interactableComponent))
             return;
-        
-        TryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent), (canInteractComponent.InteractTarget, interactableComponent));
+
+        if (@event.IsActionPressed("primary_interact"))
+        {
+            if (Input.IsActionPressed("shift_modifier"))
+            {
+                _descriptionSystem.ShowTooltip(canInteractComponent.InteractTarget);
+                GetViewport().SetInputAsHandled();
+                return;
+            }
+
+            TryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent), (canInteractComponent.InteractTarget, interactableComponent));
+            GetViewport().SetInputAsHandled();
+        }
     }
 
     public override void _PhysicsProcess(double delta)
@@ -190,7 +201,7 @@ public partial class InteractSystem : NodeSystem
         
         if (node.Comp.MaxInteractDistance < distance)
             return;
-            
+        
         var signal = new InteractWithSignal(node);
         _nodeManager.SignalBus.EmitInteractWithSignal(target, ref signal);
     }

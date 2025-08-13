@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://cplderic1k4iq"]
+[gd_scene load_steps=14 format=3 uid="uid://cplderic1k4iq"]
 
 [ext_resource type="Script" uid="uid://cqpbcbnhf4fm5" path="res://Nodes/UI/CustomWindow/CustomWindowSystem.cs" id="1_fkyde"]
+[ext_resource type="StyleBox" uid="uid://pn37gpxw73tt" path="res://Resources/StyleBox/RoundedBlack.tres" id="2_xa650"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2pm4w"]
 
@@ -54,10 +55,11 @@ offset_right = 70.0
 offset_bottom = 20.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = ExtResource("2_xa650")
 
 [node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 layout_mode = 2
-theme_type_variation = &"MarginContainerXXSmall"
+theme_type_variation = &"MarginContainerXSmall"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2

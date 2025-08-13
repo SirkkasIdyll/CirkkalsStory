@@ -3,7 +3,7 @@ using Godot.Collections;
 
 namespace CS.Nodes.UI.Tooltip;
 
-public partial class CustomTooltip : PopupPanel
+public partial class CustomTooltip : Control
 {
 	[ExportCategory("Owned")]
 	[Export] private RichTextLabel _tooltipTitle = null!;
@@ -13,7 +13,18 @@ public partial class CustomTooltip : PopupPanel
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		MouseExited += QueueFree;
+		// MouseExited += QueueFree;
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		base._Input(@event);
+
+		if (@event is not InputEventMouseButton)
+			return;
+		
+		if (@event.IsActionPressed("primary_interact") || @event.IsActionPressed("secondary_interact"))
+			QueueFree();
 	}
 
 	public void SetTooltipTitle(string title)
@@ -37,7 +48,7 @@ public partial class CustomTooltip : PopupPanel
 			var richTextLabel = new RichTextLabel();
 			richTextLabel.BbcodeEnabled = true;
 			richTextLabel.SetFitContent(true);
-			richTextLabel.SetAutowrapMode(TextServer.AutowrapMode.Off);
+			// richTextLabel.SetAutowrapMode(TextServer.AutowrapMode.Off);
 			richTextLabel.SetText(bulletpoint);
 			_tooltipBulletpoints.AddChild(richTextLabel);
 		}
