@@ -15,6 +15,7 @@ UserInterfaceScene = ExtResource("3_tw66r")
 
 [node name="DescriptionComponent" parent="." index="1"]
 DisplayName = "Box"
+Description = "You put things in it."
 
 [node name="InteractableComponent" type="Node2D" parent="." index="2" node_paths=PackedStringArray("_canvasGroup", "_area")]
 script = ExtResource("2_0ab3m")

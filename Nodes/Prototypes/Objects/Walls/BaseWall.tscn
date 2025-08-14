@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dhaogab0kykdg"]
+
+[ext_resource type="PackedScene" uid="uid://drjnmswp52ljh" path="res://Nodes/Prototypes/Objects/BaseObject.tscn" id="1_n7rpx"]
+
+[node name="BaseWall" instance=ExtResource("1_n7rpx")]
+z_index = -1
+collision_layer = 1
+lock_rotation = true
+freeze = true

@@ -1,0 +1,23 @@
+[gd_scene load_steps=6 format=3 uid="uid://cni51e1gyr32"]
+
+[ext_resource type="PackedScene" uid="uid://dhaogab0kykdg" path="res://Nodes/Prototypes/Objects/Walls/BaseWall.tscn" id="1_effiu"]
+[ext_resource type="Shader" uid="uid://b1w8cbasll4lk" path="res://Resources/Shaders/BrickWall.gdshader" id="2_aduej"]
+[ext_resource type="Texture2D" uid="uid://b64n2660xxuwk" path="res://Resources/Sprites/BrickWall.png" id="2_o30yn"]
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_aduej"]
+polygon = PackedVector2Array(-16, -16, -16, 16, 16, 16, 16, -16)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o30yn"]
+shader = ExtResource("2_aduej")
+
+[node name="BrickWall" instance=ExtResource("1_effiu")]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="1"]
+polygon = PackedVector2Array(-16, -16, -16, 16, 16, 16, 16, -16)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="." index="2"]
+occluder = SubResource("OccluderPolygon2D_aduej")
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
+material = SubResource("ShaderMaterial_o30yn")
+texture = ExtResource("2_o30yn")

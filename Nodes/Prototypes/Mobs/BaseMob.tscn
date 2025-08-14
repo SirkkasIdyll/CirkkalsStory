@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://bj3d36tnhyffx" path="res://Components/Mob/MobComponent.cs" id="7_ysox8"]
 
 [node name="BaseMob" type="CharacterBody2D"]
+collision_mask = 3
 input_pickable = true
 
 [node name="DamageableComponent" type="Node2D" parent="."]
