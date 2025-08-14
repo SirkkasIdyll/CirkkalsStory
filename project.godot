@@ -93,8 +93,9 @@ zoom_out={
 2d_render/layer_1="Impassable"
 2d_render/layer_2="Tall Furniture"
 2d_physics/layer_1="Impassable"
-2d_physics/layer_2="Furniture"
-2d_physics/layer_3="Tabletop"
+2d_physics/layer_2="Tables"
+2d_physics/layer_3="Furniture"
+2d_physics/layer_4="Tabletop"
 
 [rendering]
 

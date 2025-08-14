@@ -5,9 +5,11 @@
 [ext_resource type="Script" uid="uid://u0f07glq8xq1" path="res://Components/Power/PowerDistributorComponent.cs" id="3_kngm6"]
 
 [node name="Distributor" instance=ExtResource("1_0ujmc")]
+collision_layer = 2
 
 [node name="DescriptionComponent" parent="." index="0"]
 DisplayName = "Distributor"
+Description = "Absorbs power from transmitters and distributes it to customers."
 
 [node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
 texture = ExtResource("2_p6th0")

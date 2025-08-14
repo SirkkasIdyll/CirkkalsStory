@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://birpwtxymx2l3"]
+
+[ext_resource type="PackedScene" uid="uid://drjnmswp52ljh" path="res://Nodes/Prototypes/Objects/BaseObject.tscn" id="1_rw3es"]
+[ext_resource type="Texture2D" uid="uid://ce6vwh4nk0ckr" path="res://Resources/Sprites/Table.png" id="2_pueo4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rw3es"]
+size = Vector2(32, 20)
+
+[node name="Desk" instance=ExtResource("1_rw3es")]
+collision_layer = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
+texture = ExtResource("2_pueo4")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="2"]
+position = Vector2(0, 2)
+shape = SubResource("RectangleShape2D_rw3es")

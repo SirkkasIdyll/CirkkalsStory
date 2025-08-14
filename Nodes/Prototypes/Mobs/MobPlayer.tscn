@@ -9,8 +9,8 @@
 [ext_resource type="Shader" uid="uid://cyowv87u2bat5" path="res://Resources/Shaders/Temp.gdshader" id="7_0n3qf"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8wxkm"]
-radius = 3.5
-height = 12.0
+radius = 5.5
+height = 16.0
 
 [sub_resource type="Gradient" id="Gradient_mtcbf"]
 offsets = PackedFloat32Array(0, 0.588406, 1)
@@ -79,7 +79,7 @@ Skills = Array[String](["DoNothing", "BleedingSlash"])
 Spells = Array[String](["WeakPoison"])
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." index="5"]
-position = Vector2(0, 18)
+position = Vector2(0, 16)
 shape = SubResource("CapsuleShape2D_8wxkm")
 
 [node name="MovementComponent" type="Node2D" parent="." index="6" node_paths=PackedStringArray("SoundEffect")]
@@ -95,17 +95,18 @@ script = ExtResource("2_opdnh")
 [node name="CanInteractComponent" type="Node2D" parent="." index="7"]
 script = ExtResource("6_mtcbf")
 
-[node name="PointLight2D" type="PointLight2D" parent="." index="8"]
+[node name="FogOfWar" type="Node2D" parent="." index="8"]
 visible = false
-range_item_cull_mask = 16
+
+[node name="PointLight2D" type="PointLight2D" parent="FogOfWar" index="0"]
+range_item_cull_mask = 512
 shadow_enabled = true
-shadow_item_cull_mask = 17
+shadow_item_cull_mask = 513
 texture = SubResource("GradientTexture2D_0n3qf")
 texture_scale = 2.0
 
-[node name="Sprite2D" type="Sprite2D" parent="." index="9"]
-visible = false
-light_mask = 16
+[node name="Sprite2D" type="Sprite2D" parent="FogOfWar" index="1"]
+light_mask = 512
 z_index = 10
 material = SubResource("ShaderMaterial_l16d8")
 scale = Vector2(500, 500)
