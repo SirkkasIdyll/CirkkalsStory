@@ -25,6 +25,7 @@ public enum ClothingSlot
 {
     Shoes,
     Bottom,
+    Gloves,
     Top,
     Belt,
     Outerwear,
