@@ -1,12 +1,13 @@
-[gd_scene load_steps=17 format=3 uid="uid://buqgt44k0b5gc"]
+[gd_scene load_steps=18 format=3 uid="uid://buqgt44k0b5gc"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kbtkb"]
 [ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="2_opdnh"]
 [ext_resource type="Script" uid="uid://bxjdo37wkcuk7" path="res://Components/Movement/MovementComponent.cs" id="3_klnpo"]
-[ext_resource type="Texture2D" uid="uid://cbilvywpkwuxk" path="res://Resources/Sprites/bnuuySheet.png" id="3_tl3vd"]
 [ext_resource type="AudioStream" uid="uid://dyc6gj2kewjcm" path="res://Resources/Sounds/FootstepsWoodSoli 6017_62_1_short.wav" id="4_klnpo"]
 [ext_resource type="Script" uid="uid://ctw2xmwbf73hi" path="res://Components/Interaction/CanInteractComponent.cs" id="6_mtcbf"]
 [ext_resource type="Shader" uid="uid://cyowv87u2bat5" path="res://Resources/Shaders/Temp.gdshader" id="7_0n3qf"]
+[ext_resource type="Texture2D" uid="uid://inort5mwf5rt" path="res://Resources/Sprites/Mobs/GoodBody.png" id="7_04rii"]
+[ext_resource type="Script" uid="uid://ytx7wy5nsn36" path="res://Components/Clothing/WearsClothingComponent.cs" id="11_6bs64"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8wxkm"]
 radius = 5.5
@@ -33,19 +34,19 @@ colors = PackedColorArray(0, 0, 0, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_va6o6"]
 gradient = SubResource("Gradient_6mltn")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_opdnh"]
-atlas = ExtResource("3_tl3vd")
+[sub_resource type="AtlasTexture" id="AtlasTexture_wjsfm"]
+atlas = ExtResource("7_04rii")
 region = Rect2(48, 0, 48, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_klnpo"]
-atlas = ExtResource("3_tl3vd")
+[sub_resource type="AtlasTexture" id="AtlasTexture_xuu0h"]
+atlas = ExtResource("7_04rii")
 region = Rect2(0, 0, 48, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_mtcbf"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_opdnh")
+"texture": SubResource("AtlasTexture_wjsfm")
 }],
 "loop": true,
 "name": &"back",
@@ -53,7 +54,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_klnpo")
+"texture": SubResource("AtlasTexture_xuu0h")
 }],
 "loop": true,
 "name": &"default",
@@ -112,5 +113,28 @@ material = SubResource("ShaderMaterial_l16d8")
 scale = Vector2(500, 500)
 texture = SubResource("GradientTexture2D_va6o6")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CanvasGroup" index="0"]
+[node name="Body" type="AnimatedSprite2D" parent="CanvasGroup" index="0"]
 sprite_frames = SubResource("SpriteFrames_mtcbf")
+
+[node name="Shoes" type="AnimatedSprite2D" parent="CanvasGroup" index="1"]
+
+[node name="Bottom" type="AnimatedSprite2D" parent="CanvasGroup" index="2"]
+
+[node name="Gloves" type="AnimatedSprite2D" parent="CanvasGroup" index="3"]
+
+[node name="Top" type="AnimatedSprite2D" parent="CanvasGroup" index="4"]
+
+[node name="Belt" type="AnimatedSprite2D" parent="CanvasGroup" index="5"]
+
+[node name="Outerwear" type="AnimatedSprite2D" parent="CanvasGroup" index="6"]
+
+[node name="Neck" type="AnimatedSprite2D" parent="CanvasGroup" index="7"]
+
+[node name="Inhand" type="AnimatedSprite2D" parent="CanvasGroup" index="8"]
+
+[node name="Face" type="AnimatedSprite2D" parent="CanvasGroup" index="9"]
+
+[node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="10"]
+
+[node name="WearsClothingComponent" type="Node2D" parent="." index="11"]
+script = ExtResource("11_6bs64")

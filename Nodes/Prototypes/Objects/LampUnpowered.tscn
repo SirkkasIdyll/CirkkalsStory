@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://boxpbvbntnrfx"]
 
 [ext_resource type="PackedScene" uid="uid://bgv86o62nhtgd" path="res://Nodes/Prototypes/Objects/BaseInteractableObject.tscn" id="1_2rb81"]
-[ext_resource type="Texture2D" uid="uid://j726n7clqv12" path="res://Resources/Sprites/Lamp.png" id="2_uj2tb"]
+[ext_resource type="Texture2D" uid="uid://j726n7clqv12" path="res://Resources/Sprites/Objects/Lamp.png" id="2_uj2tb"]
 
 [sub_resource type="Gradient" id="Gradient_tmwp3"]
 offsets = PackedFloat32Array(0, 0.730028)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://c0l7xrvqm3vx2"]
 
 [ext_resource type="PackedScene" uid="uid://bgv86o62nhtgd" path="res://Nodes/Prototypes/Objects/BaseInteractableObject.tscn" id="1_jhxt7"]
-[ext_resource type="Texture2D" uid="uid://dc1gy02g87xp0" path="res://Resources/Sprites/EvilIntimidatingHole.png" id="2_kf3v6"]
+[ext_resource type="Texture2D" uid="uid://dc1gy02g87xp0" path="res://Resources/Sprites/Objects/EvilIntimidatingHole.png" id="2_kf3v6"]
 [ext_resource type="Script" uid="uid://dqxxmcj1do5g2" path="res://Components/Power/PowerGeneratorComponent.cs" id="3_0bkqj"]
 
 [sub_resource type="Gradient" id="Gradient_qektd"]

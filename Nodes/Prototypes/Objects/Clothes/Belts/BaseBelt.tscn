@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cvbjkug5xc3v7"]
+
+[ext_resource type="PackedScene" uid="uid://bps0a33hwv2dv" path="res://Nodes/Prototypes/Objects/Clothes/BaseClothing.tscn" id="1_ocv2r"]
+
+[node name="BaseBelt" instance=ExtResource("1_ocv2r")]
+
+[node name="ClothingComponent" parent="." index="3"]
+ClothingSlot = 4

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cpwse4as6ig1b"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kfhfu"]
-[ext_resource type="Texture2D" uid="uid://ct5ctrmxcb82" path="res://Resources/Sprites/MobCarnivorousPlant.png" id="2_es168"]
+[ext_resource type="Texture2D" uid="uid://ct5ctrmxcb82" path="res://Resources/Sprites/Mobs/MobCarnivorousPlant.png" id="2_es168"]
 
 [node name="MobCarnivorousPlant" instance=ExtResource("1_kfhfu")]
 

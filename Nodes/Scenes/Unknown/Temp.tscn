@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://m7oi1ohgvdft"]
+[gd_scene load_steps=23 format=4 uid="uid://m7oi1ohgvdft"]
 
 [ext_resource type="Script" uid="uid://uo4mriwgqow8" path="res://Nodes/Scenes/Unknown/TempSystem.cs" id="1_s21w5"]
 [ext_resource type="Texture2D" uid="uid://b5bhtdcnhjkxn" path="res://Resources/Sprites/Tileset32.png" id="2_6mltn"]
@@ -14,6 +14,11 @@
 [ext_resource type="PackedScene" uid="uid://dnnt2gq7vb6eg" path="res://Nodes/Prototypes/Objects/Walls/Window.tscn" id="12_3xjwc"]
 [ext_resource type="PackedScene" uid="uid://cni51e1gyr32" path="res://Nodes/Prototypes/Objects/Walls/BrickWall.tscn" id="13_gt1rf"]
 [ext_resource type="PackedScene" uid="uid://birpwtxymx2l3" path="res://Nodes/Prototypes/Objects/Desk.tscn" id="14_aq3r6"]
+[ext_resource type="PackedScene" uid="uid://dbn42g1ut7cev" path="res://Nodes/Prototypes/Objects/Clothes/Tops/GreenShirtAndTie.tscn" id="15_cgtk0"]
+[ext_resource type="PackedScene" uid="uid://bywt6heh0unqh" path="res://Nodes/Prototypes/Objects/Clothes/Outerwear/TanJacket.tscn" id="16_22fi8"]
+[ext_resource type="PackedScene" uid="uid://dm6f5s3vomv02" path="res://Nodes/Prototypes/Objects/Clothes/Bottoms/Jeans.tscn" id="17_6vrkc"]
+[ext_resource type="PackedScene" uid="uid://bqusc51x5eqgl" path="res://Nodes/Prototypes/Objects/Clothes/Face/RedHalfrimGlasses.tscn" id="18_u7g01"]
+[ext_resource type="PackedScene" uid="uid://xd78swtfom8" path="res://Nodes/Prototypes/Objects/Clothes/Inhand/WoodenCane.tscn" id="19_6vrkc"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_g45lb"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -370,3 +375,19 @@ position = Vector2(208, 528)
 
 [node name="Desk6" parent="." instance=ExtResource("14_aq3r6")]
 position = Vector2(240, 528)
+
+[node name="GreenShirtAndTie" parent="." instance=ExtResource("15_cgtk0")]
+position = Vector2(227, 377)
+collision_layer = 4
+
+[node name="TanJacket" parent="." instance=ExtResource("16_22fi8")]
+position = Vector2(209, 368)
+
+[node name="Jeans" parent="." instance=ExtResource("17_6vrkc")]
+position = Vector2(213, 390)
+
+[node name="RedHalfrimGlasses" parent="." instance=ExtResource("18_u7g01")]
+position = Vector2(228, 362)
+
+[node name="WoodenCane" parent="." instance=ExtResource("19_6vrkc")]
+position = Vector2(239, 392)

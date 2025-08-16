@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://btdtjnjhkpah8"]
+
+[ext_resource type="PackedScene" uid="uid://bps0a33hwv2dv" path="res://Nodes/Prototypes/Objects/Clothes/BaseClothing.tscn" id="1_k22bc"]
+
+[node name="BaseInhand" instance=ExtResource("1_k22bc")]

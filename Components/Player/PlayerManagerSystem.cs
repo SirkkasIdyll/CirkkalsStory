@@ -24,3 +24,4 @@ public partial class PlayerManagerSystem : NodeSystem
         _player = player;
     }
 }
+

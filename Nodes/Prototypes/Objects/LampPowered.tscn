@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://wwq64g88ipe4"]
 
 [ext_resource type="PackedScene" uid="uid://bgv86o62nhtgd" path="res://Nodes/Prototypes/Objects/BaseInteractableObject.tscn" id="1_ydeay"]
-[ext_resource type="Texture2D" uid="uid://j726n7clqv12" path="res://Resources/Sprites/Lamp.png" id="2_deeup"]
+[ext_resource type="Texture2D" uid="uid://j726n7clqv12" path="res://Resources/Sprites/Objects/Lamp.png" id="2_deeup"]
 [ext_resource type="Script" uid="uid://pjaieos5ol3i" path="res://Components/Power/PowerCustomerComponent.cs" id="3_ju5am"]
 [ext_resource type="Script" uid="uid://cfv33bp7uma0p" path="res://Components/Power/PoweredLightComponent.cs" id="4_u3mb8"]
 

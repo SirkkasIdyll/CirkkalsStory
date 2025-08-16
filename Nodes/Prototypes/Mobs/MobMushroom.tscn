@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://5kmqom1jaae5"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_qmuap"]
-[ext_resource type="Texture2D" uid="uid://b20mk1njlmd7n" path="res://Resources/Sprites/MobMushroom.png" id="2_dejed"]
+[ext_resource type="Texture2D" uid="uid://b20mk1njlmd7n" path="res://Resources/Sprites/Mobs/MobMushroom.png" id="2_dejed"]
 
 [node name="MobMushroom" instance=ExtResource("1_qmuap")]
 
