@@ -12,10 +12,10 @@ public partial class ClothingComponent : Component
     public ClothingSlot ClothingSlot;
     
     /// <summary>
-    /// The spritesheet which should have a default and back animation
+    /// The <see cref="SpriteFrames"/> which should have a default and back animation
     /// </summary>
     [Export]
-    public AnimatedSprite2D? ClothingSprite;
+    public SpriteFrames? EquippedSpriteFrames;
 }
 
 /// <summary>

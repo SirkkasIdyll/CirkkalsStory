@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://buqgt44k0b5gc"]
+[gd_scene load_steps=18 format=3 uid="uid://buqgt44k0b5gc"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kbtkb"]
 [ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="2_opdnh"]
@@ -6,12 +6,8 @@
 [ext_resource type="AudioStream" uid="uid://dyc6gj2kewjcm" path="res://Resources/Sounds/FootstepsWoodSoli 6017_62_1_short.wav" id="4_klnpo"]
 [ext_resource type="Script" uid="uid://ctw2xmwbf73hi" path="res://Components/Interaction/CanInteractComponent.cs" id="6_mtcbf"]
 [ext_resource type="Shader" uid="uid://cyowv87u2bat5" path="res://Resources/Shaders/Temp.gdshader" id="7_0n3qf"]
-[ext_resource type="Texture2D" uid="uid://inort5mwf5rt" path="res://Resources/Sprites/GoodBody.png" id="7_04rii"]
-[ext_resource type="Texture2D" uid="uid://jo68uqr1fw06" path="res://Resources/Sprites/Pants.png" id="8_l16d8"]
-[ext_resource type="Texture2D" uid="uid://bib0ga47g1qq0" path="res://Resources/Sprites/Shirt.png" id="9_va6o6"]
-[ext_resource type="Texture2D" uid="uid://bfbr685hs877" path="res://Resources/Sprites/Jacket.png" id="10_yxf2p"]
-[ext_resource type="Texture2D" uid="uid://d28wg2qgivb2v" path="res://Resources/Sprites/Cane.png" id="11_04rii"]
-[ext_resource type="Texture2D" uid="uid://cxojr84e2h7wq" path="res://Resources/Sprites/Glasses.png" id="11_7ln1c"]
+[ext_resource type="Texture2D" uid="uid://inort5mwf5rt" path="res://Resources/Sprites/Mobs/GoodBody.png" id="7_04rii"]
+[ext_resource type="Script" uid="uid://ytx7wy5nsn36" path="res://Components/Clothing/WearsClothingComponent.cs" id="11_6bs64"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8wxkm"]
 radius = 5.5
@@ -59,141 +55,6 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_xuu0h")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_va6o6"]
-atlas = ExtResource("8_l16d8")
-region = Rect2(48, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_yxf2p"]
-atlas = ExtResource("8_l16d8")
-region = Rect2(0, 0, 48, 48)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_7ln1c"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_va6o6")
-}],
-"loop": true,
-"name": &"back",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_yxf2p")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_6bs64"]
-atlas = ExtResource("9_va6o6")
-region = Rect2(48, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ep6do"]
-atlas = ExtResource("9_va6o6")
-region = Rect2(0, 0, 48, 48)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_l16d8"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_6bs64")
-}],
-"loop": true,
-"name": &"back",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ep6do")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ydmoe"]
-atlas = ExtResource("10_yxf2p")
-region = Rect2(48, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_bxab3"]
-atlas = ExtResource("10_yxf2p")
-region = Rect2(0, 0, 48, 48)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_kqw0x"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ydmoe")
-}],
-"loop": true,
-"name": &"back",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_bxab3")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_mijd0"]
-atlas = ExtResource("11_04rii")
-region = Rect2(48, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7exti"]
-atlas = ExtResource("11_04rii")
-region = Rect2(0, 0, 48, 48)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_wjsfm"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_mijd0")
-}],
-"loop": true,
-"name": &"back",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7exti")
-}],
-"loop": true,
-"name": &"default",
-"speed": 5.0
-}]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kqw0x"]
-atlas = ExtResource("11_7ln1c")
-region = Rect2(48, 0, 48, 48)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_5sbft"]
-atlas = ExtResource("11_7ln1c")
-region = Rect2(0, 0, 48, 48)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_mijd0"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kqw0x")
-}],
-"loop": true,
-"name": &"back",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_5sbft")
 }],
 "loop": true,
 "name": &"default",
@@ -258,24 +119,22 @@ sprite_frames = SubResource("SpriteFrames_mtcbf")
 [node name="Shoes" type="AnimatedSprite2D" parent="CanvasGroup" index="1"]
 
 [node name="Bottom" type="AnimatedSprite2D" parent="CanvasGroup" index="2"]
-sprite_frames = SubResource("SpriteFrames_7ln1c")
 
 [node name="Gloves" type="AnimatedSprite2D" parent="CanvasGroup" index="3"]
 
 [node name="Top" type="AnimatedSprite2D" parent="CanvasGroup" index="4"]
-sprite_frames = SubResource("SpriteFrames_l16d8")
 
 [node name="Belt" type="AnimatedSprite2D" parent="CanvasGroup" index="5"]
 
 [node name="Outerwear" type="AnimatedSprite2D" parent="CanvasGroup" index="6"]
-sprite_frames = SubResource("SpriteFrames_kqw0x")
 
 [node name="Neck" type="AnimatedSprite2D" parent="CanvasGroup" index="7"]
 
 [node name="Inhand" type="AnimatedSprite2D" parent="CanvasGroup" index="8"]
-sprite_frames = SubResource("SpriteFrames_wjsfm")
 
 [node name="Face" type="AnimatedSprite2D" parent="CanvasGroup" index="9"]
-sprite_frames = SubResource("SpriteFrames_mijd0")
 
 [node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="10"]
+
+[node name="WearsClothingComponent" type="Node2D" parent="." index="11"]
+script = ExtResource("11_6bs64")

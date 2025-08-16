@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bps0a33hwv2dv"]
+
+[ext_resource type="PackedScene" uid="uid://bgv86o62nhtgd" path="res://Nodes/Prototypes/Objects/BaseInteractableObject.tscn" id="1_2nwp3"]
+[ext_resource type="Script" uid="uid://bgcnvejusbgxi" path="res://Components/Clothing/ClothingComponent.cs" id="2_wdl4o"]
+
+[node name="BaseClothing" instance=ExtResource("1_2nwp3")]
+collision_layer = 128
+
+[node name="ClothingComponent" type="Node2D" parent="." index="3"]
+script = ExtResource("2_wdl4o")

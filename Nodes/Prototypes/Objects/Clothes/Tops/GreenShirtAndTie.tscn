@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://dbn42g1ut7cev"]
+
+[ext_resource type="PackedScene" uid="uid://dqg7bshdnjy3w" path="res://Nodes/Prototypes/Objects/Clothes/Tops/BaseTop.tscn" id="1_ae5xs"]
+[ext_resource type="SpriteFrames" uid="uid://b16xxh5ih3upw" path="res://Resources/SpriteFrames/Clothes/Tops/GreenShirtAndTie.tres" id="2_hbe05"]
+[ext_resource type="Texture2D" uid="uid://i5efadcuhrl8" path="res://Resources/Sprites/Clothes/Tops/ShirtIcon.png" id="2_s2j0g"]
+
+[node name="GreenShirtAndTie" instance=ExtResource("1_ae5xs")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Green Shirt and Tie"
+Description = "Formal and casual all in one."
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="1"]
+polygon = PackedVector2Array(-6.6, -7.6, -6.6, -6.6, -7.6, -6.6, -7.6, -5.4, -9.6, -4.4, -9.6, -2.6, -10.6, -2.6, -10.6, 0.6, -6.6, 0.6, -6.6, 7.4, -4.6, 8.3, -4.6, 9.6, 3.4, 9.6, 4.4, 7.6, 5.6, 7.6, 5.6, 0.6, 9.6, 0.6, 9.6, -2.6, 8.6, -2.6, 8.6, -4.3, 5.6, -6.3, 5.6, -7.6, 2.4, -7.6, 2.4, -6.4, 0.4, -5.4, 0.4, -4.6, -1.4, -4.6, -1.4, -5.4, -3.4, -6.4, -3.4, -7.6)
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
+texture = ExtResource("2_s2j0g")
+
+[node name="ClothingComponent" parent="." index="4"]
+EquippedSpriteFrames = ExtResource("2_hbe05")

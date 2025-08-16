@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://df6m317f3irhk" path="res://Components/UI/AttachedUserInterfaceComponent.cs" id="2_tw66r"]
 [ext_resource type="Script" uid="uid://dtmrn4vaol245" path="res://Components/Inventory/StorageComponent.cs" id="3_4ddv0"]
 [ext_resource type="PackedScene" uid="uid://cplderic1k4iq" path="res://Nodes/UI/CustomWindow/CustomWindow.tscn" id="3_tw66r"]
-[ext_resource type="Texture2D" uid="uid://bwxkfyemurfpt" path="res://Resources/Sprites/Box.png" id="4_2obsc"]
+[ext_resource type="Texture2D" uid="uid://bwxkfyemurfpt" path="res://Resources/Sprites/Objects/Box.png" id="4_2obsc"]
 
 [node name="Box" instance=ExtResource("1_4ddv0")]
 

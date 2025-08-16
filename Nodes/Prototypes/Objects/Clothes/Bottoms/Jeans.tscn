@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://dm6f5s3vomv02"]
+
+[ext_resource type="PackedScene" uid="uid://bgkgb5iluqb5o" path="res://Nodes/Prototypes/Objects/Clothes/Bottoms/BaseBottom.tscn" id="1_g7pdt"]
+[ext_resource type="Texture2D" uid="uid://dbxajv3kbsslv" path="res://Resources/Sprites/Clothes/Bottoms/JeansIcon.png" id="2_k1r3h"]
+[ext_resource type="SpriteFrames" uid="uid://cqr84e0lv8nlx" path="res://Resources/SpriteFrames/Clothes/Bottoms/Jeans.tres" id="2_vdywj"]
+
+[node name="Jeans" instance=ExtResource("1_g7pdt")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Jeans"
+Description = "Made from jeans."
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="1"]
+polygon = PackedVector2Array(-4.6, -6.6, -4.6, -4.6, -5.6, -4.6, -5.6, 11.6, -1.4, 11.6, -1.4, 1.6, -0.4, 1.6, -0.4, 0.6, 0.4, 0.6, 0.4, 1.6, 1.4, 1.6, 1.4, 11.6, 5.6, 11.6, 5.6, -4.6, 4.6, -4.6, 4.6, -6.6)
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
+texture = ExtResource("2_k1r3h")
+
+[node name="ClothingComponent" parent="." index="4"]
+EquippedSpriteFrames = ExtResource("2_vdywj")

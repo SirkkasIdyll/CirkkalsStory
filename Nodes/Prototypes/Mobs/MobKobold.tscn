@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://gdgwlj76wsc7"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_7layk"]
-[ext_resource type="Texture2D" uid="uid://d3idjrn6o8d02" path="res://Resources/Sprites/MobKobold.png" id="2_50ij7"]
+[ext_resource type="Texture2D" uid="uid://d3idjrn6o8d02" path="res://Resources/Sprites/Mobs/MobKobold.png" id="2_50ij7"]
 
 [node name="MobKobold" instance=ExtResource("1_7layk")]
 

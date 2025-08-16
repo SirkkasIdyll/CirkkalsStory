@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c64m744ubpq24"]
 
 [ext_resource type="PackedScene" uid="uid://bgv86o62nhtgd" path="res://Nodes/Prototypes/Objects/BaseInteractableObject.tscn" id="1_nq37v"]
-[ext_resource type="Texture2D" uid="uid://h3sgtye1kbac" path="res://Resources/Sprites/Crystal.png" id="2_nnx8y"]
+[ext_resource type="Texture2D" uid="uid://h3sgtye1kbac" path="res://Resources/Sprites/Objects/Crystal.png" id="2_nnx8y"]
 [ext_resource type="Script" uid="uid://vgijf2mel02f" path="res://Components/Power/PowerTransmissionComponent.cs" id="3_dh04l"]
 
 [node name="Transmitter" instance=ExtResource("1_nq37v")]

@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://bywt6heh0unqh"]
+
+[ext_resource type="PackedScene" uid="uid://bottr68gfk55a" path="res://Nodes/Prototypes/Objects/Clothes/Outerwear/BaseOuterwear.tscn" id="1_d3q38"]
+[ext_resource type="Texture2D" uid="uid://bx5tbf5n3s85s" path="res://Resources/Sprites/Clothes/Outerwear/JacketIcon.png" id="2_cav80"]
+[ext_resource type="SpriteFrames" uid="uid://cvgbj1y11m0f2" path="res://Resources/SpriteFrames/Clothes/Outerwear/TanJacket.tres" id="2_exu3e"]
+
+[node name="TanJacket" instance=ExtResource("1_d3q38")]
+
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Tan Jacket"
+Description = "It's tan, and it's a jacket."
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="1"]
+polygon = PackedVector2Array(-4.6, -9.6, -4.6, -8.6, -5.3, -8.6, -8.3, -4.6, -9.6, -4.6, -9.6, -2.6, -10.6, -2.6, -10.6, -0.6, -11.6, -0.6, -11.6, 1.6, -10.6, 1.6, -10.6, 2.6, -7.4, 2.6, -7.4, 0.6, -6.6, 0.6, -6.6, 8.3, -3.6, 10.3, -3.6, 11.6, -1.4, 11.6, -1.4, 7.6, -0.4, 7.6, -0.4, 6.9, 0.4, 7.3, 0.4, 11.4, 1.1, 11.7, 5.6, 8.3, 5.6, -0.1, 6.4, 0.299999, 6.4, 2.6, 9.6, 2.6, 9.6, 1.6, 10.6, 1.6, 10.6, -0.6, 9.6, -0.6, 9.6, -2.6, 8.6, -2.6, 8.6, -4.6, 7.6, -4.6, 7.6, -5.3, 3.6, -8.4, 3.6, -9.6)
+
+[node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
+texture = ExtResource("2_cav80")
+
+[node name="ClothingComponent" parent="." index="4"]
+EquippedSpriteFrames = ExtResource("2_exu3e")
