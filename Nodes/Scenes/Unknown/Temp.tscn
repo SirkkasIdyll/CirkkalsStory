@@ -377,17 +377,17 @@ position = Vector2(208, 528)
 position = Vector2(240, 528)
 
 [node name="GreenShirtAndTie" parent="." instance=ExtResource("15_cgtk0")]
-position = Vector2(227, 377)
+position = Vector2(282, 508)
 collision_layer = 4
 
 [node name="TanJacket" parent="." instance=ExtResource("16_22fi8")]
-position = Vector2(209, 368)
+position = Vector2(263, 502)
 
 [node name="Jeans" parent="." instance=ExtResource("17_6vrkc")]
-position = Vector2(213, 390)
+position = Vector2(272, 527)
 
 [node name="RedHalfrimGlasses" parent="." instance=ExtResource("18_u7g01")]
-position = Vector2(228, 362)
+position = Vector2(283, 492)
 
 [node name="WoodenCane" parent="." instance=ExtResource("19_6vrkc")]
-position = Vector2(239, 392)
+position = Vector2(283, 529)
