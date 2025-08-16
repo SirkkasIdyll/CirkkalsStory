@@ -42,9 +42,8 @@ public partial class MovementSystem : NodeSystem
         else
             characterBody.Velocity = inputDirection * movementComponent.RunningSpeed;
         
-        // Orient sprite
-        if (float.Abs(characterBody.GlobalPosition.X - GetGlobalMousePosition().X) <= 250 &&
-            float.Abs(characterBody.GlobalPosition.Y - GetGlobalMousePosition().Y) <= 250)
+        // Orient sprite by mouse or by keyboard movement
+        if (Input.IsActionPressed("aim"))
         {
             var facingRight = characterBody.GlobalPosition.X < GetGlobalMousePosition().X;
             var facingForward = characterBody.GlobalPosition.Y - 50 < GetGlobalMousePosition().Y;
