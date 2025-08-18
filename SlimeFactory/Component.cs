@@ -7,6 +7,10 @@ using Godot;
 
 namespace CS.SlimeFactory;
 
+/// <summary>
+/// Sets the name of the node to the component's class type
+/// Adds this component to <see cref="NodeManager"/>'s list of actively in-use components tied to the parent
+/// </summary>
 public abstract partial class Component : Node2D, IComponent
 {
     private readonly NodeManager _nodeManager = NodeManager.Instance;
@@ -34,7 +38,7 @@ public abstract partial class Component : Node2D, IComponent
         _nodeManager.ActiveNodeComps.Remove(dict);
     }
 
-    public string Serialize()
+    /*public string Serialize()
     {
         JsonSerializerOptions options = new JsonSerializerOptions();
         options.WriteIndented = true;
@@ -57,7 +61,7 @@ public abstract partial class Component : Node2D, IComponent
         jsonString += JsonSerializer.Serialize(ab, options);
 
         return jsonString;
-    }
+    }*/
 }
 
 [AttributeUsage(AttributeTargets.Field)]
