@@ -51,14 +51,14 @@ public partial class MovementSystem : NodeSystem
         }
         else
         {
-            if (inputDirection == Vector2.Left)
+            if (inputDirection.X < 0)
                 _appearanceSystem.OrientCharacterSprite(characterBody, faceRight: false);
-            else if (inputDirection == Vector2.Right)
+            else if (inputDirection.X > 0)
                 _appearanceSystem.OrientCharacterSprite(characterBody, faceRight: true);
             
-            if (inputDirection == Vector2.Up)
+            if (inputDirection.Y < 0)
                 _appearanceSystem.OrientCharacterSprite(characterBody, faceForward: false);
-            else if (inputDirection == Vector2.Down)
+            else if (inputDirection.Y > 0)
                 _appearanceSystem.OrientCharacterSprite(characterBody, faceForward: true);
         }
         
