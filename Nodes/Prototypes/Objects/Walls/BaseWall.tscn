@@ -4,6 +4,7 @@
 
 [node name="BaseWall" instance=ExtResource("1_n7rpx")]
 z_index = -1
+y_sort_enabled = false
 collision_layer = 1
 lock_rotation = true
 freeze = true

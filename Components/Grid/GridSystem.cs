@@ -129,6 +129,34 @@ public partial class GridSystem : NodeSystem
         AnchorToGrid(node);
     }
 
+    public void RotateClockwise(Node node)
+    {
+        if (node is not RigidBody2D rigidBody2D)
+            return;
+
+        if (rigidBody2D.IsFreezeEnabled())
+            return;
+
+        var tween = CreateTween();
+        tween.TweenProperty(rigidBody2D, "global_rotation_degrees",
+            GetCardinalAngle(rigidBody2D.GetGlobalRotationDegrees()) + 90, 0.05f);
+        // rigidBody2D.SetGlobalRotationDegrees(GetCardinalAngle(rigidBody2D.GetGlobalRotationDegrees()) + 90);
+    }
+    
+    public void RotateCounterClockwise(Node node)
+    {
+        if (node is not RigidBody2D rigidBody2D)
+            return;
+
+        if (rigidBody2D.IsFreezeEnabled())
+            return;
+        
+        var tween = CreateTween();
+        tween.TweenProperty(rigidBody2D, "global_rotation_degrees",
+            GetCardinalAngle(rigidBody2D.GetGlobalRotationDegrees()) - 90, 0.05f);
+        // rigidBody2D.SetGlobalRotationDegrees(GetCardinalAngle(rigidBody2D.GetGlobalRotationDegrees()) - 90);
+    }
+
     /// <summary>
     /// It's in degrees, not radians!
     /// </summary>

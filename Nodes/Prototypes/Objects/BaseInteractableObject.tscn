@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bgv86o62nhtgd"]
+[gd_scene load_steps=4 format=3 uid="uid://bgv86o62nhtgd"]
 
 [ext_resource type="PackedScene" uid="uid://drjnmswp52ljh" path="res://Nodes/Prototypes/Objects/BaseObject.tscn" id="1_xsbyq"]
 [ext_resource type="Script" uid="uid://dgdyrma2xaqwd" path="res://Components/Interaction/InteractableComponent.cs" id="2_02h4d"]
+[ext_resource type="Script" uid="uid://da71e4bytx3d8" path="res://Components/Rotate/RotatableComponent.cs" id="3_4ti3o"]
 
 [node name="BaseInteractableObject" instance=ExtResource("1_xsbyq")]
 
@@ -9,3 +10,6 @@
 script = ExtResource("2_02h4d")
 _canvasGroup = NodePath("../CanvasGroup")
 _area = NodePath("..")
+
+[node name="RotatableComponent" type="Node2D" parent="." index="3"]
+script = ExtResource("3_4ti3o")
