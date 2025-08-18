@@ -29,32 +29,15 @@ public partial class InteractSystem : NodeSystem
     {
         base._Input(@event);
 
-        if (!@event.IsActionPressed("primary_interact") && !@event.IsActionPressed("secondary_interact"))
-            return;
-        
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
                 out var canInteractComponent))
             return;
-
-        if (canInteractComponent.InteractTarget == null)
-            return;
-    
-        if (!_nodeManager.TryGetComponent<InteractableComponent>(canInteractComponent.InteractTarget,
-                out var interactableComponent))
-            return;
-
+        
         if (@event.IsActionPressed("primary_interact"))
-        {
-            if (Input.IsActionPressed("shift_modifier"))
-            {
-                _descriptionSystem.ShowTooltip(canInteractComponent.InteractTarget);
-                GetViewport().SetInputAsHandled();
-                return;
-            }
-
-            TryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent), (canInteractComponent.InteractTarget, interactableComponent));
-            GetViewport().SetInputAsHandled();
-        }
+            OnPrimaryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent));
+        
+        if (@event.IsActionPressed("secondary_interact"))
+            OnSecondaryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent));
     }
 
     public override void _PhysicsProcess(double delta)
@@ -102,6 +85,30 @@ public partial class InteractSystem : NodeSystem
             
             canvasGroup.Material = OutOfRangeOutline;
         }
+    }
+
+    private void OnPrimaryInteract(Node<CanInteractComponent> node)
+    {
+        if (node.Comp.InteractTarget == null)
+            return;
+    
+        if (!_nodeManager.TryGetComponent<InteractableComponent>(node.Comp.InteractTarget, out var interactableComponent))
+            return;
+
+        if (Input.IsActionPressed("shift_modifier"))
+        {
+            _descriptionSystem.ShowTooltip(node.Comp.InteractTarget);
+            GetViewport().SetInputAsHandled();
+            return;
+        }
+
+        TryInteract(node, (node.Comp.InteractTarget, interactableComponent));
+        GetViewport().SetInputAsHandled();
+    }
+
+    private void OnSecondaryInteract(Node<CanInteractComponent> node)
+    {
+        
     }
 
     /// <summary>
