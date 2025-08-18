@@ -1,6 +1,7 @@
 ﻿using CS.Components.Description;
 using CS.Components.Grid;
 using CS.Components.Player;
+using CS.Components.Pulling;
 using CS.Nodes.UI.Chyron;
 using CS.SlimeFactory;
 using Godot;
@@ -29,6 +30,10 @@ public partial class InteractSystem : NodeSystem
     {
         base._Input(@event);
 
+        // More efficient to check the action than to get the component
+        if (!@event.IsActionPressed("primary_interact") && !@event.IsActionPressed("secondary_interact") && !@event.IsActionPressed("pull"))
+            return;
+        
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
                 out var canInteractComponent))
             return;
@@ -38,6 +43,9 @@ public partial class InteractSystem : NodeSystem
         
         if (@event.IsActionPressed("secondary_interact"))
             OnSecondaryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent));
+
+        if (@event.IsActionPressed("pull"))
+            OnPull((_playerManagerSystem.GetPlayer(), canInteractComponent));
     }
 
     public override void _PhysicsProcess(double delta)
@@ -109,6 +117,12 @@ public partial class InteractSystem : NodeSystem
     private void OnSecondaryInteract(Node<CanInteractComponent> node)
     {
         
+    }
+
+    private void OnPull(Node<CanInteractComponent> node)
+    {
+        var signal = new PullActionSignal(node.Comp.InteractTarget);
+        _nodeManager.SignalBus.EmitPullActionSignal(node, ref signal);
     }
 
     /// <summary>

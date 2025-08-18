@@ -1,10 +1,11 @@
-[gd_scene load_steps=18 format=3 uid="uid://buqgt44k0b5gc"]
+[gd_scene load_steps=19 format=3 uid="uid://buqgt44k0b5gc"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kbtkb"]
 [ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="2_opdnh"]
 [ext_resource type="Script" uid="uid://bxjdo37wkcuk7" path="res://Components/Movement/MovementComponent.cs" id="3_klnpo"]
 [ext_resource type="AudioStream" uid="uid://dyc6gj2kewjcm" path="res://Resources/Sounds/FootstepsWoodSoli 6017_62_1_short.wav" id="4_klnpo"]
 [ext_resource type="Script" uid="uid://ctw2xmwbf73hi" path="res://Components/Interaction/CanInteractComponent.cs" id="6_mtcbf"]
+[ext_resource type="Script" uid="uid://d2d734kwludxx" path="res://Components/Pulling/CanPullComponent.cs" id="6_va6o6"]
 [ext_resource type="Shader" uid="uid://cyowv87u2bat5" path="res://Resources/Shaders/Temp.gdshader" id="7_0n3qf"]
 [ext_resource type="Texture2D" uid="uid://inort5mwf5rt" path="res://Resources/Sprites/Mobs/GoodBody.png" id="7_04rii"]
 [ext_resource type="Script" uid="uid://ytx7wy5nsn36" path="res://Components/Clothing/WearsClothingComponent.cs" id="11_6bs64"]
@@ -96,7 +97,10 @@ script = ExtResource("2_opdnh")
 [node name="CanInteractComponent" type="Node2D" parent="." index="7"]
 script = ExtResource("6_mtcbf")
 
-[node name="FogOfWar" type="Node2D" parent="." index="8"]
+[node name="CanPullComponent" type="Node2D" parent="." index="8"]
+script = ExtResource("6_va6o6")
+
+[node name="FogOfWar" type="Node2D" parent="." index="9"]
 visible = false
 
 [node name="PointLight2D" type="PointLight2D" parent="FogOfWar" index="0"]
@@ -136,5 +140,5 @@ sprite_frames = SubResource("SpriteFrames_mtcbf")
 
 [node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="10"]
 
-[node name="WearsClothingComponent" type="Node2D" parent="." index="11"]
+[node name="WearsClothingComponent" type="Node2D" parent="." index="12"]
 script = ExtResource("11_6bs64")
