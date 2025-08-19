@@ -2,8 +2,10 @@
 using CS.Components.Grid;
 using CS.Components.Player;
 using CS.Nodes.UI.Chyron;
+using CS.Nodes.UI.NodeButtonList;
 using CS.SlimeFactory;
 using Godot;
+using Godot.Collections;
 
 namespace CS.Components.Interaction;
 
@@ -13,9 +15,10 @@ public partial class InteractSystem : NodeSystem
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
     [InjectDependency] private readonly GridSystem _gridSystem = null!;
     
-    public ShaderMaterial InRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/InRangeOutline.tres");
-    public ShaderMaterial OutOfRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/OutOfRangeOutline.tres");
-
+    private ShaderMaterial _inRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/InRangeOutline.tres");
+    private ShaderMaterial _outOfRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/OutOfRangeOutline.tres");
+    private PackedScene _nodeButtonList =
+        ResourceLoader.Load<PackedScene>("res://Nodes/UI/NodeButtonList/NodeButtonList.tscn");
     
     public override void _Ready()
     {
@@ -79,11 +82,11 @@ public partial class InteractSystem : NodeSystem
             Input.SetDefaultCursorShape(Input.CursorShape.PointingHand);
             if (user == target ||  distance < component.MaxInteractDistance)
             {
-                canvasGroup.Material = InRangeOutline;
+                canvasGroup.Material = _inRangeOutline;
                 continue;
             }
             
-            canvasGroup.Material = OutOfRangeOutline;
+            canvasGroup.Material = _outOfRangeOutline;
         }
     }
 
@@ -108,7 +111,45 @@ public partial class InteractSystem : NodeSystem
 
     private void OnSecondaryInteract(Node<CanInteractComponent> node)
     {
+        // Create an area that detects nodes on all layers
+        var area2D = new Area2D();
+        area2D.SetCollisionMask(0b11111111);
         
+        // Area is a square the size of one standard tile
+        var collionShape2D = new CollisionShape2D();
+        var rectangleShape2D = new RectangleShape2D();
+        rectangleShape2D.SetSize(new Vector2(32, 32));
+        collionShape2D.Shape = rectangleShape2D;
+        area2D.AddChild(collionShape2D);
+        
+        // Adds the area to the scene at the mouse location
+        _playerManagerSystem.GetPlayer().GetParent().AddChild(area2D);
+        area2D.SetGlobalPosition(GetGlobalMousePosition());
+        
+        // After a random specified amount of time, get the overlapping bodies and narrow them down to interactables
+        // then list them for selection to be interacted with
+        var timer = GetTree().CreateTimer(0.1f);
+        timer.Timeout += () =>
+        {
+            Array<Node2D> interactableBodies = [];
+            foreach (var body in area2D.GetOverlappingBodies())
+            {
+                if (_nodeManager.HasComponent<InteractableComponent>(body))
+                    interactableBodies.Add(body);
+            }
+
+            if (interactableBodies.Count == 0)
+            {
+                area2D.QueueFree();
+                return;
+            }
+            
+            var nodeButtonList = _nodeButtonList.Instantiate<NodeButtonListSystem>();
+            nodeButtonList.Setup(interactableBodies);
+            CanvasLayer.AddChild(nodeButtonList);
+            nodeButtonList.SetPosition(GetViewport().GetMousePosition());
+            area2D.QueueFree();
+        };
     }
 
     /// <summary>
@@ -198,7 +239,7 @@ public partial class InteractSystem : NodeSystem
         return false;
     }
 
-    private void TryInteract(Node<CanInteractComponent> node, Node<InteractableComponent> target)
+    public void TryInteract(Node<CanInteractComponent> node, Node<InteractableComponent> target)
     {
         if (node.Owner is not Node2D nodeA || target.Owner is not Node2D nodeB)
             return;

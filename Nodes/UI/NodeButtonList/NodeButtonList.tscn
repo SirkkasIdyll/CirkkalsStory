@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://qnbqgeh2h5j1"]
+
+[ext_resource type="Script" uid="uid://cmpi3qn7w5gkk" path="res://Nodes/UI/NodeButtonList/NodeButtonListSystem.cs" id="1_us8tx"]
+[ext_resource type="Texture2D" uid="uid://53anc4smic08" path="res://Resources/Sprites/Sprite-0001.png" id="2_c34uy"]
+
+[node name="NodeButtonList" type="Control" node_paths=PackedStringArray("_vBoxContainer")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_us8tx")
+_vBoxContainer = NodePath("PanelContainer/VBoxContainer")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "First entry"
+icon = ExtResource("2_c34uy")
+expand_icon = true
+
+[node name="Button2" type="Button" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Second entry"
+expand_icon = true
+
+[node name="Button3" type="Button" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Third entry"
+expand_icon = true

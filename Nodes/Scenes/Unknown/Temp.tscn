@@ -247,114 +247,130 @@ position = Vector2(881, 340)
 metadata/_edit_lock_ = true
 
 [node name="Window" parent="." instance=ExtResource("12_3xjwc")]
-y_sort_enabled = false
 position = Vector2(368, 496)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="Window2" parent="." instance=ExtResource("12_3xjwc")]
-y_sort_enabled = false
 position = Vector2(368, 528)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="Window3" parent="." instance=ExtResource("12_3xjwc")]
-y_sort_enabled = false
 position = Vector2(368, 592)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="Window4" parent="." instance=ExtResource("12_3xjwc")]
-y_sort_enabled = false
 position = Vector2(368, 624)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(336, 464)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall2" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(368, 464)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall3" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(368, 560)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall4" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(368, 656)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall5" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(336, 656)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall6" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(304, 464)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall7" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(144, 528)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall8" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(144, 496)
 collision_mask = 3
 metadata/_edit_lock_ = true
 
 [node name="BrickWall9" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(144, 560)
 collision_mask = 3
 
 [node name="BrickWall10" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(144, 592)
 collision_mask = 3
 
 [node name="BrickWall11" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(144, 624)
 collision_mask = 3
 
 [node name="BrickWall12" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(144, 656)
 collision_mask = 3
 
 [node name="BrickWall13" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(176, 656)
 collision_mask = 3
 
 [node name="BrickWall14" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(208, 656)
 collision_mask = 3
 
 [node name="BrickWall15" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(240, 656)
 collision_mask = 3
 
 [node name="BrickWall16" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(272, 656)
 collision_mask = 3
 
 [node name="BrickWall17" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(304, 656)
 collision_mask = 3
 
 [node name="BrickWall18" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(144, 464)
 collision_mask = 3
 
 [node name="BrickWall19" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(176, 464)
 collision_mask = 3
 
 [node name="BrickWall20" parent="." instance=ExtResource("13_gt1rf")]
+y_sort_enabled = true
 position = Vector2(208, 464)
 collision_mask = 3
 
@@ -378,7 +394,6 @@ position = Vector2(240, 528)
 
 [node name="GreenShirtAndTie" parent="." instance=ExtResource("15_cgtk0")]
 position = Vector2(282, 508)
-collision_layer = 4
 
 [node name="TanJacket" parent="." instance=ExtResource("16_22fi8")]
 position = Vector2(263, 502)
