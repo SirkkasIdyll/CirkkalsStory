@@ -14,10 +14,19 @@ public partial class NodeButtonListSystem : Control
 	
 	[ExportCategory("Owned")]
 	[Export] private VBoxContainer _vBoxContainer = null!;
-	
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+
+	public override void _Input(InputEvent @event)
 	{
+		base._Input(@event);
+		
+		if (@event is not InputEventMouseButton mouseEvent)
+			return;
+
+		if (!mouseEvent.Pressed)
+			return;
+		
+		if (!new Rect2(Position, _vBoxContainer.Size).HasPoint(GetViewport().GetMousePosition()))
+			QueueFree();
 	}
 
 	public void Setup(Array<Node2D> node2Ds)
