@@ -11,6 +11,14 @@ public partial class SignalBus
     {
         InteractWithSignal?.Invoke(node, ref args);
     }
+
+    public delegate void GetContextActionsSignalHandler(Node<InteractableComponent> node,
+        ref GetContextActionsSignal args);
+    public event GetContextActionsSignalHandler? GetContextActionsSignal;
+    public void EmitGetContextActionsSignal(Node<InteractableComponent> node, ref GetContextActionsSignal args)
+    {
+        GetContextActionsSignal?.Invoke(node, ref args);
+    }
     
     public delegate void ShowInteractOutlineSignalHandler(Node<CanInteractComponent> node,
         ref ShowInteractOutlineSignal args);

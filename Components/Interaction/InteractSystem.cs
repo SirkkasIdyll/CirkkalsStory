@@ -26,6 +26,7 @@ public partial class InteractSystem : NodeSystem
 
         _nodeManager.SignalBus.ShowInteractOutlineSignal += OnShowInteractOutline;
         _nodeManager.SignalBus.HideInteractOutlineSignal += OnHideInteractOutline;
+        _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
     }
 
     public override void _Input(InputEvent @event)
@@ -90,6 +91,9 @@ public partial class InteractSystem : NodeSystem
         }
     }
 
+    /// <summary>
+    /// Interact with the target being focused on in the CanInteractComponent
+    /// </summary>
     private void OnPrimaryInteract(Node<CanInteractComponent> node)
     {
         if (node.Comp.InteractTarget == null)
@@ -97,20 +101,52 @@ public partial class InteractSystem : NodeSystem
     
         if (!_nodeManager.TryGetComponent<InteractableComponent>(node.Comp.InteractTarget, out var interactableComponent))
             return;
+        
+        OnPrimaryInteract(node, (node.Comp.InteractTarget, interactableComponent));
+    }
 
+    /// <summary>
+    /// Interact with the given target if it happens to be interactable
+    /// </summary>
+    private void OnPrimaryInteract(Node<CanInteractComponent> node, Node target)
+    {
+        if (!_nodeManager.TryGetComponent<InteractableComponent>(target, out var interactableComponent))
+            return;
+        
+        OnPrimaryInteract(node, (target, interactableComponent));
+    }
+
+    /// <summary>
+    /// Interact with a known interactable target
+    /// </summary>
+    private void OnPrimaryInteract(Node<CanInteractComponent> node, Node<InteractableComponent> interactable)
+    {
         if (Input.IsActionPressed("shift_modifier"))
         {
-            _descriptionSystem.ShowTooltip(node.Comp.InteractTarget);
+            _descriptionSystem.ShowTooltip(interactable);
             GetViewport().SetInputAsHandled();
             return;
         }
 
-        TryInteract(node, (node.Comp.InteractTarget, interactableComponent));
+        TryInteract(node, interactable);
         GetViewport().SetInputAsHandled();
     }
 
     private void OnSecondaryInteract(Node<CanInteractComponent> node)
     {
+        if (node.Comp.InteractTarget != null &&
+            _nodeManager.TryGetComponent<InteractableComponent>(node.Comp.InteractTarget, out var interactableComponent))
+        {
+            var signal = new GetContextActionsSignal(node);
+            _nodeManager.SignalBus.EmitGetContextActionsSignal((node.Comp.InteractTarget, interactableComponent), ref signal);
+            
+            var nodeButtonList = _nodeButtonList.Instantiate<NodeButtonListSystem>();
+            nodeButtonList.Setup(signal.Actions);
+            CanvasLayer.AddChild(nodeButtonList);
+            nodeButtonList.SetPosition(GetViewport().GetMousePosition());
+            return;
+        }
+        
         // Create an area that detects nodes on all layers
         var area2D = new Area2D();
         area2D.SetCollisionMask(0b11111111);
@@ -134,7 +170,7 @@ public partial class InteractSystem : NodeSystem
             Array<Node2D> interactableBodies = [];
             foreach (var body in area2D.GetOverlappingBodies())
             {
-                if (_nodeManager.HasComponent<InteractableComponent>(body))
+                if (_nodeManager.HasComponent<InteractableComponent>(body) && body.IsVisible())
                     interactableBodies.Add(body);
             }
 
@@ -196,6 +232,22 @@ public partial class InteractSystem : NodeSystem
             return;
         
         canvasGroup.Material = null;
+    }
+
+    private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
+    {
+        var button = new Button();
+        args.Actions.Add(button);
+        button.Text = "Interact";
+
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
+        {
+            button.Disabled = true;
+            return;
+        }
+
+        var interactee = args.Interactee;
+        button.Pressed += () => OnPrimaryInteract((interactee, canInteractComponent), node);
     }
 
     /// <summary>
