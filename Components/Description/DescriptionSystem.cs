@@ -53,7 +53,7 @@ public partial class DescriptionSystem : NodeSystem
         customTooltip.SetTooltipBulletpoints(descriptionComponent.DetailedSummary);
         CanvasLayer.AddChild(customTooltip);
         var mousePosition = GetViewport().GetMousePosition();
-        customTooltip.SetPosition(new Vector2I((int)mousePosition.X + 16, (int)mousePosition.Y + 16));
+        customTooltip.SetPosition(new Vector2I((int)mousePosition.X + 8, (int)mousePosition.Y + 8));
     }
 
     /// <summary>

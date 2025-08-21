@@ -3,6 +3,7 @@ using CS.Nodes.UI.Chyron;
 using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
 using Godot;
+using Godot.Collections;
 
 namespace CS.Components.Interaction;
 
@@ -63,6 +64,17 @@ public partial class InteractWithSignal : HandledSignalArgs
     public Node Interactee;
 
     public InteractWithSignal(Node interactee)
+    {
+        Interactee = interactee;
+    }
+}
+
+public partial class GetContextActionsSignal : UserSignalArgs
+{
+    public Node Interactee;
+    public Array<Button> Actions = [];
+
+    public GetContextActionsSignal(Node interactee)
     {
         Interactee = interactee;
     }

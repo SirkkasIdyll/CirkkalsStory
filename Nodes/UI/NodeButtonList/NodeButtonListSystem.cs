@@ -60,4 +60,16 @@ public partial class NodeButtonListSystem : Control
 			_vBoxContainer.AddChild(button);
 		}
 	}
+
+	public void Setup(Array<Button> buttons)
+	{
+		foreach (var child in _vBoxContainer.GetChildren())
+			child.QueueFree();
+
+		foreach (var button in buttons)
+		{
+			button.Pressed += QueueFree;
+			_vBoxContainer.AddChild(button);
+		}
+	}
 }
