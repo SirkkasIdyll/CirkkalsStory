@@ -6,11 +6,14 @@ namespace CS.Components.Clothing;
 
 public partial class ClothingSystem : NodeSystem
 {
+    [InjectDependency] private readonly InteractSystem _interactSystem = null!;
+    
     public override void _Ready()
     {
         base._Ready();
 
         _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
+        _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
     }
 
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
@@ -22,6 +25,34 @@ public partial class ClothingSystem : NodeSystem
             return;
 
         TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent));
+    }
+    
+    private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
+    {
+        var button = new Button();
+        args.Actions.Add(button);
+        button.Text = "Equip item";
+
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
+        {
+            button.Disabled = true;
+            return;
+        }
+
+        var interactee = args.Interactee;
+        button.Pressed += () =>
+        {
+            if (!_interactSystem.InRangeUnobstructed(interactee, node.Owner, canInteractComponent.MaxInteractDistance))
+                return;
+            
+            if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
+                return;
+
+            if (!_nodeManager.TryGetComponent<WearsClothingComponent>(interactee, out var wearsClothingComponent))
+                return;
+            
+            TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
+        };
     }
 
     public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing)

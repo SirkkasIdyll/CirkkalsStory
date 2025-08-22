@@ -26,7 +26,6 @@ public partial class InteractSystem : NodeSystem
 
         _nodeManager.SignalBus.ShowInteractOutlineSignal += OnShowInteractOutline;
         _nodeManager.SignalBus.HideInteractOutlineSignal += OnHideInteractOutline;
-        _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
     }
 
     public override void _Input(InputEvent @event)
@@ -234,28 +233,12 @@ public partial class InteractSystem : NodeSystem
         canvasGroup.Material = null;
     }
 
-    private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
-    {
-        var button = new Button();
-        args.Actions.Add(button);
-        button.Text = "Interact";
-
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
-        {
-            button.Disabled = true;
-            return;
-        }
-
-        var interactee = args.Interactee;
-        button.Pressed += () => OnPrimaryInteract((interactee, canInteractComponent), node);
-    }
-
     /// <summary>
     /// First check if the nodes are within range of each other
     /// then create a raycast from the origin to the target to check for obstructions
     /// Currently just checks if there's an impassable in the way
     /// </summary>
-    private bool InRangeUnobstructed(Node origin, Node target, float range, uint collisionMask = 1)
+    public bool InRangeUnobstructed(Node origin, Node target, float range, uint collisionMask = 1)
     {
         if (!_gridSystem.TryGetDistance(origin, target, out var distance))
             return false;
@@ -276,7 +259,7 @@ public partial class InteractSystem : NodeSystem
         return true;
     }
 
-    private bool IsObstructed(Node origin, Node target, uint collisionMask = 1)
+    public bool IsObstructed(Node origin, Node target, uint collisionMask = 1)
     {
         if (origin is not PhysicsBody2D node2DA || target is not PhysicsBody2D node2DB)
             return false;
