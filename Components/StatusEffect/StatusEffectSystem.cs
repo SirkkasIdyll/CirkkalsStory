@@ -1,5 +1,4 @@
-﻿using CS.Components.CombatManager;
-using CS.Components.Description;
+﻿using CS.Components.Description;
 using CS.Components.Mob;
 using CS.SlimeFactory;
 using Godot;
@@ -15,8 +14,6 @@ public partial class StatusEffectSystem : NodeSystem
     {
         base._Ready();
         
-        _nodeManager.SignalBus.StartOfTurnSignal += OnStartOfTurn;
-        _nodeManager.SignalBus.UseActionSignal += OnUseAction;
         _nodeManager.SignalBus.GetActionEffectsDescriptionSignal += OnGetActionEffectsDescription;
     }
 
@@ -31,33 +28,6 @@ public partial class StatusEffectSystem : NodeSystem
         /*var statusEffectName = _descriptionSystem.GetDisplayName(statusEffectApplicatorComponent.StatusEffect);
         var combatEffect = $"Apply [url={statusEffectApplicatorComponent.StatusEffect.Name}][b]{statusEffectName}[/b][/url]";*/
         // node.Comp.Effects.Add(combatEffect);
-    }
-    
-    /// <summary>
-    /// Proc all status effects at the start of the targets turn
-    /// </summary>
-    private void OnStartOfTurn(Node<MobComponent> node, ref StartOfTurnSignal args)
-    {
-        ProcStatusEffects(node, out var summaries);
-        args.Summaries.AddRange(summaries);
-    }
-
-    /// <summary>
-    /// Apply status effect to the target
-    /// </summary>
-    private void OnUseAction(Node<MobComponent> node, ref UseActionSignal args)
-    {
-        if (!_nodeManager.TryGetComponent<StatusEffectApplicatorComponent>(args.Action,
-                out var statusEffectApplicatorComponent))
-            return;
-
-        foreach (var target in args.Targets)
-        {
-            TryApplyStatusEffect((args.Action, statusEffectApplicatorComponent), target, out var appliedEffect);
-            
-            /*if (appliedEffect != null)
-                args.Summaries.Add("Inflicted [b]" + _descriptionSystem.GetDisplayName(appliedEffect) + "[/b] on [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");*/
-        }
     }
 
     /// <summary>
