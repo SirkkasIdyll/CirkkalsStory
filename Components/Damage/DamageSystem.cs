@@ -1,5 +1,4 @@
 ﻿using CS.Components.Ability;
-using CS.Components.CombatManager;
 using CS.Components.Damageable;
 using CS.Components.Description;
 using CS.Components.Mob;
@@ -20,9 +19,7 @@ public partial class DamageSystem : NodeSystem
         base._Ready();
 
         _nodeManager.SignalBus.GetActionEffectsDescriptionSignal += OnGetActionEffectsDescription;
-        _nodeManager.SignalBus.PreviewActionSignal += OnPreviewAction;
         _nodeManager.SignalBus.ProcStatusEffectSignal += OnProcStatusEffect;
-        _nodeManager.SignalBus.UseActionSignal += OnUseAction;
     }
 
     private void OnGetActionEffectsDescription(Node<DescriptionComponent> node, ref GetActionEffectsDescriptionSignal args)
@@ -43,25 +40,6 @@ public partial class DamageSystem : NodeSystem
             return;
         }
     }
-    
-    private void OnPreviewAction(Node<MobComponent> node, ref PreviewActionSignal args)
-    {
-        if (_nodeManager.TryGetComponent<DamageComponent>(args.Action, out var damageComponent))
-        {
-            foreach (var target in args.Targets)
-                TryDamageTarget((args.Action, damageComponent), target, node, true, out var potentialDamageDealt);
-            
-            return;
-        }
-
-        if (_nodeManager.TryGetComponent<PercentageDamageComponent>(args.Action, out var percentageDamageComponent))
-        {
-            foreach (var target in args.Targets)
-                TryDamageTarget((args.Action, percentageDamageComponent), target, node, true, out var potentialDamageDealt);
-
-            return;
-        }
-    }
 
     private void OnProcStatusEffect(Node<StatusEffectComponent> node, ref ProcStatusEffectSignal args)
     {
@@ -76,31 +54,6 @@ public partial class DamageSystem : NodeSystem
         {
             TryDamageTarget((node, percentageDamageComponent), args.Target, node, false, out var damageDealt);
             // args.Summaries.Add("[b]" + _descriptionSystem.GetDisplayName(args.Target) + "[/b] took " + damageDealt + " damage from [b]" + _descriptionSystem.GetDisplayName(node)+ "[/b].");
-            return;
-        }
-    }
-    
-    private void OnUseAction(Node<MobComponent> node, ref UseActionSignal args)
-    {
-        if (_nodeManager.TryGetComponent<DamageComponent>(args.Action, out var damageComponent))
-        {
-            foreach (var target in args.Targets)
-            {
-                TryDamageTarget((args.Action, damageComponent), target, node, false, out var damageDealt);
-                // args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
-            }
-            
-            return;
-        }
-
-        if (_nodeManager.TryGetComponent<PercentageDamageComponent>(args.Action, out var percentageDamageComponent))
-        {
-            foreach (var target in args.Targets)
-            {
-                TryDamageTarget((args.Action, percentageDamageComponent), target, node, false, out var damageDealt);
-                // args.Summaries.Add("Dealt " + damageDealt + " damage to [b]" + _descriptionSystem.GetDisplayName(target) + "[/b].");
-            }
-
             return;
         }
     }
