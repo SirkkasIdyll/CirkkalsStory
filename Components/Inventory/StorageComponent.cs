@@ -13,9 +13,19 @@ public partial class StorageComponent : Component
     public Array<Node> Items =  [];
 
     /// <summary>
-    /// Each item has a <see cref="StorageSizeComponent"/> with a storage size
-    /// This storage is capable of storing up to the total storage size of all items inside it
+    /// The maximum amount of space this storage can allot
     /// </summary>
     [Export]
-    public float StorageLimit;
+    public float MaxSpace;
+    
+    /// <summary>
+    /// How much space is currently occupied by items
+    /// </summary>
+    public float TotalStoredSpace;
+
+    /// <summary>
+    /// The largest possible item that can fit inside this storage
+    /// </summary>
+    [Export]
+    public ItemSize MaxItemSize = ItemSize.Large;
 }
