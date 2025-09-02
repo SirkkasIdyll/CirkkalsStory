@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.Components.CombatManager;
 using CS.Components.Description;
 using CS.Components.Mob;
 using CS.SlimeFactory;
@@ -17,8 +16,6 @@ public partial class MagicSystem : NodeSystem
         base._Ready();
 
         _nodeManager.SignalBus.GetActionCostsDescriptionSignal += OnGetActionCostsDescriptionSignal;
-        _nodeManager.SignalBus.PreviewActionSignal += OnPreviewAction;
-        _nodeManager.SignalBus.UseActionSignal += OnUseAction;
         
         LoadDictionary();
     }
@@ -29,22 +26,6 @@ public partial class MagicSystem : NodeSystem
             return;
 
         node.Comp.Costs.Add("Mana Cost: " + manaCostComponent.ManaCost);
-    }
-    
-    private void OnUseAction(Node<MobComponent> node, ref UseActionSignal args)
-    {
-        if (!_nodeManager.TryGetComponent<SpellComponent>(args.Action, out var spellComponent))
-            return;
-        
-        CastSpell(node, (args.Action, spellComponent), false);
-    }
-
-    private void OnPreviewAction(Node<MobComponent> node, ref PreviewActionSignal args)
-    {
-        if (!_nodeManager.TryGetComponent<SpellComponent>(args.Action, out var spellComponent))
-            return;
-        
-        CastSpell(node, (args.Action, spellComponent), true);
     }
     
     public bool IsSpellCastable(Node<MobComponent> node, Node<SpellComponent> spell)

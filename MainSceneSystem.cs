@@ -1,4 +1,3 @@
-using CS.Components.CombatManager;
 using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
 using Godot;
@@ -28,7 +27,6 @@ public partial class MainSceneSystem : Node2D
         _nodeSystemManager.InitializeNodeSystems(this);
         _nodeSystemManager.InjectNodeSystemDependencies();
         _nodeManager.SignalBus.ChangeActiveSceneSignal += OnChangeActiveScene;
-        _nodeManager.SignalBus.EndOfCombatSignal += OnEndOfCombat;
     }
 
     public override void _ExitTree()
@@ -36,7 +34,6 @@ public partial class MainSceneSystem : Node2D
         base._ExitTree();
         
         _nodeManager.SignalBus.ChangeActiveSceneSignal -= OnChangeActiveScene;
-        _nodeManager.SignalBus.EndOfCombatSignal -= OnEndOfCombat;
         _nodeManager.PurgeDictionary();
     }
 
@@ -81,18 +78,6 @@ public partial class MainSceneSystem : Node2D
         tweenIntoSceneTarget.Call(CanvasItem.MethodName.SetModulate, new Color(1, 1, 1, 0));    
         var tweenIntoScene = CreateTween();
         tweenIntoScene.TweenProperty(tweenIntoSceneTarget, "modulate", new Color(1, 1, 1, 1),  0.3);
-    }
-
-    private void OnEndOfCombat(ref EndOfCombatSignal args)
-    {
-        if (args.Won)
-            return;
-
-        if (_gameOverScene == null)
-            return;
-        
-        var signal = new ChangeActiveSceneSignal(_gameOverScene);
-        _nodeManager.SignalBus.EmitChangeActiveSceneSignal(args.CombatScene, ref signal);
     }
 }
 
