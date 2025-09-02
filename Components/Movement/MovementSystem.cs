@@ -27,7 +27,7 @@ public partial class MovementSystem : NodeSystem
 
     public void MovePlayer()
     {
-        var node = _playerManagerSystem.GetPlayer();
+        var node = _playerManagerSystem.TryGetPlayer();
 
         if (node is not CharacterBody2D characterBody)
             return;

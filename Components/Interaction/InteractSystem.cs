@@ -31,16 +31,20 @@ public partial class InteractSystem : NodeSystem
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
+        
+        var player = _playerManagerSystem.TryGetPlayer();
+        if (player == null)
+            return;
 
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(player,
                 out var canInteractComponent))
             return;
         
         if (@event.IsActionPressed("primary_interact"))
-            OnPrimaryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent));
+            OnPrimaryInteract((player, canInteractComponent));
         
         if (@event.IsActionPressed("secondary_interact"))
-            OnSecondaryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent));
+            OnSecondaryInteract((player, canInteractComponent));
     }
 
     public override void _PhysicsProcess(double delta)
@@ -158,7 +162,7 @@ public partial class InteractSystem : NodeSystem
         area2D.AddChild(collionShape2D);
         
         // Adds the area to the scene at the mouse location
-        _playerManagerSystem.GetPlayer().GetParent().AddChild(area2D);
+        _playerManagerSystem.TryGetPlayer()?.GetParent().AddChild(area2D);
         area2D.SetGlobalPosition(GetGlobalMousePosition());
         
         // After a random specified amount of time, get the overlapping bodies and narrow them down to interactables

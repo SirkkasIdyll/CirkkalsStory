@@ -32,14 +32,18 @@ public partial class InteractableComponent : Component
     /// </summary>
     private void OnMouseEntered()
     {
-        if (!_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerSystem))
+        if (!_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerManagerSystem))
+            return;
+        
+        var player = playerManagerSystem.TryGetPlayer();
+        if (player == null)
             return;
 
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(playerSystem.GetPlayer(), out var canInteractComponent))
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(player, out var canInteractComponent))
             return;
         
         var signal = new ShowInteractOutlineSignal(GetParent());
-        _nodeManager.SignalBus.EmitShowInteractOutlineSignal((playerSystem.GetPlayer(), canInteractComponent), ref signal);
+        _nodeManager.SignalBus.EmitShowInteractOutlineSignal((player, canInteractComponent), ref signal);
     }
     
     /// <summary>
@@ -47,15 +51,19 @@ public partial class InteractableComponent : Component
     /// </summary>
     private void OnMouseExited()
     {
-        if (!_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerSystem))
+        if (!_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerManagerSystem))
+            return;
+        
+        var player = playerManagerSystem.TryGetPlayer();
+        if (player == null)
             return;
 
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(playerSystem.GetPlayer(), out var canInteractComponent))
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(player, out var canInteractComponent))
             return;
         
         Input.SetDefaultCursorShape(Input.CursorShape.Arrow);
         var signal = new HideInteractOutlineSignal(GetParent());
-        _nodeManager.SignalBus.EmitHideInteractOutlineSignal((playerSystem.GetPlayer(), canInteractComponent), ref signal);
+        _nodeManager.SignalBus.EmitHideInteractOutlineSignal((player, canInteractComponent), ref signal);
     }
 }
 

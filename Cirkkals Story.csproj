@@ -48,7 +48,6 @@
   <ItemGroup>
     <Folder Include="Nodes\Prototypes\Mobs\" />
     <Folder Include="Nodes\Prototypes\Objects\" />
-    <Folder Include="Nodes\Scenes\AbsorbEnemy\" />
     <Folder Include="Nodes\Scenes\Inventory\" />
     <Folder Include="Resources\Encounters\1-Basic\" />
   </ItemGroup>

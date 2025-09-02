@@ -47,14 +47,14 @@ public partial class NodeButtonListSystem : Control
 			{
 				if (!_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerManagerSystem) ||
 				    !_nodeSystemManager.TryGetNodeSystem<InteractSystem>(out var interactSystem) ||
-				    !_nodeManager.TryGetComponent<CanInteractComponent>(playerManagerSystem.GetPlayer(), out var canInteractComponent) ||
+				    !_nodeManager.TryGetComponent<CanInteractComponent>(playerManagerSystem.TryGetPlayer(), out var canInteractComponent) ||
 				    !_nodeManager.TryGetComponent<InteractableComponent>(node2D, out var interactableComponent))
 				{
 					QueueFree();
 					return;
 				}
 				
-				interactSystem.TryInteract((playerManagerSystem.GetPlayer(), canInteractComponent), (node2D, interactableComponent));
+				interactSystem.TryInteract((playerManagerSystem.TryGetPlayer(), canInteractComponent), (node2D, interactableComponent));
 				QueueFree();
 			};
 			_vBoxContainer.AddChild(button);

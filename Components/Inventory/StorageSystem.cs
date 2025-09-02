@@ -65,7 +65,6 @@ public partial class StorageSystem : NodeSystem
         }
         return true;
     }
-
     
     public Node RemoveItemFromStorage(Node<StorageComponent> node, Node item)
     {
