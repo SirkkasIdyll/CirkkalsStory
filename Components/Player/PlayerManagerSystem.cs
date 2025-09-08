@@ -6,7 +6,7 @@ namespace CS.Components.Player;
 // TODO: I don't exactly know where to put this besides this, figure out something more sane later
 public partial class PlayerManagerSystem : NodeSystem
 {
-    private Node _player;
+    private Node? _player;
 
     /// <summary>
     /// TODO: HUNT DOWN ALL USAGES OF THIS AND UNCURSE IT

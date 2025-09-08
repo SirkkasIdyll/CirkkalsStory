@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bottr68gfk55a" path="res://Nodes/Prototypes/Objects/Clothes/Outerwear/BaseOuterwear.tscn" id="1_d3q38"]
 [ext_resource type="Texture2D" uid="uid://bx5tbf5n3s85s" path="res://Resources/Sprites/Clothes/Outerwear/JacketIcon.png" id="2_cav80"]
-[ext_resource type="SpriteFrames" uid="uid://cvgbj1y11m0f2" path="res://Resources/SpriteFrames/Clothes/Outerwear/TanJacket.tres" id="2_exu3e"]
+[ext_resource type="SpriteFrames" uid="uid://cvgbj1y11m0f2" path="res://Resources/Sprites/Clothes/Outerwear/TanJacket.tres" id="2_exu3e"]
 
 [node name="TanJacket" instance=ExtResource("1_d3q38")]
 

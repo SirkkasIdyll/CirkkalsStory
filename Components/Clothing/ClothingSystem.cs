@@ -1,4 +1,5 @@
-﻿using CS.Components.Interaction;
+﻿using CS.Components.Appearance;
+using CS.Components.Interaction;
 using CS.SlimeFactory;
 using Godot;
 
@@ -6,6 +7,7 @@ namespace CS.Components.Clothing;
 
 public partial class ClothingSystem : NodeSystem
 {
+    [InjectDependency] private readonly AppearanceSystem _appearanceSystem = null!;
     [InjectDependency] private readonly InteractSystem _interactSystem = null!;
     
     public override void _Ready()
@@ -81,6 +83,9 @@ public partial class ClothingSystem : NodeSystem
             clothing.Owner.Reparent(node.Owner, false);
             clothingNode2D.GlobalPosition = wearerNode2D.GlobalPosition;
         }
+        
+        if (node.Owner is CharacterBody2D characterBody2D)
+            _appearanceSystem.OrientClothingToBody(characterBody2D);
 
         return true;
     }

@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bgkgb5iluqb5o" path="res://Nodes/Prototypes/Objects/Clothes/Bottoms/BaseBottom.tscn" id="1_g7pdt"]
 [ext_resource type="Texture2D" uid="uid://dbxajv3kbsslv" path="res://Resources/Sprites/Clothes/Bottoms/JeansIcon.png" id="2_k1r3h"]
-[ext_resource type="SpriteFrames" uid="uid://cqr84e0lv8nlx" path="res://Resources/SpriteFrames/Clothes/Bottoms/Jeans.tres" id="2_vdywj"]
+[ext_resource type="SpriteFrames" uid="uid://cqr84e0lv8nlx" path="res://Resources/Sprites/Clothes/Bottoms/Jeans.tres" id="2_vdywj"]
 
 [node name="Jeans" instance=ExtResource("1_g7pdt")]
 

@@ -37,4 +37,28 @@ public partial class AppearanceSystem : NodeSystem
             tween.TweenProperty(canvasGroup, "scale", orientationVector, 0.1f);
         }
     }
+
+    public void OrientClothingToBody(CharacterBody2D node)
+    {
+        var canvasGroup = node.GetNode<CanvasGroup>("CanvasGroup");
+
+        var body = canvasGroup.GetChildOrNull<AnimatedSprite2D>(0);
+        if (body == null)
+            return;
+
+        var animation = body.Animation;
+        var orientationVector = body.Scale;
+        
+        foreach (var child in canvasGroup.GetChildren())
+        {
+            if (child is not AnimatedSprite2D animatedSprite2D)
+                continue;
+
+            if (animatedSprite2D.SpriteFrames == null)
+                continue;
+
+            animatedSprite2D.Animation = animation;
+            animatedSprite2D.Scale = orientationVector;
+        }
+    }
 }

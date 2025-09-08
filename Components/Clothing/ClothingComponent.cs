@@ -29,6 +29,7 @@ public enum ClothingSlot
     Top,
     Belt,
     Outerwear,
+    Bag,
     Neck,
     Inhand,
     Face,

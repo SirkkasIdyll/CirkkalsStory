@@ -21,6 +21,7 @@ public partial class WearsClothingComponent : Component
         { ClothingSlot.Top, null },
         { ClothingSlot.Belt, null },
         { ClothingSlot.Outerwear, null },
+        { ClothingSlot.Bag, null },
         { ClothingSlot.Neck, null },
         { ClothingSlot.Inhand, null },
         { ClothingSlot.Face, null },

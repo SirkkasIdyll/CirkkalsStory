@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2hkw33agsvim"]
+
+[ext_resource type="PackedScene" uid="uid://bps0a33hwv2dv" path="res://Nodes/Prototypes/Objects/Clothes/BaseClothing.tscn" id="1_adaib"]
+[ext_resource type="Script" uid="uid://dtmrn4vaol245" path="res://Components/Inventory/StorageComponent.cs" id="2_iixcw"]
+
+[node name="BaseBag" instance=ExtResource("1_adaib")]
+
+[node name="ClothingComponent" parent="." index="3"]
+ClothingSlot = 6
+
+[node name="StorageComponent" type="Node2D" parent="." index="5"]
+script = ExtResource("2_iixcw")

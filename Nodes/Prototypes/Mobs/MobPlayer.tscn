@@ -128,13 +128,15 @@ sprite_frames = SubResource("SpriteFrames_mtcbf")
 
 [node name="Outerwear" type="AnimatedSprite2D" parent="CanvasGroup" index="6"]
 
-[node name="Neck" type="AnimatedSprite2D" parent="CanvasGroup" index="7"]
+[node name="Bag" type="AnimatedSprite2D" parent="CanvasGroup" index="7"]
 
-[node name="Inhand" type="AnimatedSprite2D" parent="CanvasGroup" index="8"]
+[node name="Neck" type="AnimatedSprite2D" parent="CanvasGroup" index="8"]
 
-[node name="Face" type="AnimatedSprite2D" parent="CanvasGroup" index="9"]
+[node name="Inhand" type="AnimatedSprite2D" parent="CanvasGroup" index="9"]
 
-[node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="10"]
+[node name="Face" type="AnimatedSprite2D" parent="CanvasGroup" index="10"]
+
+[node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="11"]
 
 [node name="WearsClothingComponent" type="Node2D" parent="." index="11"]
 script = ExtResource("11_6bs64")
