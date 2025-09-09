@@ -1,10 +1,24 @@
-﻿using CS.SlimeFactory;
+﻿using CS.Components.Clothing;
+using CS.SlimeFactory;
 using Godot;
 
 namespace CS.Components.Appearance;
 
 public partial class AppearanceSystem : NodeSystem
 {
+    public override void _Ready()
+    {
+        base._Ready();
+
+        _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
+    }
+
+    private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
+    {
+        if (node.Owner is CharacterBody2D characterBody2D)
+            OrientClothingToBody(characterBody2D);
+    }
+
     /// <summary>
     /// Orients the character's sprite to the correct facing given the inputs
     /// </summary>

@@ -44,6 +44,8 @@ public partial class NodeManager
             var node = ResourceLoader.Load<PackedScene>(file).Instantiate();
             if (!node.Name.ToString().StartsWith("Base"))
                 NodeDictionary.TryAdd(node.Name, node);
+            else
+                node.QueueFree();
         }
     }
 

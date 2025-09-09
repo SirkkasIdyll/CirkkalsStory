@@ -1,6 +1,7 @@
 ﻿using CS.Components.Appearance;
 using CS.Components.Interaction;
 using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.Components.Clothing;
@@ -83,9 +84,9 @@ public partial class ClothingSystem : NodeSystem
             clothing.Owner.Reparent(node.Owner, false);
             clothingNode2D.GlobalPosition = wearerNode2D.GlobalPosition;
         }
-        
-        if (node.Owner is CharacterBody2D characterBody2D)
-            _appearanceSystem.OrientClothingToBody(characterBody2D);
+
+        var signal = new ClothingEquippedSignal(clothing);
+        _nodeManager.SignalBus.EmitClothingEquippedSignal(node, ref signal);
 
         return true;
     }
@@ -98,12 +99,38 @@ public partial class ClothingSystem : NodeSystem
         
         // TODO: maybe some kind of CursedClothingComponent or something to make perma-equipped clothes that require dispelling
         
-        // TODO: Put the item back into their inventory, their hand, drop it into the world, literally anything
         node.Comp.ClothingSlots[slot] = null;
         var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + slot);
         if (spriteSlot != null)
             spriteSlot.SpriteFrames = null;
 
+        // TODO: Put the item back into their inventory, their hand, drop it into the world, literally anything
+        if (value != null && _nodeManager.TryGetComponent<ClothingComponent>(value, out var clothingComponent))
+        {
+            var signal = new ClothingUnequippedSignal((value, clothingComponent));
+            _nodeManager.SignalBus.EmitClothingUnequippedSignal(node, ref signal);
+        }
+
         return true;
+    }
+}
+
+public partial class ClothingEquippedSignal : UserSignalArgs
+{
+    public Node<ClothingComponent> Clothing;
+
+    public ClothingEquippedSignal(Node<ClothingComponent> clothing)
+    {
+        Clothing = clothing;
+    }
+}
+
+public partial class ClothingUnequippedSignal : UserSignalArgs
+{
+    public Node<ClothingComponent> Clothing;
+
+    public ClothingUnequippedSignal(Node<ClothingComponent> clothing)
+    {
+        Clothing = clothing;
     }
 }
