@@ -16,8 +16,6 @@ public partial class ClothingSystem : NodeSystem
     [InjectDependency] private readonly InteractSystem _interactSystem = null!;
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
     [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
-
-    private const string PathToEquipmentScene = "res://Nodes/Scenes/Inventory/ClothingScene.tscn";
     
     public override void _Ready()
     {
