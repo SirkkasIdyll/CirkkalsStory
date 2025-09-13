@@ -55,22 +55,23 @@ public partial class UserInterfaceSystem : NodeSystem
     /// <summary>
     /// Open the attached user interface and prevent opening duplicates
     /// </summary>
-    private void OpenAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, Node user, string action)
+    public Control? OpenAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, Node user, string action)
     {
         // Already a UI open, don't open another one
         if (node.Comp.UserInterface.ContainsKey(action))
-            return;
+            return null;
 
         node.Comp.UserInterface[action] = node.Comp.UserInterfaceScenes[action].Instantiate<Control>();
         node.Comp.UserUsingInterface[action] = user;
         node.Comp.UserInterface[action].TreeExited += () => CloseAttachedUserInterface(node, action);
         CanvasLayer.AddChild(node.Comp.UserInterface[action]);
+        return node.Comp.UserInterface[action];
     }
 
     /// <summary>
     /// Closes the attached user interface
     /// </summary>
-    private void CloseAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, string action)
+    public void CloseAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, string action)
     {
         if (!node.Comp.UserInterface.ContainsKey(action))
             return;

@@ -1,6 +1,7 @@
 ﻿using CS.Components.Appearance;
 using CS.Components.Interaction;
 using CS.Components.Player;
+using CS.Components.UI;
 using CS.Nodes.Scenes.Inventory;
 using CS.Nodes.UI.CustomWindow;
 using CS.SlimeFactory;
@@ -14,6 +15,7 @@ public partial class ClothingSystem : NodeSystem
     [InjectDependency] private readonly AppearanceSystem _appearanceSystem = null!;
     [InjectDependency] private readonly InteractSystem _interactSystem = null!;
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
+    [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
 
     private const string PathToEquipmentScene = "res://Nodes/Scenes/Inventory/ClothingScene.tscn";
     
@@ -36,13 +38,19 @@ public partial class ClothingSystem : NodeSystem
         if (player == null)
             return;
 
-        var customWindow = ResourceLoader.Load<PackedScene>(PathToEquipmentScene).Instantiate<CustomWindowSystem>();
+        if (!_nodeManager.TryGetComponent<AttachedUserInterfaceComponent>(player, out var attachedUserInterfaceComponent))
+            return;
+        
+        var control = _userInterfaceSystem.OpenAttachedUserInterface((player, attachedUserInterfaceComponent), player, "equipment");
+        if (control == null)
+            return;
+        
+        var customWindow = (CustomWindowSystem)control;
         if (customWindow.Content == null)
             return;
 
         var clothingSceneSystem = (ClothingSceneSystem)customWindow.Content;
         clothingSceneSystem.SetDetails(player);
-        CanvasLayer.AddChild(customWindow);
     }
 
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
@@ -54,11 +62,6 @@ public partial class ClothingSystem : NodeSystem
             return;
 
         TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent));
-    }
-
-    private void OpenEquipmentUI(Node node)
-    {
-        
     }
     
     private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
