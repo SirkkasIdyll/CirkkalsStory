@@ -59,7 +59,13 @@ public partial class UserInterfaceSystem : NodeSystem
     {
         // Already a UI open, don't open another one
         if (node.Comp.UserInterface.ContainsKey(action))
+        {
+            // If it's the same user who tried it again, have it close the UI
+            if (node.Comp.UserUsingInterface.TryGetValue(action, out var userUsingInterface) && userUsingInterface == user)
+                CloseAttachedUserInterface(node, action);
+            
             return null;
+        }
 
         node.Comp.UserInterface[action] = node.Comp.UserInterfaceScenes[action].Instantiate<Control>();
         node.Comp.UserUsingInterface[action] = user;

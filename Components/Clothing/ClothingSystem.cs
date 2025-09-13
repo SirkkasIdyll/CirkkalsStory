@@ -29,7 +29,7 @@ public partial class ClothingSystem : NodeSystem
     {
         base._Input(@event);
 
-        if (!Input.IsActionPressed("equipment"))
+        if (!@event.IsActionPressed("equipment"))
             return;
         
         var player = _playerManagerSystem.TryGetPlayer();
@@ -49,6 +49,7 @@ public partial class ClothingSystem : NodeSystem
 
         var clothingSceneSystem = (ClothingSceneSystem)customWindow.Content;
         clothingSceneSystem.SetDetails(player);
+        GetViewport().SetInputAsHandled();
     }
 
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
