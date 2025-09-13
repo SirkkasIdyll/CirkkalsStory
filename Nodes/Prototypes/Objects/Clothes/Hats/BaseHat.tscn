@@ -5,4 +5,4 @@
 [node name="BaseHat" instance=ExtResource("1_okyos")]
 
 [node name="ClothingComponent" parent="." index="3"]
-ClothingSlot = 9
+ClothingSlot = 10

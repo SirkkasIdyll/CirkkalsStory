@@ -1,5 +1,8 @@
 ﻿using CS.Components.Appearance;
 using CS.Components.Interaction;
+using CS.Components.Player;
+using CS.Nodes.Scenes.Inventory;
+using CS.Nodes.UI.CustomWindow;
 using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
 using Godot;
@@ -10,6 +13,9 @@ public partial class ClothingSystem : NodeSystem
 {
     [InjectDependency] private readonly AppearanceSystem _appearanceSystem = null!;
     [InjectDependency] private readonly InteractSystem _interactSystem = null!;
+    [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
+
+    private const string PathToEquipmentScene = "res://Nodes/Scenes/Inventory/ClothingScene.tscn";
     
     public override void _Ready()
     {
@@ -17,6 +23,26 @@ public partial class ClothingSystem : NodeSystem
 
         _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
+    }
+
+    public override void _Input(InputEvent @event)
+    {
+        base._Input(@event);
+
+        if (!Input.IsActionPressed("equipment"))
+            return;
+        
+        var player = _playerManagerSystem.TryGetPlayer();
+        if (player == null)
+            return;
+
+        var customWindow = ResourceLoader.Load<PackedScene>(PathToEquipmentScene).Instantiate<CustomWindowSystem>();
+        if (customWindow.Content == null)
+            return;
+
+        var clothingSceneSystem = (ClothingSceneSystem)customWindow.Content;
+        clothingSceneSystem.SetDetails(player);
+        CanvasLayer.AddChild(customWindow);
     }
 
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
@@ -28,6 +54,11 @@ public partial class ClothingSystem : NodeSystem
             return;
 
         TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent));
+    }
+
+    private void OpenEquipmentUI(Node node)
+    {
+        
     }
     
     private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
@@ -60,7 +91,7 @@ public partial class ClothingSystem : NodeSystem
 
     public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing)
     {
-        // Slot doesn't exist
+        // Check if slot exists
         if (!node.Comp.ClothingSlots.TryGetValue(clothing.Comp.ClothingSlot, out var value))
             return false;
 
@@ -93,19 +124,25 @@ public partial class ClothingSystem : NodeSystem
 
     public bool TryUnequipClothing(Node<WearsClothingComponent> node, ClothingSlot slot)
     {
-        // Slot doesn't exist
+        // Check if slot exists
         if (!node.Comp.ClothingSlots.TryGetValue(slot, out var value))
             return false;
+
+        if (value == null)
+            return false;
+        
+        value.Reparent(node.Owner.GetParent());
+        if (value is Node2D clothesNode2D)
+            clothesNode2D.SetVisible(true);
         
         // TODO: maybe some kind of CursedClothingComponent or something to make perma-equipped clothes that require dispelling
-        
         node.Comp.ClothingSlots[slot] = null;
         var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + slot);
         if (spriteSlot != null)
             spriteSlot.SpriteFrames = null;
-
+        
         // TODO: Put the item back into their inventory, their hand, drop it into the world, literally anything
-        if (value != null && _nodeManager.TryGetComponent<ClothingComponent>(value, out var clothingComponent))
+        if (_nodeManager.TryGetComponent<ClothingComponent>(value, out var clothingComponent))
         {
             var signal = new ClothingUnequippedSignal((value, clothingComponent));
             _nodeManager.SignalBus.EmitClothingUnequippedSignal(node, ref signal);

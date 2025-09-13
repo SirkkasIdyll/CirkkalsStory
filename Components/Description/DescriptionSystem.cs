@@ -39,6 +39,19 @@ public partial class DescriptionSystem : NodeSystem
         return true;
     }
 
+    public bool TryGetSprite(Node node, [NotNullWhen(true)] out Sprite2D? sprite2D)
+    {
+        sprite2D = null;
+        
+        var canvasGroup = node.GetNode<CanvasGroup>("CanvasGroup");
+        var sprite = canvasGroup.GetNodeOrNull<Sprite2D>("Sprite2D");
+        if (sprite == null)
+            return false;
+
+        sprite2D = sprite;
+        return true;
+    }
+
     public void ShowTooltip(Node node)
     {
         if (node is not Node2D node2D)

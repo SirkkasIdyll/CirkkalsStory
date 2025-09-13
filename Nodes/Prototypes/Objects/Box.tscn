@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://o7hv4otvn8ms"]
+[gd_scene load_steps=8 format=3 uid="uid://o7hv4otvn8ms"]
 
 [ext_resource type="PackedScene" uid="uid://drjnmswp52ljh" path="res://Nodes/Prototypes/Objects/BaseObject.tscn" id="1_4ddv0"]
 [ext_resource type="Script" uid="uid://dgdyrma2xaqwd" path="res://Components/Interaction/InteractableComponent.cs" id="2_0ab3m"]
+[ext_resource type="Script" uid="uid://cua66qighc02x" path="res://Components/UI/OpenAttachedUserInterfaceOnInteractComponent.cs" id="2_2obsc"]
 [ext_resource type="Script" uid="uid://df6m317f3irhk" path="res://Components/UI/AttachedUserInterfaceComponent.cs" id="2_tw66r"]
 [ext_resource type="Script" uid="uid://dtmrn4vaol245" path="res://Components/Inventory/StorageComponent.cs" id="3_4ddv0"]
 [ext_resource type="PackedScene" uid="uid://cplderic1k4iq" path="res://Nodes/UI/CustomWindow/CustomWindow.tscn" id="3_tw66r"]
@@ -9,33 +10,37 @@
 
 [node name="Box" instance=ExtResource("1_4ddv0")]
 
-[node name="AttachedUserInterfaceComponent" type="Node2D" parent="." index="0"]
-script = ExtResource("2_tw66r")
-UserInterfaceScene = ExtResource("3_tw66r")
+[node name="OpenAttachedUserInterfaceOnInteractComponent" type="Node2D" parent="." index="0"]
+script = ExtResource("2_2obsc")
 
-[node name="DescriptionComponent" parent="." index="1"]
+[node name="AttachedUserInterfaceComponent" type="Node2D" parent="." index="1"]
+script = ExtResource("2_tw66r")
+UserInterfaceScenes = Dictionary[String, PackedScene]({
+"interact": ExtResource("3_tw66r")
+})
+
+[node name="DescriptionComponent" parent="." index="2"]
 DisplayName = "Box"
 Description = "You put things in it."
 
-[node name="InteractableComponent" type="Node2D" parent="." index="2" node_paths=PackedStringArray("_canvasGroup", "_area")]
+[node name="InteractableComponent" type="Node2D" parent="." index="3" node_paths=PackedStringArray("_canvasGroup", "_area")]
 script = ExtResource("2_0ab3m")
 _canvasGroup = NodePath("../CanvasGroup")
 _area = NodePath("..")
 
-[node name="StorageComponent" type="Node2D" parent="." index="3"]
+[node name="StorageComponent" type="Node2D" parent="." index="4"]
 script = ExtResource("3_4ddv0")
-StorageLimit = 100.0
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="4"]
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="5"]
 polygon = PackedVector2Array(-3.4, -1.6, -6.6, -1.6, -6.6, 0.6, -5.6, 0.6, -5.6, 8, 5.6, 8, 5.6, 0.6, 6.6, 0.6, 6.6, -1.6, 3.4, -1.6, 3.4, -0.6, -3.4, -0.6)
 
-[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="." index="5"]
+[node name="CollisionPolygon2D2" type="CollisionPolygon2D" parent="." index="6"]
 polygon = PackedVector2Array(-5.4, -0.6, -7.6, -0.6, -7.6, 0.4, -8, 2.6, -5.4, 2.6)
 
-[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="." index="6"]
+[node name="CollisionPolygon2D3" type="CollisionPolygon2D" parent="." index="7"]
 polygon = PackedVector2Array(8, 2.6, 8, 0.4, 6.4, 0.4, 6.4, 2.6)
 
-[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="." index="7"]
+[node name="CollisionPolygon2D4" type="CollisionPolygon2D" parent="." index="8"]
 polygon = PackedVector2Array(5.4, -0.6, 5.4, 1.6, 7.6, 1.6, 7.6, -0.6)
 
 [node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
