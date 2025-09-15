@@ -73,7 +73,19 @@ columns = 3
 script = ExtResource("2_ejtbp")
 _title = NodePath("../HBoxContainer/Title")
 _texture = SubResource("AtlasTexture_xmpy0")
-_clothingSlots = [NodePath("Shoes/MarginContainer/TextureRect"), NodePath("Bottom/MarginContainer/TextureRect"), NodePath("Gloves/MarginContainer/TextureRect"), NodePath("Top/MarginContainer/TextureRect"), NodePath("Belt/MarginContainer/TextureRect"), NodePath("Outerwear/MarginContainer/TextureRect"), NodePath("Bag/MarginContainer/TextureRect"), NodePath("Neck/MarginContainer/TextureRect"), NodePath("Inhand/MarginContainer/TextureRect"), NodePath("Face/MarginContainer/TextureRect"), NodePath("Hat/MarginContainer/TextureRect")]
+_clothingSlots = {
+0: NodePath("Shoes/MarginContainer/TextureRect"),
+1: NodePath("Bottom/MarginContainer/TextureRect"),
+2: NodePath("Gloves/MarginContainer/TextureRect"),
+3: NodePath("Top/MarginContainer/TextureRect"),
+4: NodePath("Belt/MarginContainer/TextureRect"),
+5: NodePath("Outerwear/MarginContainer/TextureRect"),
+6: NodePath("Bag/MarginContainer/TextureRect"),
+7: NodePath("Neck/MarginContainer/TextureRect"),
+8: NodePath("Inhand/MarginContainer/TextureRect"),
+9: NodePath("Face/MarginContainer/TextureRect"),
+10: NodePath("Hat/MarginContainer/TextureRect")
+}
 
 [node name="Spacer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="0" instance=ExtResource("2_ecccw")]
 layout_mode = 2

@@ -13,6 +13,7 @@ public partial class StorableComponent : Component
 
     /// <summary>
     /// The physical size of the item
+    /// Example: ExtraSmall, Small, Medium, Large, ExtraLarge
     /// </summary>
     [Export]
     public ItemSize ItemSize;

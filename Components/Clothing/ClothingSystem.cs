@@ -1,5 +1,6 @@
 ﻿using CS.Components.Appearance;
 using CS.Components.Interaction;
+using CS.Components.Inventory;
 using CS.Components.Player;
 using CS.Components.UI;
 using CS.Nodes.Scenes.Inventory;
@@ -15,6 +16,7 @@ public partial class ClothingSystem : NodeSystem
     [InjectDependency] private readonly AppearanceSystem _appearanceSystem = null!;
     [InjectDependency] private readonly InteractSystem _interactSystem = null!;
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
+    [InjectDependency] private readonly StorageSystem _storageSystem = null!;
     [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
     
     public override void _Ready()
@@ -36,13 +38,17 @@ public partial class ClothingSystem : NodeSystem
 
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
     {
+        if (args.Handled)
+            return;
+        
         if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
             return;
 
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
             return;
 
-        TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent));
+        if (TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent)))
+            args.Handled = true;
     }
     
     /// <summary>
@@ -110,6 +116,31 @@ public partial class ClothingSystem : NodeSystem
         clothingSceneSystem.SetDetails((player, wearsClothingComponent));
     }
 
+    public bool TryPutItemInHand(Node<WearsClothingComponent> node, Node<StorableComponent> item)
+    {
+        // Check if slot exists
+        if (!node.Comp.ClothingSlots.TryGetValue(ClothingSlot.Inhand, out var value))
+            return false;
+
+        if (value != null)
+            return false;
+
+        if (item.Comp.ItemSize == ItemSize.ExtraLarge)
+            return false;
+
+        // For now, it's likely the item doesn't have an in-hand sprite
+        // if equip clothing failed on it
+        node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
+        var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/Inhand");
+        if (spriteSlot != null)
+            spriteSlot.SpriteFrames = null;
+
+        _storageSystem.AttachItemInvisibly(node, item);
+        var signal = new ItemPutInHandSignal(item);
+        _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
+        return true;
+    }
+
     public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing)
     {
         // Check if slot exists
@@ -125,21 +156,14 @@ public partial class ClothingSystem : NodeSystem
         // Equip the clothing to that slot
         node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] = clothing;
         // Assign the spriteFrame to the correct AnimatedSprite2D node
+        // This causes the item to show up on the character's body
         var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + clothing.Comp.ClothingSlot);
         if (clothing.Comp.EquippedSpriteFrames != null && spriteSlot != null)
             spriteSlot.SpriteFrames = clothing.Comp.EquippedSpriteFrames;
 
-        // Attach the clothing to the wearer and have it follow them around invisibly
-        if (node.Owner is Node2D wearerNode2D && clothing.Owner is Node2D clothingNode2D)
-        {
-            clothingNode2D.SetVisible(false);
-            clothing.Owner.Reparent(node.Owner, false);
-            clothingNode2D.GlobalPosition = wearerNode2D.GlobalPosition;
-        }
-
+        _storageSystem.AttachItemInvisibly(node, clothing);
         var signal = new ClothingEquippedSignal(clothing);
         _nodeManager.SignalBus.EmitClothingEquippedSignal(node, ref signal);
-
         return true;
     }
 
@@ -183,6 +207,16 @@ public partial class ClothingEquippedSignal : UserSignalArgs
     public ClothingEquippedSignal(Node<ClothingComponent> clothing)
     {
         Clothing = clothing;
+    }
+}
+
+public partial class ItemPutInHandSignal : UserSignalArgs
+{
+    public Node<StorableComponent> Storable;
+
+    public ItemPutInHandSignal(Node<StorableComponent> storable)
+    {
+        Storable = storable;
     }
 }
 

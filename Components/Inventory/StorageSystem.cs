@@ -1,4 +1,5 @@
 ﻿using CS.Components.Clothing;
+using CS.Components.Interaction;
 using CS.Components.Player;
 using CS.Components.UI;
 using CS.Nodes.Scenes.Inventory;
@@ -11,6 +12,7 @@ namespace CS.Components.Inventory;
 
 public partial class StorageSystem : NodeSystem
 {
+    [InjectDependency] private readonly ClothingSystem _clothingSystem = null!;
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
     [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
 
@@ -20,6 +22,28 @@ public partial class StorageSystem : NodeSystem
         
         if (@event.IsActionPressed("inventory"))
             TryOpenInventoryUi();
+    }
+
+    public override void _Ready()
+    {
+        base._Ready();
+        
+        _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
+    }
+
+    private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
+    {
+        if (args.Handled)
+            return;
+        
+        if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
+            return;
+
+        if (_clothingSystem.TryPutItemInHand((args.Interactee, wearsClothingComponent), (node, storableComponent)))
+            args.Handled = true;
     }
 
     /// <summary>
@@ -36,6 +60,16 @@ public partial class StorageSystem : NodeSystem
     public Array<Node> GetStorageItems(Node<StorageComponent> node)
     {
         return node.Comp.Items;
+    }
+
+    public void AttachItemInvisibly(Node main, Node nodeToAttach)
+    {
+        if (main is not Node2D mainNode2D || nodeToAttach is not Node2D node2DToAttach)
+            return;
+        
+        node2DToAttach.SetVisible(false);
+        nodeToAttach.Reparent(main, false);
+        node2DToAttach.GlobalPosition = mainNode2D.GlobalPosition;
     }
 
     /// <summary>
