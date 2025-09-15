@@ -28,9 +28,9 @@ public partial class InteractSystem : NodeSystem
         _nodeManager.SignalBus.HideInteractOutlineSignal += OnHideInteractOutline;
     }
 
-    public override void _Input(InputEvent @event)
+    public override void _UnhandledInput(InputEvent @event)
     {
-        base._Input(@event);
+        base._UnhandledInput(@event);
         
         var player = _playerManagerSystem.TryGetPlayer();
         if (player == null)
@@ -127,12 +127,10 @@ public partial class InteractSystem : NodeSystem
         if (Input.IsActionPressed("shift_modifier"))
         {
             _descriptionSystem.ShowTooltip(interactable);
-            GetViewport().SetInputAsHandled();
             return;
         }
 
         TryInteract(node, interactable);
-        GetViewport().SetInputAsHandled();
     }
 
     private void OnSecondaryInteract(Node<CanInteractComponent> node)

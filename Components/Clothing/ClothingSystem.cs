@@ -27,10 +27,10 @@ public partial class ClothingSystem : NodeSystem
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
     }
 
-    public override void _Input(InputEvent @event)
+    public override void _UnhandledInput(InputEvent @event)
     {
-        base._Input(@event);
-
+        base._UnhandledInput(@event);
+        
         // Open the equipment menu when the action is pressed, if possible
         if (@event.IsActionPressed("equipment"))
             TryOpenEquipmentUi();
@@ -196,17 +196,19 @@ public partial class ClothingSystem : NodeSystem
         var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + slot);
         if (spriteSlot != null)
             spriteSlot.SpriteFrames = null;
+
+        if (slot == ClothingSlot.Inhand && _nodeManager.TryGetComponent<StorableComponent>(value, out var storableComponent))
+        {
+            var signal = new ItemRemovedFromHandSignal((value, storableComponent));
+            _nodeManager.SignalBus.EmitItemRemovedFromHandSignal(node, ref signal);
+            return true;
+        }
         
         // TODO: Now put the item back into their inventory, their hand, drop it into the world, literally anything
         if (_nodeManager.TryGetComponent<ClothingComponent>(value, out var clothingComponent))
         {
             var signal = new ClothingUnequippedSignal((value, clothingComponent));
             _nodeManager.SignalBus.EmitClothingUnequippedSignal(node, ref signal);
-        }
-        else if (_nodeManager.TryGetComponent<StorableComponent>(value, out var storableComponent))
-        {
-            var signal = new ItemRemovedFromHandSignal((value, storableComponent));
-            _nodeManager.SignalBus.EmitItemRemovedFromHandSignal(node, ref signal);
         }
 
         return true;

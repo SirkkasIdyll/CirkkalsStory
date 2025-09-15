@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://d1ifsfpmh23yx" path="res://Nodes/Scenes/Inventory/StorageSceneSystem.cs" id="2_nxsi8"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ratu4"]
-bg_color = Color(0.238744, 0.238744, 0.238744, 1)
+bg_color = Color(0.423696, 0.435013, 0.439849, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j6uqo"]
 bg_color = Color(0.360784, 0.564706, 0.333333, 1)

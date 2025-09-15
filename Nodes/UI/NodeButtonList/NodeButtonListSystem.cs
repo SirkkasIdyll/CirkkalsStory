@@ -17,9 +17,16 @@ public partial class NodeButtonListSystem : Control
 	[ExportCategory("Owned")]
 	[Export] private VBoxContainer _vBoxContainer = null!;
 
-	public override void _Input(InputEvent @event)
+	public override void _GuiInput(InputEvent @event)
 	{
-		base._Input(@event);
+		base._GuiInput(@event);
+		
+		GetViewport().SetInputAsHandled();
+	}
+
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		base._UnhandledInput(@event);
 		
 		if (@event is not InputEventMouseButton mouseEvent)
 			return;

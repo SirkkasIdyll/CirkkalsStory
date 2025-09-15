@@ -2,6 +2,7 @@ using CS.Components.Description;
 using CS.Components.Inventory;
 using CS.SlimeFactory;
 using Godot;
+using Godot.Collections;
 
 namespace CS.Nodes.Scenes.Inventory;
 
@@ -19,14 +20,19 @@ public partial class StorageSceneSystem : VBoxContainer
 	private const string Yellow = "#dfcb43";
 	private const string Red = "#c22e15";
 
+	public override void _Ready()
+	{
+		base._Ready();
+		
+	}
+
 	public void SetDetails(Node<StorageComponent> node)
 	{
 		_nodeSystemManager.InjectNodeSystemDependencies(this);
 		UpdateStorageProgressBar(node);
 
 		var items = _storageSystem.GetStorageItems(node);
-		foreach (var item in items)
-			AddItemButton(item);
+		AddItemButtons(items);
 	}
 
 	private void UpdateStorageProgressBar(Node<StorageComponent> node)
@@ -45,21 +51,27 @@ public partial class StorageSceneSystem : VBoxContainer
 		_storageProgressBar.AddThemeStyleboxOverride("fill", storageBarColor);
 	}
 
-	private void AddItemButton(Node item)
+	private void AddItemButtons(Array<Node> items)
 	{
 		var marginContainer = new MarginContainer();
 		marginContainer.SetThemeTypeVariation("MarginContainerXSmall");
-
-		var button = new Button();
-		button.SetThemeTypeVariation("ButtonSmall");
-		
-		if (_descriptionSystem.TryGetDisplayName(item,  out var displayName))
-			button.SetText(displayName);
-
-		if (_descriptionSystem.TryGetSprite(item, out var sprite))
-			button.Icon = sprite.Texture;
-		
 		AddChild(marginContainer);
-		marginContainer.AddChild(button);
+		
+		var vBoxContainer = new VBoxContainer();
+		marginContainer.AddChild(vBoxContainer);
+		
+		foreach (var item in items)
+		{
+			var button = new Button();
+			button.SetThemeTypeVariation("ButtonSmall");
+		
+			if (_descriptionSystem.TryGetDisplayName(item,  out var displayName))
+				button.SetText(displayName);
+
+			if (_descriptionSystem.TryGetSprite(item, out var sprite))
+				button.Icon = sprite.Texture;
+			
+			vBoxContainer.AddChild(button);
+		}
 	}
 }

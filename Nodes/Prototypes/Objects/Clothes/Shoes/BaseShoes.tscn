@@ -3,3 +3,6 @@
 [ext_resource type="PackedScene" uid="uid://bps0a33hwv2dv" path="res://Nodes/Prototypes/Objects/Clothes/BaseClothing.tscn" id="1_8i6dj"]
 
 [node name="BaseShoes" instance=ExtResource("1_8i6dj")]
+
+[node name="StorableComponent" parent="." index="5"]
+ItemSize = 1

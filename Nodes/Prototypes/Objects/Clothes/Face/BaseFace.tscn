@@ -6,3 +6,6 @@
 
 [node name="ClothingComponent" parent="." index="3"]
 ClothingSlot = 9
+
+[node name="StorableComponent" parent="." index="5"]
+ItemSize = 1

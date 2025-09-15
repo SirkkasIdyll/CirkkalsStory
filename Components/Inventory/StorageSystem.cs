@@ -16,9 +16,9 @@ public partial class StorageSystem : NodeSystem
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
     [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
 
-    public override void _Input(InputEvent @event)
+    public override void _UnhandledInput(InputEvent @event)
     {
-        base._Input(@event);
+        base._UnhandledInput(@event);
         
         if (@event.IsActionPressed("inventory"))
             TryOpenInventoryUi();
@@ -41,6 +41,15 @@ public partial class StorageSystem : NodeSystem
 
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
             return;
+
+        var bag = wearsClothingComponent.ClothingSlots[ClothingSlot.Bag];
+        if (bag != null
+            && _nodeManager.TryGetComponent<StorageComponent>(bag, out var storageComponent)
+            && TryAddItemToStorage((bag, storageComponent), (node, storableComponent)))
+        {
+            args.Handled = true;
+            return;
+        }
 
         if (_clothingSystem.TryPutItemInHand((args.Interactee, wearsClothingComponent), (node, storableComponent)))
             args.Handled = true;
@@ -92,12 +101,7 @@ public partial class StorageSystem : NodeSystem
         
         node.Comp.Items.Add(item);
         node.Comp.TotalStoredSpace += storableComponent.Space;
-        if (node.Owner is Node2D storageNode2D && item.Owner is Node2D itemNode2D)
-        {
-            itemNode2D.SetVisible(false);
-            item.Owner.Reparent(node.Owner, false);
-            itemNode2D.GlobalPosition = storageNode2D.GlobalPosition;
-        }
+        AttachItemInvisibly(node, item);
         return true;
     }
     

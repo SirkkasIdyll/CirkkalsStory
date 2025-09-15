@@ -10,3 +10,6 @@ ClothingSlot = 6
 
 [node name="StorageComponent" type="Node2D" parent="." index="5"]
 script = ExtResource("2_iixcw")
+
+[node name="StorableComponent" parent="." index="6"]
+ItemSize = 3
