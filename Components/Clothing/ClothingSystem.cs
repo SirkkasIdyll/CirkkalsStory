@@ -141,20 +141,28 @@ public partial class ClothingSystem : NodeSystem
         return true;
     }
 
-    public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing)
+    /// <summary>
+    /// Try to equip clothing if the slot exists
+    /// Set the boolean if you want to try unequipping the slot if it's occupied
+    /// </summary>
+    public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing, bool unequipIfOccupied = false)
     {
         // Check if slot exists
         if (!node.Comp.ClothingSlots.TryGetValue(clothing.Comp.ClothingSlot, out var value))
+            return false;
+        
+        if (value != null && !unequipIfOccupied)
             return false;
 
         // Try to take off what you're currently wearing
         // If it fails, it means you can't take off whatever you're currently wearing
         // i.e. some kind of cursed or binded object
-        if (value != null && !TryUnequipClothing(node, clothing.Comp.ClothingSlot))
+        if (value != null && unequipIfOccupied && !TryUnequipClothing(node, clothing.Comp.ClothingSlot))
             return false;
         
         // Equip the clothing to that slot
         node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] = clothing;
+        
         // Assign the spriteFrame to the correct AnimatedSprite2D node
         // This causes the item to show up on the character's body
         var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + clothing.Comp.ClothingSlot);
@@ -195,6 +203,11 @@ public partial class ClothingSystem : NodeSystem
             var signal = new ClothingUnequippedSignal((value, clothingComponent));
             _nodeManager.SignalBus.EmitClothingUnequippedSignal(node, ref signal);
         }
+        else if (_nodeManager.TryGetComponent<StorableComponent>(value, out var storableComponent))
+        {
+            var signal = new ItemRemovedFromHandSignal((value, storableComponent));
+            _nodeManager.SignalBus.EmitItemRemovedFromHandSignal(node, ref signal);
+        }
 
         return true;
     }
@@ -227,5 +240,15 @@ public partial class ClothingUnequippedSignal : UserSignalArgs
     public ClothingUnequippedSignal(Node<ClothingComponent> clothing)
     {
         Clothing = clothing;
+    }
+}
+
+public partial class ItemRemovedFromHandSignal : UserSignalArgs
+{
+    public Node<StorableComponent> Storable;
+
+    public ItemRemovedFromHandSignal(Node<StorableComponent> storable)
+    {
+        Storable = storable;
     }
 }

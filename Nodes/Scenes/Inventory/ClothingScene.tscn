@@ -11,10 +11,12 @@ region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c1wji"]
 bg_color = Color(0.25, 0.25, 0.25, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 1
+shadow_offset = Vector2(1, 1)
 anti_aliasing = false
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ejtbp"]
@@ -69,22 +71,24 @@ text = "Equipment"
 
 [node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer" index="1" node_paths=PackedStringArray("_title", "_clothingSlots")]
 layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
 columns = 3
 script = ExtResource("2_ejtbp")
 _title = NodePath("../HBoxContainer/Title")
 _texture = SubResource("AtlasTexture_xmpy0")
 _clothingSlots = {
-0: NodePath("Shoes/MarginContainer/TextureRect"),
-1: NodePath("Bottom/MarginContainer/TextureRect"),
-2: NodePath("Gloves/MarginContainer/TextureRect"),
-3: NodePath("Top/MarginContainer/TextureRect"),
-4: NodePath("Belt/MarginContainer/TextureRect"),
-5: NodePath("Outerwear/MarginContainer/TextureRect"),
-6: NodePath("Bag/MarginContainer/TextureRect"),
-7: NodePath("Neck/MarginContainer/TextureRect"),
-8: NodePath("Inhand/MarginContainer/TextureRect"),
-9: NodePath("Face/MarginContainer/TextureRect"),
-10: NodePath("Hat/MarginContainer/TextureRect")
+0: NodePath("Shoes/TextureRect"),
+1: NodePath("Bottom/TextureRect"),
+2: NodePath("Gloves/TextureRect"),
+3: NodePath("Top/TextureRect"),
+4: NodePath("Belt/TextureRect"),
+5: NodePath("Outerwear/TextureRect"),
+6: NodePath("Bag/TextureRect"),
+7: NodePath("Neck/TextureRect"),
+8: NodePath("Inhand/TextureRect"),
+9: NodePath("Face/TextureRect"),
+10: NodePath("Hat/TextureRect")
 }
 
 [node name="Spacer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="0" instance=ExtResource("2_ecccw")]
@@ -92,14 +96,11 @@ layout_mode = 2
 size_flags_horizontal = 1
 
 [node name="Hat" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="1"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Hat" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Hat/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Hat" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_ejtbp")
 
@@ -112,62 +113,47 @@ layout_mode = 2
 size_flags_horizontal = 1
 
 [node name="Face" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="4"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Face" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Face/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Face" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_10hi3")
 
 [node name="Neck" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="5"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Neck" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Neck/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Neck" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_4ovpy")
 
 [node name="Gloves" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="6"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Gloves" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Gloves/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Gloves" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_17w50")
 
 [node name="Top" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="7"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Top" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Top/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Top" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_5drdd")
 
 [node name="Outerwear" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="8"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Outerwear" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Outerwear/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Outerwear" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_lvs77")
 
@@ -176,26 +162,20 @@ layout_mode = 2
 size_flags_horizontal = 1
 
 [node name="Bottom" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="10"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Bottom" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Bottom/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Bottom" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_tkmey")
 
 [node name="Shoes" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="11"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Shoes" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Shoes/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Shoes" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_np617")
 
@@ -213,37 +193,28 @@ layout_mode = 2
 size_flags_horizontal = 1
 
 [node name="Bag" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="15"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Bag" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Bag/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Bag" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_ecccw")
 
 [node name="Belt" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="16"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Belt" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Belt/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Belt" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_x8nxv")
 
 [node name="Inhand" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="17"]
+custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Inhand" index="0"]
-custom_minimum_size = Vector2(64, 64)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Inhand/MarginContainer" index="0"]
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Inhand" index="0"]
 layout_mode = 2
 texture = SubResource("AtlasTexture_m7vgx")

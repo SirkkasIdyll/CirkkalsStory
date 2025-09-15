@@ -12,7 +12,7 @@ public partial class ClothingSceneSystem : GridContainer
 	[ExportCategory("Owned")]
 	[Export] private Button _title = null!;
 	[Export] private AtlasTexture _texture = null!;
-	[Export] private Dictionary<ClothingSlot, TextureRect> _clothingSlots = null!; 
+	[Export] private Dictionary<ClothingSlot, TextureRect> _clothingSlots = []; 
 	
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
@@ -20,29 +20,31 @@ public partial class ClothingSceneSystem : GridContainer
 	[InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
 	[InjectDependency] private readonly InteractSystem _interactSystem = null!;
 	
-	private Node? Character;
+	private Node? _character;
 
 	public override void _Ready()
 	{
 		base._Ready();
 
-		_nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
 		_nodeManager.SignalBus.ClothingEquippedSignal += OnEquipped;
 		_nodeManager.SignalBus.ClothingUnequippedSignal += OnUnequipped;
+		_nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
+		_nodeManager.SignalBus.ItemRemovedFromHandSignal += OnItemRemovedFromHand;
 	}
 
 	public override void _ExitTree()
 	{
 		base._ExitTree();
 		
-		_nodeManager.SignalBus.ItemPutInHandSignal -= OnItemPutInHand;
 		_nodeManager.SignalBus.ClothingEquippedSignal -= OnEquipped;
 		_nodeManager.SignalBus.ClothingUnequippedSignal -= OnUnequipped;
+		_nodeManager.SignalBus.ItemPutInHandSignal -= OnItemPutInHand;
+		_nodeManager.SignalBus.ItemRemovedFromHandSignal -= OnItemRemovedFromHand;
 	}
 
 	private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
 	{
-		if (node.Owner != Character)
+		if (node.Owner != _character)
 			return;
 		
 		// Set sprite to clothing's icon
@@ -55,9 +57,23 @@ public partial class ClothingSceneSystem : GridContainer
 		textureRect.Texture = sprite2D.Texture;
 	}
 
+	private void OnItemRemovedFromHand(Node<WearsClothingComponent> node, ref ItemRemovedFromHandSignal args)
+	{
+		if (node.Owner != _character)
+			return;
+		
+		if (!_clothingSlots.TryGetValue(ClothingSlot.Inhand, out var textureRect))
+			return;
+		
+		// Set sprite to generic atlas icon
+		var atlasTexture = (AtlasTexture) _texture.Duplicate();
+		atlasTexture.Region = new Rect2(new Vector2(0, 32 * (int)ClothingSlot.Inhand), new Vector2(32, 32));
+		textureRect.Texture = atlasTexture;
+	}
+
 	private void OnEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
 	{
-		if (node.Owner != Character)
+		if (node.Owner != _character)
 			return;
 		
 		// Set sprite to clothing's icon
@@ -72,7 +88,7 @@ public partial class ClothingSceneSystem : GridContainer
 
 	private void OnUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
 	{
-		if (node.Owner != Character)
+		if (node.Owner != _character)
 			return;
 		
 		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var textureRect))
@@ -88,17 +104,9 @@ public partial class ClothingSceneSystem : GridContainer
 	{
 		_nodeSystemManager.InjectNodeSystemDependencies(this);
 
+		_character = node;
 		if (_descriptionSystem.TryGetDisplayName(node, out var name))
 			_title.SetText(name + "'s Equipment");
-
-		GD.Print(_clothingSlots);
-		foreach (var (clothingSlot, textureRect) in _clothingSlots)
-		{
-			GD.Print(_clothingSlots[clothingSlot]);
-			GD.Print(_clothingSlots[ClothingSlot.Shoes]);
-			GD.Print(clothingSlot);
-			GD.Print(textureRect);
-		}
 		
 		foreach (var (clothingSlot, clothingItem) in node.Comp.ClothingSlots)
 		{
@@ -124,7 +132,7 @@ public partial class ClothingSceneSystem : GridContainer
 			}
 			
 			// Set the texture in the equipment UI scene to the texture of the clothing item's icon (not the worn sprite)
-			if (_descriptionSystem.TryGetSprite(node, out var sprite2D))
+			if (_descriptionSystem.TryGetSprite(clothingItem, out var sprite2D))
 				_clothingSlots[clothingSlot].Texture = sprite2D.Texture;
 		}
 	}
