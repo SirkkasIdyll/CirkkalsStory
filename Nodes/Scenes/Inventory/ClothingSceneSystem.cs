@@ -1,6 +1,8 @@
 using CS.Components.Clothing;
 using CS.Components.Description;
 using CS.Components.Interaction;
+using CS.Components.Inventory;
+using CS.Nodes.UI.ContextButtonList;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -20,6 +22,7 @@ public partial class ClothingSceneSystem : GridContainer
 	[InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
 	[InjectDependency] private readonly InteractSystem _interactSystem = null!;
 	
+	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Node? _character;
 
 	public override void _Ready()
@@ -100,6 +103,57 @@ public partial class ClothingSceneSystem : GridContainer
 		textureRect.Texture = atlasTexture;
 	}
 
+	/// <summary>
+	/// When clicking on an equipped piece of clothing, attempts to put the item in hand
+	/// When clicking an empty space with a piece of clothing in hand, attempts to equip the clothing to that slot
+	/// </summary>
+	private void OnPrimaryInteract(Node<WearsClothingComponent> node, ClothingSlot clothingSlot)
+	{
+		var clothingItem = node.Comp.ClothingSlots[clothingSlot];
+		// If the user clicks on an empty slot, with a piece of clothing in-hand,
+		// try to equip the clothing item to that slot.
+		if (clothingItem == null)
+		{
+			var inHandItem = node.Comp.ClothingSlots[ClothingSlot.Inhand];
+			if (inHandItem == null)
+				return;
+
+			if (!_nodeManager.TryGetComponent<ClothingComponent>(inHandItem, out var clothingComponent))
+				return;
+
+			if (clothingComponent.ClothingSlot != clothingSlot)
+				return;
+			
+			_clothingSystem.TryEquipClothing(node, (inHandItem, clothingComponent), true);
+			return;
+		}
+
+		// If the user clicks on a piece of clothing,
+		// attempt to put the item in hand
+		if (!_nodeManager.TryGetComponent<StorableComponent>(clothingItem, out var storableComponent))
+			return;
+		
+		_clothingSystem.TryPutItemInHand(node, (clothingItem, storableComponent));
+	}
+
+	private void OnSecondayInteract(Node<WearsClothingComponent> node, ClothingSlot clothingSlot)
+	{
+		var clothingItem = node.Comp.ClothingSlots[clothingSlot];
+		if (clothingItem == null)
+			return;
+
+		if (!_nodeManager.TryGetComponent<InteractableComponent>(clothingItem, out var interactableComponent))
+			return;
+		
+		var signal = new GetContextActionsSignal(node);
+		_nodeManager.SignalBus.EmitGetContextActionsSignal((clothingItem, interactableComponent), ref signal);
+            
+		var nodeButtonList = _contextButtonList.Instantiate<ContextButtonListSystem>();
+		nodeButtonList.Setup(signal.Actions);
+		_interactSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(nodeButtonList);
+		nodeButtonList.SetPosition(GetViewport().GetMousePosition());
+	}
+
 	public void SetDetails(Node<WearsClothingComponent> node)
 	{
 		_nodeSystemManager.InjectNodeSystemDependencies(this);
@@ -117,8 +171,11 @@ public partial class ClothingSceneSystem : GridContainer
 			{
 				textureRect.GuiInput += @event =>
 				{
-					if (@event is InputEventMouseButton eventButton && eventButton.ButtonIndex == MouseButton.Left && eventButton.Pressed)
-						_clothingSystem.TryUnequipClothing(node, clothingSlot);
+					if (@event.IsActionPressed("primary_interact"))
+						OnPrimaryInteract(node, clothingSlot);
+
+					if (@event.IsActionPressed("secondary_interact"))
+						OnSecondayInteract(node, clothingSlot);
 				};
 			}
 

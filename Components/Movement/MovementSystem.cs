@@ -20,6 +20,23 @@ public partial class MovementSystem : NodeSystem
         MovePlayer();
     }
 
+    public override void _Input(InputEvent @event)
+    {
+        base._Input(@event);
+
+        if (!@event.IsActionPressed("primary_interact"))
+            return;
+        
+        var node = _playerManagerSystem.TryGetPlayer();
+
+        if (node is not CharacterBody2D characterBody)
+            return;
+            
+        var facingRight = characterBody.GlobalPosition.X < GetGlobalMousePosition().X;
+        var facingForward = characterBody.GlobalPosition.Y - 50 < GetGlobalMousePosition().Y;
+        _appearanceSystem.OrientCharacterSprite(characterBody, facingRight, facingForward);
+    }
+
     public void MovePlayer()
     {
         var node = _playerManagerSystem.TryGetPlayer();

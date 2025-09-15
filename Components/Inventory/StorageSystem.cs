@@ -5,6 +5,7 @@ using CS.Components.UI;
 using CS.Nodes.Scenes.Inventory;
 using CS.Nodes.UI.CustomWindow;
 using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 using Godot.Collections;
 
@@ -13,6 +14,7 @@ namespace CS.Components.Inventory;
 public partial class StorageSystem : NodeSystem
 {
     [InjectDependency] private readonly ClothingSystem _clothingSystem = null!;
+    [InjectDependency] private readonly InteractSystem _interactSystem = null!;
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
     [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
 
@@ -28,7 +30,70 @@ public partial class StorageSystem : NodeSystem
     {
         base._Ready();
         
+        _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
         _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
+        _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
+        _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
+        _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
+    }
+
+    private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
+    {
+        AttachItemInvisibly(node, args.Clothing);
+    }
+
+    private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
+    {
+        AttachItemInvisibly(node, args.Storable);
+    }
+
+    private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
+    {
+        AttachItemInvisibly(node, args.Storable);
+    }
+
+    private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
+    {
+        var button = new Button();
+        args.Actions.Add(button);
+        button.SetText("Pick up");
+        
+        // Disable the equip item option for users that are incapable of interacting
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
+        {
+            button.Disabled = true;
+            return;
+        }
+        
+        // Disable the equip item option for users that are incapable of wearing clothing
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
+        {
+            button.Disabled = true;
+            return;
+        }
+
+        if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
+            return;
+        
+        if (_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent)
+            && node.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+            button.SetText("Put item in hand");
+        
+        if (node.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
+            button.SetText("Drop item");
+        
+        // Set the button up to equip the item if the user is in-range when pressed
+        var interactee = args.Interactee;
+        button.Pressed += () =>
+        {
+            if (!_interactSystem.InRangeUnobstructed(interactee, node.Owner, canInteractComponent.MaxInteractDistance))
+                return;
+
+            if (node.Owner != wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
+                _clothingSystem.TryPutItemInHand((interactee, wearsClothingComponent), (node, storableComponent));
+            else
+                _clothingSystem.TryUnequipClothing((interactee, wearsClothingComponent), ClothingSlot.Inhand);
+        };
     }
 
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
@@ -101,7 +166,21 @@ public partial class StorageSystem : NodeSystem
         
         node.Comp.Items.Add(item);
         node.Comp.TotalStoredSpace += storableComponent.Space;
-        AttachItemInvisibly(node, item);
+        
+        if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
+        {
+            var tween = CreateTween();
+            tween.TweenProperty(itemNode2D, "global_position", node2D.GlobalPosition, 0.125f);
+            tween.Finished += () =>
+            {
+                var signal = new ItemPutInStorageSignal(item);
+                _nodeManager.SignalBus.EmitItemPutInStorageSignal(node, ref signal);
+            };
+            return true;
+        }
+
+        var signal = new ItemPutInStorageSignal(item);
+        _nodeManager.SignalBus.EmitItemPutInStorageSignal(node, ref signal);
         return true;
     }
     
@@ -165,4 +244,14 @@ public enum ItemSize
     Medium,
     Large,
     ExtraLarge
+}
+
+public partial class ItemPutInStorageSignal : UserSignalArgs
+{
+    public Node<StorableComponent> Storable;
+
+    public ItemPutInStorageSignal(Node<StorableComponent> storable)
+    {
+        Storable = storable;
+    }
 }

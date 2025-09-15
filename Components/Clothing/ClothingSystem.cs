@@ -36,6 +36,11 @@ public partial class ClothingSystem : NodeSystem
             TryOpenEquipmentUi();
     }
 
+    /// <summary>
+    /// Equip clothing when interacting with an Interactable Clothing object
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="args"></param>
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
     {
         if (args.Handled)
@@ -59,8 +64,8 @@ public partial class ClothingSystem : NodeSystem
     {
         var button = new Button();
         args.Actions.Add(button);
-        button.Text = "Equip item";
-
+        button.SetText("Equip Item");
+        
         // Disable the equip item option for users that are incapable of interacting
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
         {
@@ -74,6 +79,12 @@ public partial class ClothingSystem : NodeSystem
             button.Disabled = true;
             return;
         }
+        
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
+            return;
+
+        if (node.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+            button.SetText("Unequip Item");
 
         // Set the button up to equip the item if the user is in-range when pressed
         var interactee = args.Interactee;
@@ -81,11 +92,11 @@ public partial class ClothingSystem : NodeSystem
         {
             if (!_interactSystem.InRangeUnobstructed(interactee, node.Owner, canInteractComponent.MaxInteractDistance))
                 return;
-            
-            if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
-                return;
-            
-            TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
+
+            if (node.Owner != wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+                TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
+            else
+                TryUnequipClothing((interactee, wearsClothingComponent), clothingComponent.ClothingSlot);
         };
     }
 
@@ -122,10 +133,17 @@ public partial class ClothingSystem : NodeSystem
         if (!node.Comp.ClothingSlots.TryGetValue(ClothingSlot.Inhand, out var value))
             return false;
 
+        // If hand is occupied, don't do anything
         if (value != null)
             return false;
 
         if (item.Comp.ItemSize == ItemSize.ExtraLarge)
+            return false;
+        
+        // Clothing is already equipped to a slot and apparently can't be unequipped
+        if (_nodeManager.TryGetComponent<ClothingComponent>(item, out var clothingComponent)
+            && item.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot]
+            && !TryUnequipClothing(node, clothingComponent.ClothingSlot))
             return false;
 
         // For now, it's likely the item doesn't have an in-hand sprite
@@ -135,7 +153,18 @@ public partial class ClothingSystem : NodeSystem
         if (spriteSlot != null)
             spriteSlot.SpriteFrames = null;
 
-        _storageSystem.AttachItemInvisibly(node, item);
+        if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
+        {
+            var tween = CreateTween();
+            tween.TweenProperty(itemNode2D, "global_position", node2D.GlobalPosition, 0.125f);
+            tween.Finished += () =>
+            {
+                var signal = new ItemPutInHandSignal(item);
+                _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
+            };
+            return true;
+        }
+        
         var signal = new ItemPutInHandSignal(item);
         _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
         return true;
@@ -159,6 +188,9 @@ public partial class ClothingSystem : NodeSystem
         // i.e. some kind of cursed or binded object
         if (value != null && unequipIfOccupied && !TryUnequipClothing(node, clothing.Comp.ClothingSlot))
             return false;
+
+        if (clothing.Owner == node.Comp.ClothingSlots[ClothingSlot.Inhand] && !TryUnequipClothing(node, ClothingSlot.Inhand))
+            return false;
         
         // Equip the clothing to that slot
         node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] = clothing;
@@ -169,7 +201,6 @@ public partial class ClothingSystem : NodeSystem
         if (clothing.Comp.EquippedSpriteFrames != null && spriteSlot != null)
             spriteSlot.SpriteFrames = clothing.Comp.EquippedSpriteFrames;
 
-        _storageSystem.AttachItemInvisibly(node, clothing);
         var signal = new ClothingEquippedSignal(clothing);
         _nodeManager.SignalBus.EmitClothingEquippedSignal(node, ref signal);
         return true;

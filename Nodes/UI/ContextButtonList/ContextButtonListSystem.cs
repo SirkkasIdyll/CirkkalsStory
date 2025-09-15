@@ -5,9 +5,9 @@ using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
-namespace CS.Nodes.UI.NodeButtonList;
+namespace CS.Nodes.UI.ContextButtonList;
 
-public partial class NodeButtonListSystem : Control
+public partial class ContextButtonListSystem : Control
 {
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	private readonly NodeManager _nodeManager = NodeManager.Instance;

@@ -2,7 +2,7 @@
 using CS.Components.Grid;
 using CS.Components.Player;
 using CS.Nodes.UI.Chyron;
-using CS.Nodes.UI.NodeButtonList;
+using CS.Nodes.UI.ContextButtonList;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -17,8 +17,7 @@ public partial class InteractSystem : NodeSystem
     
     private ShaderMaterial _inRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/InRangeOutline.tres");
     private ShaderMaterial _outOfRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/OutOfRangeOutline.tres");
-    private PackedScene _nodeButtonList =
-        ResourceLoader.Load<PackedScene>("res://Nodes/UI/NodeButtonList/NodeButtonList.tscn");
+    private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
     
     public override void _Ready()
     {
@@ -36,8 +35,7 @@ public partial class InteractSystem : NodeSystem
         if (player == null)
             return;
 
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(player,
-                out var canInteractComponent))
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(player, out var canInteractComponent))
             return;
         
         if (@event.IsActionPressed("primary_interact"))
@@ -141,7 +139,7 @@ public partial class InteractSystem : NodeSystem
             var signal = new GetContextActionsSignal(node);
             _nodeManager.SignalBus.EmitGetContextActionsSignal((node.Comp.InteractTarget, interactableComponent), ref signal);
             
-            var nodeButtonList = _nodeButtonList.Instantiate<NodeButtonListSystem>();
+            var nodeButtonList = _contextButtonList.Instantiate<ContextButtonListSystem>();
             nodeButtonList.Setup(signal.Actions);
             CanvasLayer.AddChild(nodeButtonList);
             nodeButtonList.SetPosition(GetViewport().GetMousePosition());
@@ -181,7 +179,7 @@ public partial class InteractSystem : NodeSystem
                 return;
             }
             
-            var nodeButtonList = _nodeButtonList.Instantiate<NodeButtonListSystem>();
+            var nodeButtonList = _contextButtonList.Instantiate<ContextButtonListSystem>();
             nodeButtonList.Setup(interactableBodies);
             CanvasLayer.AddChild(nodeButtonList);
             nodeButtonList.SetPosition(GetViewport().GetMousePosition());
