@@ -29,11 +29,70 @@ public partial class ClothingSystem : NodeSystem
     {
         base._Input(@event);
 
-        if (!@event.IsActionPressed("equipment"))
+        // Open the equipment menu when the action is pressed, if possible
+        if (@event.IsActionPressed("equipment"))
+            TryOpenEquipmentUi();
+    }
+
+    private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
             return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
+            return;
+
+        TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent));
+    }
+    
+    /// <summary>
+    /// When right-clicking, creates the context-menu button for equipping items
+    /// and adds it to the context menu list
+    /// </summary>
+    private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
+    {
+        var button = new Button();
+        args.Actions.Add(button);
+        button.Text = "Equip item";
+
+        // Disable the equip item option for users that are incapable of interacting
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
+        {
+            button.Disabled = true;
+            return;
+        }
         
+        // Disable the equip item option for users that are incapable of wearing clothing
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
+        {
+            button.Disabled = true;
+            return;
+        }
+
+        // Set the button up to equip the item if the user is in-range when pressed
+        var interactee = args.Interactee;
+        button.Pressed += () =>
+        {
+            if (!_interactSystem.InRangeUnobstructed(interactee, node.Owner, canInteractComponent.MaxInteractDistance))
+                return;
+            
+            if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
+                return;
+            
+            TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
+        };
+    }
+
+    /// <summary>
+    /// Opens the equipment UI if all the requirements are met
+    /// </summary>
+    private void TryOpenEquipmentUi()
+    {
         var player = _playerManagerSystem.TryGetPlayer();
         if (player == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(player, out var wearsClothingComponent))
             return;
 
         if (!_nodeManager.TryGetComponent<AttachedUserInterfaceComponent>(player, out var attachedUserInterfaceComponent))
@@ -48,47 +107,7 @@ public partial class ClothingSystem : NodeSystem
             return;
 
         var clothingSceneSystem = (ClothingSceneSystem)customWindow.Content;
-        clothingSceneSystem.SetDetails(player);
-        GetViewport().SetInputAsHandled();
-    }
-
-    private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
-    {
-        if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
-            return;
-
-        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
-            return;
-
-        TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent));
-    }
-    
-    private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
-    {
-        var button = new Button();
-        args.Actions.Add(button);
-        button.Text = "Equip item";
-
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
-        {
-            button.Disabled = true;
-            return;
-        }
-
-        var interactee = args.Interactee;
-        button.Pressed += () =>
-        {
-            if (!_interactSystem.InRangeUnobstructed(interactee, node.Owner, canInteractComponent.MaxInteractDistance))
-                return;
-            
-            if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
-                return;
-
-            if (!_nodeManager.TryGetComponent<WearsClothingComponent>(interactee, out var wearsClothingComponent))
-                return;
-            
-            TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
-        };
+        clothingSceneSystem.SetDetails((player, wearsClothingComponent));
     }
 
     public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing)
@@ -129,21 +148,24 @@ public partial class ClothingSystem : NodeSystem
         // Check if slot exists
         if (!node.Comp.ClothingSlots.TryGetValue(slot, out var value))
             return false;
-
+        
+        // Nothing to unequip
         if (value == null)
             return false;
         
+        // Put the item back into the world and make it visible again
         value.Reparent(node.Owner.GetParent());
         if (value is Node2D clothesNode2D)
             clothesNode2D.SetVisible(true);
         
         // TODO: maybe some kind of CursedClothingComponent or something to make perma-equipped clothes that require dispelling
+        // Removes the item from the character's clothing slots and removes the appearance of it on the character
         node.Comp.ClothingSlots[slot] = null;
         var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + slot);
         if (spriteSlot != null)
             spriteSlot.SpriteFrames = null;
         
-        // TODO: Put the item back into their inventory, their hand, drop it into the world, literally anything
+        // TODO: Now put the item back into their inventory, their hand, drop it into the world, literally anything
         if (_nodeManager.TryGetComponent<ClothingComponent>(value, out var clothingComponent))
         {
             var signal = new ClothingUnequippedSignal((value, clothingComponent));

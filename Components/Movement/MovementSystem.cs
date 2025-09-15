@@ -9,11 +9,6 @@ public partial class MovementSystem : NodeSystem
 {
     [InjectDependency] private readonly AppearanceSystem _appearanceSystem = null!;
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
-    
-    public override void _Ready()
-    {
-        base._Ready();
-    }
 
     // TODO: This shit is evil, it's hardcoded only to move the player character
     // Will not work when the world is inhabited with multiple PCs

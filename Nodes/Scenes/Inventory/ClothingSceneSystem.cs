@@ -59,36 +59,32 @@ public partial class ClothingSceneSystem : GridContainer
 		_clothingSlots[(int)args.Clothing.Comp.ClothingSlot].Texture = atlasTexture;
 	}
 
-	public void SetDetails(Node character)
+	public void SetDetails(Node<WearsClothingComponent> node)
 	{
 		_nodeSystemManager.InjectNodeSystemDependencies(this);
-		Character = character;
 
-		if (_descriptionSystem.TryGetDisplayName(character, out var name))
+		if (_descriptionSystem.TryGetDisplayName(node, out var name))
 			_title.SetText(name + "'s Equipment");
-
-		if (!_nodeManager.TryGetComponent<WearsClothingComponent>(character, out var wearsClothingComponent))
-			return;
 		
-		foreach (var dictionary in wearsClothingComponent.ClothingSlots)
+		foreach (var dictionary in node.Comp.ClothingSlots)
 		{
 			var clothingSlot = dictionary.Key;
 			var clothingSlotIndex = (int)clothingSlot;
-			var node = dictionary.Value;
+			var clothingItem = dictionary.Value;
 			
 			// When the particular slot's image is clicked, try to unequip the clothing in that slot.
 			// It's fine if there is an attempt to unequip nothing as that will be handled in the unequip function
 			_clothingSlots[clothingSlotIndex].GuiInput += @event =>
 			{
 				if (@event is InputEventMouseButton eventButton && eventButton.ButtonIndex == MouseButton.Left && eventButton.Pressed)
-					_clothingSystem.TryUnequipClothing((character, wearsClothingComponent), clothingSlot);
+					_clothingSystem.TryUnequipClothing(node, clothingSlot);
 			};
 
 			// No clothing equipped in this slot, set it to the generic icon and continue
-			if (node == null)
+			if (clothingItem == null)
 			{
 				var atlasTexture = (AtlasTexture) _texture.Duplicate();
-				atlasTexture.Region = new Rect2(new Vector2(0, 32 * (int)clothingSlotIndex), new Vector2(32, 32));
+				atlasTexture.Region = new Rect2(new Vector2(0, 32 * clothingSlotIndex), new Vector2(32, 32));
 				_clothingSlots[clothingSlotIndex].Texture = atlasTexture;
 				continue;
 			}

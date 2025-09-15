@@ -1,4 +1,9 @@
-﻿using CS.SlimeFactory;
+﻿using CS.Components.Clothing;
+using CS.Components.Player;
+using CS.Components.UI;
+using CS.Nodes.Scenes.Inventory;
+using CS.Nodes.UI.CustomWindow;
+using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
@@ -6,28 +11,24 @@ namespace CS.Components.Inventory;
 
 public partial class StorageSystem : NodeSystem
 {
-    public override void _Ready()
-    {
-        base._Ready();
+    [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
+    [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
 
-        // _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
+    public override void _Input(InputEvent @event)
+    {
+        base._Input(@event);
+        
+        if (@event.IsActionPressed("inventory"))
+            TryOpenInventoryUi();
     }
 
-    /*private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
+    /// <summary>
+    /// How filled the storage is compared to the maximum, as a percentage
+    /// </summary>
+    public float GetStoragePercentage(Node<StorageComponent> node)
     {
-        if (!_nodeManager.TryGetComponent<StorageComponent>(node, out var storageComponent))
-            return;
-
-        OpenStorageWindow((node, storageComponent));
+        return node.Comp.TotalStoredSpace / node.Comp.MaxSpace * 100;
     }
-
-    private void OpenStorageWindow(Node<StorageComponent> node)
-    {
-        var customWindow = ResourceLoader.Load<PackedScene>("res://Nodes/UI/CustomWindow/CustomWindow.tscn")
-            .Instantiate<CustomWindowSystem>();
-        customWindow.Title.Text = "Inventory";
-        GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(customWindow);
-    }*/
 
     /// <summary>
     /// Returns all the items currently inside a storage
@@ -64,6 +65,38 @@ public partial class StorageSystem : NodeSystem
             itemNode2D.GlobalPosition = storageNode2D.GlobalPosition;
         }
         return true;
+    }
+    
+    // Opens the inventory UI if all the requirements are met
+    private void TryOpenInventoryUi()
+    {
+        var player = _playerManagerSystem.TryGetPlayer();
+        if (player == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(player, out var wearsClothingComponent))
+            return;
+
+        wearsClothingComponent.ClothingSlots.TryGetValue(ClothingSlot.Bag, out var bagItem);
+        if (bagItem == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<StorageComponent>(bagItem, out var storageComponent))
+            return;
+            
+        if (!_nodeManager.TryGetComponent<AttachedUserInterfaceComponent>(player, out var attachedUserInterfaceComponent))
+            return;
+
+        var control = _userInterfaceSystem.OpenAttachedUserInterface((player, attachedUserInterfaceComponent), player, "inventory");
+        if (control == null)
+            return;
+
+        var customWindow = (CustomWindowSystem)control;
+        if (customWindow.Content == null)
+            return;
+        
+        var storageSceneSystem = (StorageSceneSystem)customWindow.Content;
+        storageSceneSystem.SetDetails((bagItem, storageComponent));
     }
     
     public Node RemoveItemFromStorage(Node<StorageComponent> node, Node item)

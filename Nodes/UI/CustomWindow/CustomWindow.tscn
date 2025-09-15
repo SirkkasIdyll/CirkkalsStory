@@ -46,7 +46,6 @@ offset_right = -300.0
 offset_bottom = -60.0
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1.5, 1.5)
 script = ExtResource("1_fkyde")
 _closeButton = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/CloseButton")
 Title = NodePath("PanelContainer/MarginContainer/VBoxContainer/HBoxContainer/Title")
