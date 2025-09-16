@@ -244,6 +244,11 @@ public partial class ClothingSystem : NodeSystem
 
         return true;
     }
+
+    public bool IsHandEmpty(Node<WearsClothingComponent> node)
+    {
+        return node.Comp.ClothingSlots[ClothingSlot.Inhand] == null;
+    }
 }
 
 public partial class ClothingEquippedSignal : UserSignalArgs

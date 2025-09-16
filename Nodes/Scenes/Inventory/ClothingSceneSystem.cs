@@ -20,7 +20,6 @@ public partial class ClothingSceneSystem : GridContainer
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
 	[InjectDependency] private readonly ClothingSystem _clothingSystem = null!;
 	[InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
-	[InjectDependency] private readonly InteractSystem _interactSystem = null!;
 	
 	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Node? _character;
@@ -150,7 +149,7 @@ public partial class ClothingSceneSystem : GridContainer
             
 		var nodeButtonList = _contextButtonList.Instantiate<ContextButtonListSystem>();
 		nodeButtonList.Setup(signal.Actions);
-		_interactSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(nodeButtonList);
+		_clothingSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(nodeButtonList);
 		nodeButtonList.SetPosition(GetViewport().GetMousePosition());
 	}
 

@@ -1,4 +1,5 @@
-﻿using CS.Components.Clothing;
+﻿using System.Diagnostics.CodeAnalysis;
+using CS.Components.Clothing;
 using CS.Components.Interaction;
 using CS.Components.Player;
 using CS.Components.UI;
@@ -96,6 +97,9 @@ public partial class StorageSystem : NodeSystem
         };
     }
 
+    /// <summary>
+    /// Places item into the equipped bag if one is equipped, otherwise puts the item in hand.
+    /// </summary>
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
     {
         if (args.Handled)
@@ -216,17 +220,26 @@ public partial class StorageSystem : NodeSystem
         storageSceneSystem.SetDetails((bagItem, storageComponent));
     }
     
-    public Node RemoveItemFromStorage(Node<StorageComponent> node, Node item)
+    public bool TryRemoveItemFromStorage(Node<StorageComponent> node, Node<StorableComponent> item,
+        [NotNullWhen(true)] out Node? removedItem)
     {
+        removedItem = null;
+        if (!_nodeManager.TryGetComponent<StorableComponent>(item, out var storableComponent))
+            return false;
+        
         node.Comp.Items.Remove(item);
-        if (_nodeManager.TryGetComponent<StorableComponent>(item, out var storableComponent))
-            node.Comp.TotalStoredSpace -= storableComponent.Space;
-        if (item.Owner is Node2D itemNode2D)
+        node.Comp.TotalStoredSpace -= storableComponent.Space;
+        var signal = new ItemRemovedFromStorageSignal((item, storableComponent));
+        _nodeManager.SignalBus.EmitItemRemovedFromStorageSignal(node, ref signal);
+            
+        /*if (item.Owner is Node2D itemNode2D)
         {
             itemNode2D.SetVisible(true);
             item.Owner.Reparent(node.Owner.GetParent());
-        }
-        return item;
+        }*/
+
+        removedItem = item;
+        return true;
     }
 }
 
@@ -251,6 +264,16 @@ public partial class ItemPutInStorageSignal : UserSignalArgs
     public Node<StorableComponent> Storable;
 
     public ItemPutInStorageSignal(Node<StorableComponent> storable)
+    {
+        Storable = storable;
+    }
+}
+
+public partial class ItemRemovedFromStorageSignal : UserSignalArgs
+{
+    public Node<StorableComponent> Storable;
+
+    public ItemRemovedFromStorageSignal(Node<StorableComponent> storable)
     {
         Storable = storable;
     }

@@ -36,11 +36,4 @@ public partial class SignalBus
     {
         ItemRemovedFromHandSignal?.Invoke(node, ref args);
     }
-
-    public delegate void ItemPutInStorageSignalHandler(Node<StorageComponent> node, ref ItemPutInStorageSignal args);
-    public event ItemPutInStorageSignalHandler? ItemPutInStorageSignal;
-    public void EmitItemPutInStorageSignal(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
-    {
-        ItemPutInStorageSignal?.Invoke(node, ref args);
-    }
 }
