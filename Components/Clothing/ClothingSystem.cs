@@ -75,7 +75,7 @@ public partial class ClothingSystem : NodeSystem
             if (node.Owner != wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
                 TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
             else
-                TryUnequipClothing((interactee, wearsClothingComponent), clothingComponent.ClothingSlot);
+                TryUnequipClothing((interactee, wearsClothingComponent), clothingComponent.ClothingSlot, true);
         };
     }
 
@@ -238,7 +238,11 @@ public partial class ClothingSystem : NodeSystem
     {
         if (!CanBePutInHand(node, item))
             return false;
-
+        
+        if (_nodeManager.TryGetComponent<ClothingComponent>(item, out var clothingComponent)
+            && item.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot])
+            TryUnequipClothing(node, clothingComponent.ClothingSlot);
+        
         // For now, it's likely the item doesn't have an in-hand sprite
         // if equip clothing failed on it
         node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
@@ -246,7 +250,6 @@ public partial class ClothingSystem : NodeSystem
         if (spriteSlot != null)
             spriteSlot.SpriteFrames = null;
 
-        // TODO: Bug where item is visible in tree but not out in world. Check for being out in the world.
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
         {
             var tween = CreateTween();
@@ -264,7 +267,7 @@ public partial class ClothingSystem : NodeSystem
         return true;
     }
     
-    public bool TryUnequipClothing(Node<WearsClothingComponent> node, ClothingSlot slot)
+    public bool TryUnequipClothing(Node<WearsClothingComponent> node, ClothingSlot slot, bool dropItem = false)
     {
         if (!CanBeUnequipped(node, slot))
             return false;
@@ -274,9 +277,12 @@ public partial class ClothingSystem : NodeSystem
             return false;
         
         // Put the item back into the world and make it visible again
-        clothingItem.Reparent(node.Owner.GetParent());
-        if (clothingItem is Node2D clothesNode2D)
-            clothesNode2D.SetVisible(true);
+        if (dropItem)
+        {
+            clothingItem.Reparent(node.Owner.GetParent());
+            if (clothingItem is Node2D clothesNode2D)
+                clothesNode2D.SetVisible(true);
+        }
         
         // Removes the item from the character's clothing slots and removes the appearance of it on the character
         node.Comp.ClothingSlots[slot] = null;
