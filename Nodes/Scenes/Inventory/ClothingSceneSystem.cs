@@ -14,34 +14,63 @@ public partial class ClothingSceneSystem : GridContainer
 	[ExportCategory("Owned")]
 	[Export] private Button _title = null!;
 	[Export] private AtlasTexture _texture = null!;
-	[Export] private Dictionary<ClothingSlot, TextureRect> _clothingSlots = []; 
-	
-	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
+	[Export] private Dictionary<ClothingSlot, TextureRect> _clothingSlots = [];
+
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
+	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	[InjectDependency] private readonly ClothingSystem _clothingSystem = null!;
 	[InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
-	
+
 	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Node? _character;
-
-	public override void _Ready()
-	{
-		base._Ready();
-
-		_nodeManager.SignalBus.ClothingEquippedSignal += OnEquipped;
-		_nodeManager.SignalBus.ClothingUnequippedSignal += OnUnequipped;
-		_nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
-		_nodeManager.SignalBus.ItemRemovedFromHandSignal += OnItemRemovedFromHand;
-	}
 
 	public override void _ExitTree()
 	{
 		base._ExitTree();
 		
-		_nodeManager.SignalBus.ClothingEquippedSignal -= OnEquipped;
-		_nodeManager.SignalBus.ClothingUnequippedSignal -= OnUnequipped;
+		_nodeManager.SignalBus.ClothingEquippedSignal -= OnClothingEquipped;
+		_nodeManager.SignalBus.ClothingUnequippedSignal -= OnClothingUnequipped;
 		_nodeManager.SignalBus.ItemPutInHandSignal -= OnItemPutInHand;
 		_nodeManager.SignalBus.ItemRemovedFromHandSignal -= OnItemRemovedFromHand;
+	}
+
+	public override void _Ready()
+	{
+		base._Ready();
+
+		_nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
+		_nodeManager.SignalBus.ClothingUnequippedSignal += OnClothingUnequipped;
+		_nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
+		_nodeManager.SignalBus.ItemRemovedFromHandSignal += OnItemRemovedFromHand;
+	}
+
+	private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
+	{
+		if (node.Owner != _character)
+			return;
+		
+		// Set sprite to clothing's icon
+		if (!_descriptionSystem.TryGetSprite(args.Clothing, out var sprite2D))
+			return;
+
+		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var textureRect))
+			return;
+		
+		textureRect.Texture = sprite2D.Texture;
+	}
+
+	private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
+	{
+		if (node.Owner != _character)
+			return;
+		
+		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var textureRect))
+			return;
+		
+		// Set sprite to generic atlas icon
+		var atlasTexture = (AtlasTexture) _texture.Duplicate();
+		atlasTexture.Region = new Rect2(new Vector2(0, 32 * (int)args.Clothing.Comp.ClothingSlot), new Vector2(32, 32));
+		textureRect.Texture = atlasTexture;
 	}
 
 	private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
@@ -70,35 +99,6 @@ public partial class ClothingSceneSystem : GridContainer
 		// Set sprite to generic atlas icon
 		var atlasTexture = (AtlasTexture) _texture.Duplicate();
 		atlasTexture.Region = new Rect2(new Vector2(0, 32 * (int)ClothingSlot.Inhand), new Vector2(32, 32));
-		textureRect.Texture = atlasTexture;
-	}
-
-	private void OnEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
-	{
-		if (node.Owner != _character)
-			return;
-		
-		// Set sprite to clothing's icon
-		if (!_descriptionSystem.TryGetSprite(args.Clothing, out var sprite2D))
-			return;
-
-		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var textureRect))
-			return;
-		
-		textureRect.Texture = sprite2D.Texture;
-	}
-
-	private void OnUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
-	{
-		if (node.Owner != _character)
-			return;
-		
-		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var textureRect))
-			return;
-		
-		// Set sprite to generic atlas icon
-		var atlasTexture = (AtlasTexture) _texture.Duplicate();
-		atlasTexture.Region = new Rect2(new Vector2(0, 32 * (int)args.Clothing.Comp.ClothingSlot), new Vector2(32, 32));
 		textureRect.Texture = atlasTexture;
 	}
 

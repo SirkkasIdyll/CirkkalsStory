@@ -19,6 +19,17 @@ public partial class StorageSystem : NodeSystem
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
     [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
 
+    public override void _Ready()
+    {
+        base._Ready();
+        
+        _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
+        _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
+        _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
+        _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
+        _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
+    }
+
     public override void _UnhandledInput(InputEvent @event)
     {
         base._UnhandledInput(@event);
@@ -27,30 +38,9 @@ public partial class StorageSystem : NodeSystem
             TryOpenInventoryUi();
     }
 
-    public override void _Ready()
-    {
-        base._Ready();
-        
-        _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
-        _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
-        _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
-        _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
-        _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
-    }
-
     private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
     {
         AttachItemInvisibly(node, args.Clothing);
-    }
-
-    private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
-    {
-        AttachItemInvisibly(node, args.Storable);
-    }
-
-    private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
-    {
-        AttachItemInvisibly(node, args.Storable);
     }
 
     private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
@@ -124,20 +114,14 @@ public partial class StorageSystem : NodeSystem
             args.Handled = true;
     }
 
-    /// <summary>
-    /// How filled the storage is compared to the maximum, as a percentage
-    /// </summary>
-    public float GetStoragePercentage(Node<StorageComponent> node)
+    private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
     {
-        return node.Comp.TotalStoredSpace / node.Comp.MaxSpace * 100;
+        AttachItemInvisibly(node, args.Storable);
     }
 
-    /// <summary>
-    /// Returns all the items currently inside a storage
-    /// </summary>
-    public Array<Node> GetStorageItems(Node<StorageComponent> node)
+    private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
     {
-        return node.Comp.Items;
+        AttachItemInvisibly(node, args.Storable);
     }
 
     public void AttachItemInvisibly(Node main, Node nodeToAttach)
@@ -148,6 +132,22 @@ public partial class StorageSystem : NodeSystem
         node2DToAttach.SetVisible(false);
         nodeToAttach.Reparent(main, false);
         node2DToAttach.GlobalPosition = mainNode2D.GlobalPosition;
+    }
+
+    /// <summary>
+    /// Returns all the items currently inside a storage
+    /// </summary>
+    public Array<Node> GetStorageItems(Node<StorageComponent> node)
+    {
+        return node.Comp.Items;
+    }
+
+    /// <summary>
+    /// How filled the storage is compared to the maximum, as a percentage
+    /// </summary>
+    public float GetStoragePercentage(Node<StorageComponent> node)
+    {
+        return node.Comp.TotalStoredSpace / node.Comp.MaxSpace * 100;
     }
 
     /// <summary>
@@ -187,7 +187,30 @@ public partial class StorageSystem : NodeSystem
         _nodeManager.SignalBus.EmitItemPutInStorageSignal(node, ref signal);
         return true;
     }
-    
+
+    public bool TryRemoveItemFromStorage(Node<StorageComponent> node, Node<StorableComponent> item,
+        [NotNullWhen(true)] out Node? removedItem)
+    {
+        removedItem = null;
+        if (!_nodeManager.TryGetComponent<StorableComponent>(item, out var storableComponent))
+            return false;
+        
+        node.Comp.Items.Remove(item);
+        node.Comp.TotalStoredSpace -= storableComponent.Space;
+        
+        var signal = new ItemRemovedFromStorageSignal((item, storableComponent));
+        _nodeManager.SignalBus.EmitItemRemovedFromStorageSignal(node, ref signal);
+            
+        /*if (item.Owner is Node2D itemNode2D)
+        {
+            itemNode2D.SetVisible(true);
+            item.Owner.Reparent(node.Owner.GetParent());
+        }*/
+
+        removedItem = item;
+        return true;
+    }
+
     // Opens the inventory UI if all the requirements are met
     private void TryOpenInventoryUi()
     {
@@ -218,64 +241,5 @@ public partial class StorageSystem : NodeSystem
         
         var storageSceneSystem = (StorageSceneSystem)customWindow.Content;
         storageSceneSystem.SetDetails((bagItem, storageComponent));
-    }
-    
-    public bool TryRemoveItemFromStorage(Node<StorageComponent> node, Node<StorableComponent> item,
-        [NotNullWhen(true)] out Node? removedItem)
-    {
-        removedItem = null;
-        if (!_nodeManager.TryGetComponent<StorableComponent>(item, out var storableComponent))
-            return false;
-        
-        node.Comp.Items.Remove(item);
-        node.Comp.TotalStoredSpace -= storableComponent.Space;
-        
-        var signal = new ItemRemovedFromStorageSignal((item, storableComponent));
-        _nodeManager.SignalBus.EmitItemRemovedFromStorageSignal(node, ref signal);
-            
-        /*if (item.Owner is Node2D itemNode2D)
-        {
-            itemNode2D.SetVisible(true);
-            item.Owner.Reparent(node.Owner.GetParent());
-        }*/
-
-        removedItem = item;
-        return true;
-    }
-}
-
-/// <summary>
-/// ExtraSmall (Pen, paper, materials) 
-/// Small (Books? Hats? Scarves? Shoes?)
-/// Medium (Shirt, pants, robe, cloaks, daggers? )
-/// Large (Swords, bows, armor?)
-/// ExtraLarge (I really have no clue)
-/// </summary>
-public enum ItemSize
-{
-    ExtraSmall,
-    Small,
-    Medium,
-    Large,
-    ExtraLarge
-}
-
-public partial class ItemPutInStorageSignal : UserSignalArgs
-{
-    public Node<StorableComponent> Storable;
-
-    public ItemPutInStorageSignal(Node<StorableComponent> storable)
-    {
-        Storable = storable;
-    }
-}
-
-public partial class ItemRemovedFromStorageSignal : UserSignalArgs
-{
-    public Node<StorableComponent> Storable;
-
-    public ItemRemovedFromStorageSignal(Node<StorableComponent> storable)
-    {
-        Storable = storable;
     }
 }
