@@ -28,6 +28,7 @@ public partial class StorageSystem : NodeSystem
         _nodeManager.SignalBus.IsClothingEquippableSignal += OnIsClothingEquippable;
         _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
         _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
+        _nodeManager.SignalBus.ItemRemovedFromStorageSignal += OnItemRemovedFromStorage;
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -97,7 +98,7 @@ public partial class StorageSystem : NodeSystem
             if (node.Owner != wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
                 _clothingSystem.TryPutItemInHand((interactee, wearsClothingComponent), (node, storableComponent));
             else
-                _clothingSystem.TryUnequipClothing((interactee, wearsClothingComponent), ClothingSlot.Inhand);
+                _clothingSystem.TryUnequipClothing((interactee, wearsClothingComponent), ClothingSlot.Inhand, true);
         };
     }
 
@@ -165,6 +166,19 @@ public partial class StorageSystem : NodeSystem
     private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
     {
         AttachItemInvisibly(node, args.Storable);
+
+        if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
+            return;
+        
+        storableComponent.Volume += args.Storable.Comp.Volume;
+    }
+
+    private void OnItemRemovedFromStorage(Node<StorageComponent> node, ref ItemRemovedFromStorageSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
+            return;
+        
+        storableComponent.Volume -= args.Storable.Comp.Volume;
     }
 
     public void AttachItemInvisibly(Node main, Node nodeToAttach)
@@ -179,9 +193,9 @@ public partial class StorageSystem : NodeSystem
 
     public bool CanBeAddedToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
     {
-        // Item would exceed the maximum space of the storage
+        // Item would exceed the capacity of the storage
         // TODO: Add a written reason why it failed that pops up
-        if (node.Comp.TotalStoredSpace + item.Comp.Space > node.Comp.MaxSpace)
+        if (node.Comp.VolumeOccupied + item.Comp.Volume > node.Comp.Capacity)
             return false;
 
         // Item is too large to fit into the storage
@@ -224,11 +238,11 @@ public partial class StorageSystem : NodeSystem
     /// </summary>
     public float GetStoragePercentage(Node<StorageComponent> node)
     {
-        return node.Comp.TotalStoredSpace / node.Comp.MaxSpace * 100;
+        return node.Comp.VolumeOccupied / node.Comp.Capacity * 100;
     }
 
     /// <summary>
-    /// Attempts to add an item to a storage, but fails if there is not enough space or if the item is too large
+    /// Attempts to add an item to a storage, but fails if there is not enough capacity or if the item is too large
     /// If true, handle it and remove the item from wherever it is
     /// </summary>
     public bool TryAddItemToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
@@ -237,8 +251,9 @@ public partial class StorageSystem : NodeSystem
             return false;
         
         node.Comp.Items.Add(item);
-        node.Comp.TotalStoredSpace += item.Comp.Space;
+        node.Comp.VolumeOccupied += item.Comp.Volume;
         
+        // Pickup animation
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
         {
             var tween = CreateTween();
@@ -264,7 +279,7 @@ public partial class StorageSystem : NodeSystem
             return false;
         
         node.Comp.Items.Remove(item);
-        node.Comp.TotalStoredSpace -= item.Comp.Space;
+        node.Comp.VolumeOccupied -= item.Comp.Volume;
         
         var signal = new ItemRemovedFromStorageSignal(item);
         _nodeManager.SignalBus.EmitItemRemovedFromStorageSignal(node, ref signal);

@@ -20,4 +20,4 @@ texture = ExtResource("2_s2j0g")
 EquippedSpriteFrames = ExtResource("2_hbe05")
 
 [node name="StorableComponent" parent="." index="6"]
-Space = 3.0
+Volume = 2.0

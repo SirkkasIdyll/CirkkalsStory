@@ -23,4 +23,4 @@ texture = ExtResource("2_qoore")
 EquippedSpriteFrames = ExtResource("3_ejbnm")
 
 [node name="StorableComponent" parent="." index="7"]
-Space = 0.5
+Volume = 0.2

@@ -20,5 +20,5 @@ texture = ExtResource("2_b8cb3")
 EquippedSpriteFrames = ExtResource("3_0a5oc")
 
 [node name="StorageComponent" parent="." index="6"]
-MaxSpace = 50.0
+Capacity = 50.0
 MaxItemSize = 2

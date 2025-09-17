@@ -229,27 +229,48 @@ public partial class ClothingSystem : NodeSystem
         if (clothing.Comp.EquippedSpriteFrames != null && spriteSlot != null)
             spriteSlot.SpriteFrames = clothing.Comp.EquippedSpriteFrames;
 
+        // Handles clothing which by default occupy the inhand slot
+        if (clothing.Comp.ClothingSlot == ClothingSlot.Inhand
+            && _nodeManager.TryGetComponent<StorableComponent>(clothing, out var storableComponent))
+        {
+            var itemPutInHandSignal = new ItemPutInHandSignal((clothing, storableComponent));
+            _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref itemPutInHandSignal);
+            return true;
+        }
+        
         var signal = new ClothingEquippedSignal(clothing);
         _nodeManager.SignalBus.EmitClothingEquippedSignal(node, ref signal);
         return true;
     }
 
+    /// <summary>
+    /// Non-clothing items can be equipped to the hand if it is storable
+    /// </summary>
     public bool TryPutItemInHand(Node<WearsClothingComponent> node, Node<StorableComponent> item)
     {
         if (!CanBePutInHand(node, item))
             return false;
         
-        if (_nodeManager.TryGetComponent<ClothingComponent>(item, out var clothingComponent)
-            && item.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot])
+        // when the item being put in hand is already worn in a different slot, unequip it first
+        _nodeManager.TryGetComponent<ClothingComponent>(item, out var clothingComponent);
+        if (clothingComponent != null && item.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot])
             TryUnequipClothing(node, clothingComponent.ClothingSlot);
         
-        // For now, it's likely the item doesn't have an in-hand sprite
-        // if equip clothing failed on it
         node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
+        
+        // Set the sprite 
         var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/Inhand");
         if (spriteSlot != null)
-            spriteSlot.SpriteFrames = null;
+        {
+            if (clothingComponent != null
+                && clothingComponent.ClothingSlot == ClothingSlot.Inhand
+                && clothingComponent.EquippedSpriteFrames != null)
+                spriteSlot.SpriteFrames = clothingComponent.EquippedSpriteFrames;
+            else
+                spriteSlot.SpriteFrames = null;
+        }
 
+        // Pickup animation
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
         {
             var tween = CreateTween();

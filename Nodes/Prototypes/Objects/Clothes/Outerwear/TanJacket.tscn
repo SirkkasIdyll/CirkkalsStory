@@ -20,4 +20,4 @@ texture = ExtResource("2_cav80")
 EquippedSpriteFrames = ExtResource("2_exu3e")
 
 [node name="StorableComponent" parent="." index="6"]
-Space = 6.0
+Volume = 4.0

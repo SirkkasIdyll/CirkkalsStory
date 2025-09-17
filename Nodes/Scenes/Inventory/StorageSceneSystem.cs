@@ -137,7 +137,7 @@ public partial class StorageSceneSystem : VBoxContainer
 
 	private void UpdateStorageProgressBar(Node<StorageComponent> node)
 	{
-		_storageProgressBarLabel.SetText(node.Comp.TotalStoredSpace + " / " + node.Comp.MaxSpace);
+		_storageProgressBarLabel.SetText(node.Comp.VolumeOccupied + " / " + node.Comp.Capacity);
 		var storagePercentage = _storageSystem.GetStoragePercentage(node);
 		_storageProgressBar.Value = storagePercentage;
 		
