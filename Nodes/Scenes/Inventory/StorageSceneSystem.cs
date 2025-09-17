@@ -17,18 +17,17 @@ public partial class StorageSceneSystem : VBoxContainer
 	[Export] private Label _storageProgressBarLabel = null!;
 	[Export] private VBoxContainer _itemButtonContainer = null!;
 	
-	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
+	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	[InjectDependency] private readonly ClothingSystem _clothingSystem = null!;
 	[InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
 	[InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
 	[InjectDependency] private readonly StorageSystem _storageSystem = null!;
-	
-	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
+
 	private const string Green = "#5c9055";
 	private const string Yellow = "#dfcb43";
 	private const string Red = "#c22e15";
-
+	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Dictionary<Node, Button> _buttonDictionary = [];
 
 	public override void _Ready()
@@ -101,23 +100,6 @@ public partial class StorageSceneSystem : VBoxContainer
 		AddItemButtons(node, items);
 	}
 
-	private void UpdateStorageProgressBar(Node<StorageComponent> node)
-	{
-		_storageProgressBarLabel.SetText(node.Comp.TotalStoredSpace + " / " + node.Comp.MaxSpace);
-		var storagePercentage = _storageSystem.GetStoragePercentage(node);
-		_storageProgressBar.Value = storagePercentage;
-		
-		// Sets the color to green, red, or yellow depending on how filled the storage is
-		var storageBarColor = new StyleBoxFlat();
-		if (storagePercentage > 80)
-			storageBarColor.BgColor = Color.FromHtml(Red);
-		else if (storagePercentage > 50)
-			storageBarColor.BgColor = Color.FromHtml(Yellow);
-		else
-			storageBarColor.BgColor = Color.FromHtml(Green);
-		_storageProgressBar.AddThemeStyleboxOverride("fill", storageBarColor);
-	}
-
 	private void AddItemButtons(Node<StorageComponent> node, Array<Node> items)
 	{
 		foreach (var item in items)
@@ -151,5 +133,22 @@ public partial class StorageSceneSystem : VBoxContainer
 				OnSecondaryInteract(node, item);
 		};
 		return button;
+	}
+
+	private void UpdateStorageProgressBar(Node<StorageComponent> node)
+	{
+		_storageProgressBarLabel.SetText(node.Comp.TotalStoredSpace + " / " + node.Comp.MaxSpace);
+		var storagePercentage = _storageSystem.GetStoragePercentage(node);
+		_storageProgressBar.Value = storagePercentage;
+		
+		// Sets the color to green, red, or yellow depending on how filled the storage is
+		var storageBarColor = new StyleBoxFlat();
+		if (storagePercentage > 80)
+			storageBarColor.BgColor = Color.FromHtml(Red);
+		else if (storagePercentage > 50)
+			storageBarColor.BgColor = Color.FromHtml(Yellow);
+		else
+			storageBarColor.BgColor = Color.FromHtml(Green);
+		_storageProgressBar.AddThemeStyleboxOverride("fill", storageBarColor);
 	}
 }
