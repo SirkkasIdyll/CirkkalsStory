@@ -6,7 +6,6 @@ using CS.Components.UI;
 using CS.Nodes.Scenes.Inventory;
 using CS.Nodes.UI.CustomWindow;
 using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
 using Godot;
 using Godot.Collections;
 
@@ -26,6 +25,7 @@ public partial class StorageSystem : NodeSystem
         _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
         _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
+        _nodeManager.SignalBus.IsClothingEquippableSignal += OnIsClothingEquippable;
         _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
         _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
     }
@@ -41,6 +41,20 @@ public partial class StorageSystem : NodeSystem
     private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
     {
         AttachItemInvisibly(node, args.Clothing);
+        
+        _nodeManager.NodeQuery<StorageComponent>(out var dictionary);
+        foreach (var (storage, storageComponent) in dictionary)
+        {
+            // Find the storage that contains the item
+            if (!storageComponent.Items.Contains(args.Clothing))
+                continue;
+            
+            if (!_nodeManager.TryGetComponent<StorableComponent>(args.Clothing, out var storableComponent))
+                return;
+
+            TryRemoveItemFromStorage((storage, storageComponent), (args.Clothing, storableComponent), out _);
+            return;
+        }
     }
 
     private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
@@ -102,21 +116,50 @@ public partial class StorageSystem : NodeSystem
             return;
 
         var bag = wearsClothingComponent.ClothingSlots[ClothingSlot.Bag];
-        if (bag != null
-            && _nodeManager.TryGetComponent<StorageComponent>(bag, out var storageComponent)
-            && TryAddItemToStorage((bag, storageComponent), (node, storableComponent)))
-        {
+        if (bag == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<StorageComponent>(bag, out var storageComponent))
+            return;
+        
+        if (TryAddItemToStorage((bag, storageComponent), (node, storableComponent)))
             args.Handled = true;
+    }
+
+    private void OnIsClothingEquippable(Node<WearsClothingComponent> node, ref IsClothingEquippableSignal args)
+    {
+        _nodeManager.NodeQuery<StorageComponent>(out var dictionary);
+        foreach (var (storage, storageComponent) in dictionary)
+        {
+            // Find the storage that contains the item
+            if (!storageComponent.Items.Contains(args.Clothing))
+                continue;
+            
+            if (!_nodeManager.TryGetComponent<StorableComponent>(args.Clothing, out var storableComponent))
+                continue;
+
+            // If the item can't be removed from the storage, cancel the attempt to equip the clothing item
+            if (!CanBeRemovedFromStorage((storage, storageComponent), (args.Clothing, storableComponent)))
+                args.Canceled = true;
+            
             return;
         }
-
-        if (_clothingSystem.TryPutItemInHand((args.Interactee, wearsClothingComponent), (node, storableComponent)))
-            args.Handled = true;
     }
 
     private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
     {
         AttachItemInvisibly(node, args.Storable);
+        
+        _nodeManager.NodeQuery<StorageComponent>(out var dictionary);
+        foreach (var (storage, storageComponent) in dictionary)
+        {
+            // Find the storage that contains the item
+            if (!storageComponent.Items.Contains(args.Storable))
+                continue;
+
+            TryRemoveItemFromStorage((storage, storageComponent), args.Storable, out _);
+            return;
+        }
     }
 
     private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
@@ -132,6 +175,40 @@ public partial class StorageSystem : NodeSystem
         node2DToAttach.SetVisible(false);
         nodeToAttach.Reparent(main, false);
         node2DToAttach.GlobalPosition = mainNode2D.GlobalPosition;
+    }
+
+    public bool CanBeAddedToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
+    {
+        // Item would exceed the maximum space of the storage
+        // TODO: Add a written reason why it failed that pops up
+        if (node.Comp.TotalStoredSpace + item.Comp.Space > node.Comp.MaxSpace)
+            return false;
+
+        // Item is too large to fit into the storage
+        // TODO: Add a written reason why it failed that pops up
+        if (node.Comp.MaxItemSize < item.Comp.ItemSize)
+            return false;
+
+        // Check other systems if they prevent it
+        var signal = new CanBePutInStorageSignal(item);
+        _nodeManager.SignalBus.EmitCanBePutInStorageSignal(node, ref signal);
+
+        if (signal.Canceled)
+            return false;
+        
+        return true;
+    }
+
+    public bool CanBeRemovedFromStorage(Node<StorageComponent> node, Node<StorableComponent> item)
+    {
+        // Check any other systems preventing item from being removed
+        var signal = new CanBeRemovedFromStorageSignal(item);
+        _nodeManager.SignalBus.EmitCanBeRemovedFromStorageSignal(node, ref signal);
+
+        if (signal.Canceled)
+            return false;
+        
+        return true;
     }
 
     /// <summary>
@@ -156,20 +233,11 @@ public partial class StorageSystem : NodeSystem
     /// </summary>
     public bool TryAddItemToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
     {
-        // TODO: Add a written reason why it failed that pops up
-        if (!_nodeManager.TryGetComponent<StorableComponent>(item, out var storableComponent))
-            return false;
-
-        // TODO: Add a written reason why it failed that pops up
-        if (node.Comp.TotalStoredSpace + storableComponent.Space > node.Comp.MaxSpace)
-            return false;
-
-        // TODO: Add a written reason why it failed that pops up
-        if (node.Comp.MaxItemSize < storableComponent.ItemSize)
+        if (!CanBeAddedToStorage(node, item))
             return false;
         
         node.Comp.Items.Add(item);
-        node.Comp.TotalStoredSpace += storableComponent.Space;
+        node.Comp.TotalStoredSpace += item.Comp.Space;
         
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
         {
@@ -192,20 +260,14 @@ public partial class StorageSystem : NodeSystem
         [NotNullWhen(true)] out Node? removedItem)
     {
         removedItem = null;
-        if (!_nodeManager.TryGetComponent<StorableComponent>(item, out var storableComponent))
+        if (!CanBeRemovedFromStorage(node, item))
             return false;
         
         node.Comp.Items.Remove(item);
-        node.Comp.TotalStoredSpace -= storableComponent.Space;
+        node.Comp.TotalStoredSpace -= item.Comp.Space;
         
-        var signal = new ItemRemovedFromStorageSignal((item, storableComponent));
+        var signal = new ItemRemovedFromStorageSignal(item);
         _nodeManager.SignalBus.EmitItemRemovedFromStorageSignal(node, ref signal);
-            
-        /*if (item.Owner is Node2D itemNode2D)
-        {
-            itemNode2D.SetVisible(true);
-            item.Owner.Reparent(node.Owner.GetParent());
-        }*/
 
         removedItem = item;
         return true;

@@ -55,6 +55,9 @@ public partial class NodeManager
 
         foreach (var file in nodeFiles)
         {
+            if (file.EndsWith(".Events.cs"))
+                continue;
+            
             var node = ResourceLoader.Load<CSharpScript>(file).New().Obj;
             if (node is Component component)
             {

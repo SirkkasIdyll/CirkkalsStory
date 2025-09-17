@@ -3,8 +3,6 @@ using CS.SlimeFactory.Signals;
 
 namespace CS.Components.Inventory;
 
-public partial class StorageSystem;
-
 /// <summary>
 /// ExtraSmall (Pen, paper, materials) 
 /// Small (Books? Hats? Scarves? Shoes?)
@@ -19,6 +17,26 @@ public enum ItemSize
     Medium,
     Large,
     ExtraLarge
+}
+
+public partial class CanBePutInStorageSignal : CancellableSignalArgs
+{
+    public Node<StorableComponent> Storable;
+
+    public CanBePutInStorageSignal(Node<StorableComponent> storable)
+    {
+        Storable = storable;
+    }
+}
+
+public partial class CanBeRemovedFromStorageSignal : CancellableSignalArgs
+{
+    public Node<StorableComponent> Storable;
+
+    public CanBeRemovedFromStorageSignal(Node<StorableComponent> storable)
+    {
+        Storable = storable;
+    }
 }
 
 public partial class ItemPutInStorageSignal : UserSignalArgs

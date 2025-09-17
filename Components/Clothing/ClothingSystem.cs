@@ -89,14 +89,57 @@ public partial class ClothingSystem : NodeSystem
         if (args.Handled)
             return;
         
-        if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
-            return;
-
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
             return;
 
-        if (TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent)))
+        if (_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent)
+            && TryPutItemInHand((args.Interactee, wearsClothingComponent), (node, storableComponent)))
+        {
             args.Handled = true;
+            return;
+        }
+        
+        if (_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent)
+            && TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent)))
+        {
+            args.Handled = true;
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Checks if the slot exists and if it's occupied, or too large
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="storable"></param>
+    /// <returns></returns>
+    public bool CanBePutInHand(Node<WearsClothingComponent> node, Node<StorableComponent> storable)
+    {
+        // Check if slot exists
+        if (!node.Comp.ClothingSlots.TryGetValue(ClothingSlot.Inhand, out var value))
+            return false;
+
+        // If hand is occupied, don't do anything
+        if (value != null)
+            return false;
+
+        if (storable.Comp.ItemSize == ItemSize.ExtraLarge)
+            return false;
+
+        // Clothing is already equipped to a slot and apparently can't be unequipped
+        if (_nodeManager.TryGetComponent<ClothingComponent>(storable, out var clothingComponent)
+            && storable.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot]
+            && !CanBeUnequipped(node, clothingComponent.ClothingSlot))
+            return false;
+        
+        // Check other systems for reasons why this can't be put in hand
+        var signal = new CanItemBePutInHandSignal(storable);
+        _nodeManager.SignalBus.EmitCanItemBePutInHandSignal(node, ref signal);
+
+        if (signal.Canceled)
+            return false;
+
+        return true;
     }
 
     /// <summary>
@@ -193,21 +236,7 @@ public partial class ClothingSystem : NodeSystem
 
     public bool TryPutItemInHand(Node<WearsClothingComponent> node, Node<StorableComponent> item)
     {
-        // Check if slot exists
-        if (!node.Comp.ClothingSlots.TryGetValue(ClothingSlot.Inhand, out var value))
-            return false;
-
-        // If hand is occupied, don't do anything
-        if (value != null)
-            return false;
-
-        if (item.Comp.ItemSize == ItemSize.ExtraLarge)
-            return false;
-        
-        // Clothing is already equipped to a slot and apparently can't be unequipped
-        if (_nodeManager.TryGetComponent<ClothingComponent>(item, out var clothingComponent)
-            && item.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot]
-            && !TryUnequipClothing(node, clothingComponent.ClothingSlot))
+        if (!CanBePutInHand(node, item))
             return false;
 
         // For now, it's likely the item doesn't have an in-hand sprite
@@ -217,6 +246,7 @@ public partial class ClothingSystem : NodeSystem
         if (spriteSlot != null)
             spriteSlot.SpriteFrames = null;
 
+        // TODO: Bug where item is visible in tree but not out in world. Check for being out in the world.
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
         {
             var tween = CreateTween();
@@ -233,7 +263,7 @@ public partial class ClothingSystem : NodeSystem
         _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
         return true;
     }
-
+    
     public bool TryUnequipClothing(Node<WearsClothingComponent> node, ClothingSlot slot)
     {
         if (!CanBeUnequipped(node, slot))
