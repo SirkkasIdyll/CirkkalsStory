@@ -18,3 +18,7 @@ texture = ExtResource("2_v4h8e")
 
 [node name="ClothingComponent" parent="." index="4"]
 EquippedSpriteFrames = ExtResource("3_1jvng")
+
+[node name="StorableComponent" parent="." index="6"]
+Space = 3.0
+ItemSize = 2

@@ -229,6 +229,7 @@ public partial class StorageSystem : NodeSystem
         
         node.Comp.Items.Remove(item);
         node.Comp.TotalStoredSpace -= storableComponent.Space;
+        
         var signal = new ItemRemovedFromStorageSignal((item, storableComponent));
         _nodeManager.SignalBus.EmitItemRemovedFromStorageSignal(node, ref signal);
             

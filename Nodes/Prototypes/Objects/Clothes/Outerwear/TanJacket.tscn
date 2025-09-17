@@ -18,3 +18,6 @@ texture = ExtResource("2_cav80")
 
 [node name="ClothingComponent" parent="." index="4"]
 EquippedSpriteFrames = ExtResource("2_exu3e")
+
+[node name="StorableComponent" parent="." index="6"]
+Space = 6.0

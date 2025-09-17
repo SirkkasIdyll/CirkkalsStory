@@ -14,6 +14,7 @@ public partial class StorageSceneSystem : VBoxContainer
 {
 	[ExportCategory("Owned")]
 	[Export] private ProgressBar _storageProgressBar = null!;
+	[Export] private Label _storageProgressBarLabel = null!;
 	[Export] private VBoxContainer _itemButtonContainer = null!;
 	
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
@@ -43,6 +44,7 @@ public partial class StorageSceneSystem : VBoxContainer
 		var button = CreateItemButton(node, args.Storable);
 		_itemButtonContainer.AddChild(button);
 		_buttonDictionary[args.Storable] = button;
+		UpdateStorageProgressBar(node);
 	}
 
 	private void OnItemRemovedFromStorage(Node<StorageComponent> node, ref ItemRemovedFromStorageSignal args)
@@ -50,6 +52,7 @@ public partial class StorageSceneSystem : VBoxContainer
 		var button = _buttonDictionary[args.Storable];
 		_itemButtonContainer.RemoveChild(button);
 		_buttonDictionary.Remove(args.Storable);
+		UpdateStorageProgressBar(node);
 	}
 
 	private void OnPrimaryInteract(Node<StorageComponent> node, Node<StorableComponent> item)
@@ -100,6 +103,7 @@ public partial class StorageSceneSystem : VBoxContainer
 
 	private void UpdateStorageProgressBar(Node<StorageComponent> node)
 	{
+		_storageProgressBarLabel.SetText(node.Comp.TotalStoredSpace + " / " + node.Comp.MaxSpace);
 		var storagePercentage = _storageSystem.GetStoragePercentage(node);
 		_storageProgressBar.Value = storagePercentage;
 		

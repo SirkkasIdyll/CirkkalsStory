@@ -176,21 +176,15 @@ public partial class ClothingSystem : NodeSystem
     /// </summary>
     public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing, bool unequipIfOccupied = false)
     {
-        // Check if slot exists
-        if (!node.Comp.ClothingSlots.TryGetValue(clothing.Comp.ClothingSlot, out var value))
-            return false;
-        
-        if (value != null && !unequipIfOccupied)
+        if (!CanBeEquipped(node, clothing, unequipIfOccupied))
             return false;
 
-        // Try to take off what you're currently wearing
-        // If it fails, it means you can't take off whatever you're currently wearing
-        // i.e. some kind of cursed or binded object
-        if (value != null && unequipIfOccupied && !TryUnequipClothing(node, clothing.Comp.ClothingSlot))
-            return false;
-
-        if (clothing.Owner == node.Comp.ClothingSlots[ClothingSlot.Inhand] && !TryUnequipClothing(node, ClothingSlot.Inhand))
-            return false;
+        // If we're already wearing something and want to swap it out, unequip the clothing
+        // or if the item is in our hand, get it out of our hand
+        if (node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] != null && unequipIfOccupied)
+            TryUnequipClothing(node, clothing.Comp.ClothingSlot);
+        else if (clothing.Owner == node.Comp.ClothingSlots[ClothingSlot.Inhand])
+            TryUnequipClothing(node, ClothingSlot.Inhand);
         
         // Equip the clothing to that slot
         node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] = clothing;
@@ -208,6 +202,76 @@ public partial class ClothingSystem : NodeSystem
 
     public bool TryUnequipClothing(Node<WearsClothingComponent> node, ClothingSlot slot)
     {
+        if (!CanBeUnequipped(node, slot))
+            return false;
+        
+        var clothingItem = node.Comp.ClothingSlots[slot];
+        if (clothingItem == null)
+            return false;
+        
+        // Put the item back into the world and make it visible again
+        clothingItem.Reparent(node.Owner.GetParent());
+        if (clothingItem is Node2D clothesNode2D)
+            clothesNode2D.SetVisible(true);
+        
+        // Removes the item from the character's clothing slots and removes the appearance of it on the character
+        node.Comp.ClothingSlots[slot] = null;
+        var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + slot);
+        if (spriteSlot != null)
+            spriteSlot.SpriteFrames = null;
+
+        if (slot == ClothingSlot.Inhand && _nodeManager.TryGetComponent<StorableComponent>(clothingItem, out var storableComponent))
+        {
+            var signal = new ItemRemovedFromHandSignal((clothingItem, storableComponent));
+            _nodeManager.SignalBus.EmitItemRemovedFromHandSignal(node, ref signal);
+        }
+        else if (_nodeManager.TryGetComponent<ClothingComponent>(clothingItem, out var clothingComponent))
+        {
+            var signal = new ClothingUnequippedSignal((clothingItem, clothingComponent));
+            _nodeManager.SignalBus.EmitClothingUnequippedSignal(node, ref signal);
+        }
+
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if the slot exists, and if it's occupied if we can unequip what's in that slot if needed
+    /// </summary>
+    public bool CanBeEquipped(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing,
+        bool unequipIfOccupied = false)
+    {
+        // Check if slot exists
+        if (!node.Comp.ClothingSlots.TryGetValue(clothing.Comp.ClothingSlot, out var value))
+            return false;
+        
+        // If the slot is occupied and we don't want to unequip it, return false
+        if (value != null && !unequipIfOccupied)
+            return false;
+        
+        // If we do want to unequip what's already in the slot to swap it out, check if we can
+        if (value != null && unequipIfOccupied && !CanBeUnequipped(node, clothing.Comp.ClothingSlot))
+            return false;
+
+        // If we're equipping from the person's own hands, we always want that to happen
+        if (clothing.Owner == node.Comp.ClothingSlots[ClothingSlot.Inhand] && !CanBeUnequipped(node, ClothingSlot.Inhand))
+            return false;
+        
+        // Check other systems that may be preventing the clothing from being equipped
+        // i.e. cursed and binded
+        var signal = new IsClothingEquippableSignal(clothing);
+        _nodeManager.SignalBus.EmitIsClothingEquippableSignal(node, ref signal);
+
+        if (signal.Canceled)
+            return false;
+        
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if the slot exists, if there's something in that slot, 
+    /// </summary>
+    public bool CanBeUnequipped(Node<WearsClothingComponent> node, ClothingSlot slot)
+    {
         // Check if slot exists
         if (!node.Comp.ClothingSlots.TryGetValue(slot, out var value))
             return false;
@@ -216,32 +280,14 @@ public partial class ClothingSystem : NodeSystem
         if (value == null)
             return false;
         
-        // Put the item back into the world and make it visible again
-        value.Reparent(node.Owner.GetParent());
-        if (value is Node2D clothesNode2D)
-            clothesNode2D.SetVisible(true);
+        // Check other systems that may be preventing the clothing from being unequipped
+        // i.e. cursed and binded
+        var signal = new IsClothingUnequippableSignal(slot);
+        _nodeManager.SignalBus.EmitIsClothingUnequippableSignal(node, ref signal);
         
-        // TODO: maybe some kind of CursedClothingComponent or something to make perma-equipped clothes that require dispelling
-        // Removes the item from the character's clothing slots and removes the appearance of it on the character
-        node.Comp.ClothingSlots[slot] = null;
-        var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + slot);
-        if (spriteSlot != null)
-            spriteSlot.SpriteFrames = null;
-
-        if (slot == ClothingSlot.Inhand && _nodeManager.TryGetComponent<StorableComponent>(value, out var storableComponent))
-        {
-            var signal = new ItemRemovedFromHandSignal((value, storableComponent));
-            _nodeManager.SignalBus.EmitItemRemovedFromHandSignal(node, ref signal);
-            return true;
-        }
+        if (signal.Canceled)
+            return false;
         
-        // TODO: Now put the item back into their inventory, their hand, drop it into the world, literally anything
-        if (_nodeManager.TryGetComponent<ClothingComponent>(value, out var clothingComponent))
-        {
-            var signal = new ClothingUnequippedSignal((value, clothingComponent));
-            _nodeManager.SignalBus.EmitClothingUnequippedSignal(node, ref signal);
-        }
-
         return true;
     }
 
@@ -251,42 +297,3 @@ public partial class ClothingSystem : NodeSystem
     }
 }
 
-public partial class ClothingEquippedSignal : UserSignalArgs
-{
-    public Node<ClothingComponent> Clothing;
-
-    public ClothingEquippedSignal(Node<ClothingComponent> clothing)
-    {
-        Clothing = clothing;
-    }
-}
-
-public partial class ItemPutInHandSignal : UserSignalArgs
-{
-    public Node<StorableComponent> Storable;
-
-    public ItemPutInHandSignal(Node<StorableComponent> storable)
-    {
-        Storable = storable;
-    }
-}
-
-public partial class ClothingUnequippedSignal : UserSignalArgs
-{
-    public Node<ClothingComponent> Clothing;
-
-    public ClothingUnequippedSignal(Node<ClothingComponent> clothing)
-    {
-        Clothing = clothing;
-    }
-}
-
-public partial class ItemRemovedFromHandSignal : UserSignalArgs
-{
-    public Node<StorableComponent> Storable;
-
-    public ItemRemovedFromHandSignal(Node<StorableComponent> storable)
-    {
-        Storable = storable;
-    }
-}

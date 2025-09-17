@@ -36,4 +36,21 @@ public partial class SignalBus
     {
         ItemRemovedFromHandSignal?.Invoke(node, ref args);
     }
+
+    public delegate void IsClothingEquippableSignalHandler(Node<WearsClothingComponent> node,
+        ref IsClothingEquippableSignal args);
+    public event IsClothingEquippableSignalHandler? IsClothingEquippableSignal;
+    public void EmitIsClothingEquippableSignal(Node<WearsClothingComponent> node, ref IsClothingEquippableSignal args)
+    {
+        IsClothingEquippableSignal?.Invoke(node, ref args);
+    }
+
+    public delegate void IsClothingUnequippableSignalHandler(Node<WearsClothingComponent> node,
+        ref IsClothingUnequippableSignal args);
+    public event IsClothingUnequippableSignalHandler? IsClothingUnequippableSignal;
+    public void EmitIsClothingUnequippableSignal(Node<WearsClothingComponent> node,
+        ref IsClothingUnequippableSignal args)
+    {
+        IsClothingUnequippableSignal?.Invoke(node, ref args);
+    }
 }
