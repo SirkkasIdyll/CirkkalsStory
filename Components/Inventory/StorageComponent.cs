@@ -1,4 +1,5 @@
-﻿using CS.SlimeFactory;
+﻿using CS.Nodes.UI.Audio;
+using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
@@ -13,6 +14,18 @@ public partial class StorageComponent : Component
     public float Capacity;
     
     /// <summary>
+    /// Sound played when closing the storage
+    /// </summary>
+    [Export]
+    public AudioStreamWav? CloseSound;
+    
+    /// <summary>
+    /// Sound played when inserting something into the storage
+    /// </summary>
+    [Export]
+    public AudioStreamWav? InsertSound;
+    
+    /// <summary>
     /// What items are currently being stored
     /// </summary>
     [Export]
@@ -25,7 +38,23 @@ public partial class StorageComponent : Component
     public ItemSize MaxItemSize = ItemSize.Large;
     
     /// <summary>
+    /// Sound played when opening the storage
+    /// </summary>
+    [Export]
+    public AudioStreamWav? OpenSound;
+    
+    /// <summary>
+    /// Sound played when removing something from storage
+    /// </summary>
+    [Export]
+    public AudioStreamWav? RemoveSound;
+    
+    /// <summary>
     /// How much volume is currently occupied by <see cref="StorableComponent"/>
     /// </summary>
     public float VolumeOccupied;
+
+    [ExportCategory("Owned")]
+    [Export]
+    public FluctuatingAudioStreamPlayer2DSystem FluctuatingAudioStreamPlayer2DSystem = null!;
 }

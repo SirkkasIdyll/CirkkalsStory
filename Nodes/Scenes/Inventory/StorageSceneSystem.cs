@@ -13,6 +13,7 @@ namespace CS.Nodes.Scenes.Inventory;
 public partial class StorageSceneSystem : VBoxContainer
 {
 	[ExportCategory("Owned")]
+	[Export] private Button? _title;
 	[Export] private ProgressBar _storageProgressBar = null!;
 	[Export] private Label _storageProgressBarLabel = null!;
 	[Export] private VBoxContainer _itemButtonContainer = null!;
@@ -37,7 +38,7 @@ public partial class StorageSceneSystem : VBoxContainer
 		_nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
 		_nodeManager.SignalBus.ItemRemovedFromStorageSignal += OnItemRemovedFromStorage;
 	}
-
+	
 	private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
 	{
 		var button = CreateItemButton(node, args.Storable);
@@ -94,10 +95,23 @@ public partial class StorageSceneSystem : VBoxContainer
 	public void SetDetails(Node<StorageComponent> node)
 	{
 		_nodeSystemManager.InjectNodeSystemDependencies(this);
+		
+		if (_title != null && _descriptionSystem.TryGetDisplayName(node, out var name))
+			_title.SetText(name);
+		
+		// Play closing storage SFX
+		TreeExiting += () =>
+		{
+			var signal = new StorageClosedSignal();
+			_nodeManager.SignalBus.EmitStorageClosedSignal(node, ref signal);
+		};
+		
 		UpdateStorageProgressBar(node);
-
 		var items = _storageSystem.GetStorageItems(node);
 		AddItemButtons(node, items);
+
+		var signal = new StorageOpenedSignal();
+		_nodeManager.SignalBus.EmitStorageOpenedSignal(node, ref signal);
 	}
 
 	private void AddItemButtons(Node<StorageComponent> node, Array<Node> items)

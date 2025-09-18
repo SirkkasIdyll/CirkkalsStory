@@ -1,8 +1,12 @@
-[gd_scene load_steps=4 format=3 uid="uid://bubhjug0wt7lo"]
+[gd_scene load_steps=8 format=3 uid="uid://bubhjug0wt7lo"]
 
 [ext_resource type="PackedScene" uid="uid://b2hkw33agsvim" path="res://Nodes/Prototypes/Objects/Clothes/Bags/BaseBag.tscn" id="1_fcl8q"]
 [ext_resource type="Texture2D" uid="uid://bl1oshptsxtki" path="res://Resources/Sprites/Clothes/Bags/SatchelIcon.png" id="2_b8cb3"]
 [ext_resource type="SpriteFrames" uid="uid://ey66hpqjagm1" path="res://Resources/Sprites/Clothes/Bags/Satchel.tres" id="3_0a5oc"]
+[ext_resource type="AudioStream" uid="uid://b6u4cjs86rss" path="res://Resources/Sounds/SFX/KnapsackCanvas 9006_33_8.wav" id="4_b01fi"]
+[ext_resource type="AudioStream" uid="uid://bjsma3qikutpx" path="res://Resources/Sounds/SFX/ClothesBag 6046_31_2.wav" id="5_6rsih"]
+[ext_resource type="AudioStream" uid="uid://cfur8j4oe0lv6" path="res://Resources/Sounds/SFX/KnapsackCanvas 9006_33_4.wav" id="6_4rk4o"]
+[ext_resource type="AudioStream" uid="uid://cy3br53imfe4y" path="res://Resources/Sounds/SFX/GrabsClothMovement PE380402.wav" id="7_6rsih"]
 
 [node name="Satchel" instance=ExtResource("1_fcl8q")]
 
@@ -20,5 +24,7 @@ texture = ExtResource("2_b8cb3")
 EquippedSpriteFrames = ExtResource("3_0a5oc")
 
 [node name="StorageComponent" parent="." index="6"]
-Capacity = 50.0
-MaxItemSize = 2
+CloseSound = ExtResource("4_b01fi")
+InsertSound = ExtResource("5_6rsih")
+OpenSound = ExtResource("6_4rk4o")
+RemoveSound = ExtResource("7_6rsih")

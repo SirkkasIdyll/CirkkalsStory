@@ -1,15 +1,32 @@
-[gd_scene load_steps=3 format=3 uid="uid://b2hkw33agsvim"]
+[gd_scene load_steps=8 format=3 uid="uid://b2hkw33agsvim"]
 
 [ext_resource type="PackedScene" uid="uid://bps0a33hwv2dv" path="res://Nodes/Prototypes/Objects/Clothes/BaseClothing.tscn" id="1_adaib"]
 [ext_resource type="Script" uid="uid://dtmrn4vaol245" path="res://Components/Inventory/StorageComponent.cs" id="2_iixcw"]
+[ext_resource type="Script" uid="uid://b31av732wqlh2" path="res://Nodes/UI/Audio/FluctuatingAudioStreamPlayer2DSystem.cs" id="3_fpyna"]
+[ext_resource type="AudioStream" uid="uid://b6u4cjs86rss" path="res://Resources/Sounds/SFX/KnapsackCanvas 9006_33_8.wav" id="3_wj841"]
+[ext_resource type="AudioStream" uid="uid://bjsma3qikutpx" path="res://Resources/Sounds/SFX/ClothesBag 6046_31_2.wav" id="4_wls1b"]
+[ext_resource type="AudioStream" uid="uid://cfur8j4oe0lv6" path="res://Resources/Sounds/SFX/KnapsackCanvas 9006_33_4.wav" id="5_qghnt"]
+[ext_resource type="AudioStream" uid="uid://cy3br53imfe4y" path="res://Resources/Sounds/SFX/GrabsClothMovement PE380402.wav" id="6_p5n2f"]
 
 [node name="BaseBag" instance=ExtResource("1_adaib")]
 
 [node name="ClothingComponent" parent="." index="3"]
 ClothingSlot = 6
 
-[node name="StorageComponent" type="Node2D" parent="." index="5"]
+[node name="StorageComponent" type="Node2D" parent="." index="5" node_paths=PackedStringArray("FluctuatingAudioStreamPlayer2DSystem")]
 script = ExtResource("2_iixcw")
+Capacity = 50.0
+CloseSound = ExtResource("3_wj841")
+InsertSound = ExtResource("4_wls1b")
+MaxItemSize = 2
+OpenSound = ExtResource("5_qghnt")
+RemoveSound = ExtResource("6_p5n2f")
+FluctuatingAudioStreamPlayer2DSystem = NodePath("FluctuatingAudioStreamPlayer2D")
+
+[node name="FluctuatingAudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="StorageComponent" index="0"]
+volume_db = -8.0
+bus = &"SFX"
+script = ExtResource("3_fpyna")
 
 [node name="StorableComponent" parent="." index="6"]
 ItemSize = 3

@@ -58,3 +58,6 @@ public partial class ItemRemovedFromStorageSignal : UserSignalArgs
         Storable = storable;
     }
 }
+
+public partial class StorageClosedSignal : UserSignalArgs;
+public partial class StorageOpenedSignal : UserSignalArgs;

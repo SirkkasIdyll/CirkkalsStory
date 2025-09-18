@@ -29,6 +29,8 @@ public partial class StorageSystem : NodeSystem
         _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
         _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
         _nodeManager.SignalBus.ItemRemovedFromStorageSignal += OnItemRemovedFromStorage;
+        _nodeManager.SignalBus.StorageClosedSignal += OnStorageClosed;
+        _nodeManager.SignalBus.StorageOpenedSignal += OnStorageOpened;
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -181,6 +183,24 @@ public partial class StorageSystem : NodeSystem
         storableComponent.Volume -= args.Storable.Comp.Volume;
     }
 
+    /// <summary>
+    /// Plays SFX when storage is closed
+    /// </summary>
+    private void OnStorageClosed(Node<StorageComponent> node, ref StorageClosedSignal args)
+    {
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem.SetStream(node.Comp.CloseSound);
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem.Play();
+    }
+
+    /// <summary>
+    /// Plays SFX when storage is opened
+    /// </summary>
+    private void OnStorageOpened(Node<StorageComponent> node, ref StorageOpenedSignal args)
+    {
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem.SetStream(node.Comp.OpenSound);
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem.Play();
+    }
+
     public void AttachItemInvisibly(Node main, Node nodeToAttach)
     {
         if (main is not Node2D mainNode2D || nodeToAttach is not Node2D node2DToAttach)
@@ -253,6 +273,10 @@ public partial class StorageSystem : NodeSystem
         node.Comp.Items.Add(item);
         node.Comp.VolumeOccupied += item.Comp.Volume;
         
+        // Play insert SFX
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem.SetStream(node.Comp.InsertSound);
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem.Play();
+        
         // Pickup animation
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
         {
@@ -281,6 +305,10 @@ public partial class StorageSystem : NodeSystem
         node.Comp.Items.Remove(item);
         node.Comp.VolumeOccupied -= item.Comp.Volume;
         
+        // Play removal SFX
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem.SetStream(node.Comp.RemoveSound);
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem.Play();
+        
         var signal = new ItemRemovedFromStorageSignal(item);
         _nodeManager.SignalBus.EmitItemRemovedFromStorageSignal(node, ref signal);
 
@@ -295,16 +323,10 @@ public partial class StorageSystem : NodeSystem
         if (player == null)
             return;
 
+        // Only mobs that can wear clothes have an inventory, at the moment
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(player, out var wearsClothingComponent))
             return;
-
-        wearsClothingComponent.ClothingSlots.TryGetValue(ClothingSlot.Bag, out var bagItem);
-        if (bagItem == null)
-            return;
-
-        if (!_nodeManager.TryGetComponent<StorageComponent>(bagItem, out var storageComponent))
-            return;
-            
+        
         if (!_nodeManager.TryGetComponent<AttachedUserInterfaceComponent>(player, out var attachedUserInterfaceComponent))
             return;
 
@@ -316,7 +338,7 @@ public partial class StorageSystem : NodeSystem
         if (customWindow.Content == null)
             return;
         
-        var storageSceneSystem = (StorageSceneSystem)customWindow.Content;
-        storageSceneSystem.SetDetails((bagItem, storageComponent));
+        var inventorySceneSystem = (InventorySceneSystem)customWindow.Content;
+        inventorySceneSystem.SetDetails((player, wearsClothingComponent));
     }
 }

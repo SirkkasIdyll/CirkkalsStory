@@ -3,14 +3,14 @@
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kbtkb"]
 [ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="2_opdnh"]
 [ext_resource type="Script" uid="uid://bxjdo37wkcuk7" path="res://Components/Movement/MovementComponent.cs" id="3_klnpo"]
-[ext_resource type="AudioStream" uid="uid://dyc6gj2kewjcm" path="res://Resources/Sounds/FootstepsWoodSoli 6017_62_1_short.wav" id="4_klnpo"]
+[ext_resource type="AudioStream" uid="uid://dyc6gj2kewjcm" path="res://Resources/Sounds/SFX/FootstepsWoodSoli 6017_62_1_short.wav" id="4_klnpo"]
 [ext_resource type="Script" uid="uid://ctw2xmwbf73hi" path="res://Components/Interaction/CanInteractComponent.cs" id="6_mtcbf"]
 [ext_resource type="Shader" uid="uid://cyowv87u2bat5" path="res://Resources/Shaders/Temp.gdshader" id="7_0n3qf"]
 [ext_resource type="Texture2D" uid="uid://inort5mwf5rt" path="res://Resources/Sprites/Mobs/GoodBody.png" id="7_04rii"]
 [ext_resource type="Script" uid="uid://df6m317f3irhk" path="res://Components/UI/AttachedUserInterfaceComponent.cs" id="9_yxf2p"]
 [ext_resource type="PackedScene" uid="uid://bt08bpy5bn30e" path="res://Nodes/Scenes/Inventory/ClothingScene.tscn" id="10_7ln1c"]
 [ext_resource type="Script" uid="uid://ytx7wy5nsn36" path="res://Components/Clothing/WearsClothingComponent.cs" id="11_6bs64"]
-[ext_resource type="PackedScene" uid="uid://dgultw4o7b6ge" path="res://Nodes/Scenes/Inventory/StorageScene.tscn" id="11_7ln1c"]
+[ext_resource type="PackedScene" uid="uid://cu3vy6cnoktke" path="res://Nodes/Scenes/Inventory/InventoryScene.tscn" id="11_7ln1c"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8wxkm"]
 radius = 5.5

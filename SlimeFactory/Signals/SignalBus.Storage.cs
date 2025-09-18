@@ -31,4 +31,18 @@ public partial class SignalBus
     {
         ItemRemovedFromStorageSignal?.Invoke(node, ref args);
     }
+    
+    public delegate void StorageClosedSignalHandler(Node<StorageComponent> node, ref StorageClosedSignal args);
+    public event StorageClosedSignalHandler? StorageClosedSignal;
+    public void EmitStorageClosedSignal(Node<StorageComponent> node, ref StorageClosedSignal args)
+    {
+        StorageClosedSignal?.Invoke(node, ref args);
+    }
+    
+    public delegate void StorageOpenedSignalHandler(Node<StorageComponent> node, ref StorageOpenedSignal args);
+    public event StorageOpenedSignalHandler? StorageOpenedSignal;
+    public void EmitStorageOpenedSignal(Node<StorageComponent> node, ref StorageOpenedSignal args)
+    {
+        StorageOpenedSignal?.Invoke(node, ref args);
+    }
 }
