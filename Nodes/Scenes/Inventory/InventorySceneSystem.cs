@@ -22,19 +22,59 @@ public partial class InventorySceneSystem : VBoxContainer
 
     private PackedScene _storageFragmentScene =
         ResourceLoader.Load<PackedScene>("res://Nodes/Scenes/Inventory/StorageFragmentScene.tscn");
-    private Dictionary<FoldableContainer, float> _storageDictionary = [];
+    private FoldableGroup _foldableGroup = new();
+    private Dictionary<Node, FoldableContainer> _foldableDictionary = [];
+    private Node? _uiBelongsToThisMob;
+
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+        
+        _nodeManager.SignalBus.ClothingEquippedSignal -= OnClothingEquipped;
+        _nodeManager.SignalBus.ClothingUnequippedSignal -= OnClothingUnequipped;
+    }
+
+    public override void _Ready()
+    {
+        base._Ready();
+
+        _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
+        _nodeManager.SignalBus.ClothingUnequippedSignal += OnClothingUnequipped;
+    }
+
+    private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
+    {
+        if (node.Owner != _uiBelongsToThisMob)
+            return;
+
+        if (!_nodeManager.TryGetComponent<StorageComponent>(args.Clothing, out var storageComponent))
+            return;
+        
+        CreateStorageListing((args.Clothing, storageComponent));
+    }
+
+    private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
+    {
+        if (node.Owner != _uiBelongsToThisMob)
+            return;
+
+        if (!_foldableDictionary.TryGetValue(node, out var foldable))
+            return;
+        
+        RemoveChild(node);
+    }
 
     public void SetDetails(Node<WearsClothingComponent> node)
     {
         _nodeSystemManager.InjectNodeSystemDependencies(this);
+        _uiBelongsToThisMob = node;
+
+        // Foldable groups connect the storage UIs together so that only is expanded at a time
+        _foldableGroup.AllowFoldingAll = true;
+        
         // Get rid of preview template
         foreach (var child in GetChildren())
             child.QueueFree();
-        
-        // All foldable containers will belong to one foldable group,
-        // so that opening one storage collapses the other ones
-        var foldableGroup = new FoldableGroup();
-        foldableGroup.AllowFoldingAll = true;
         
         // For each item equipped that has storage, add it to the inventory scene
         foreach (var (_, clothingNode) in node.Comp.ClothingSlots)
@@ -45,19 +85,21 @@ public partial class InventorySceneSystem : VBoxContainer
             if (!_nodeManager.TryGetComponent<StorageComponent>(clothingNode, out var storageComponent))
                 continue;
             
-            CreateStorageListing((clothingNode, storageComponent), foldableGroup);
+            CreateStorageListing((clothingNode, storageComponent));
         }
     }
 
-    private void CreateStorageListing(Node<StorageComponent> node, FoldableGroup foldableGroup)
+    private void CreateStorageListing(Node<StorageComponent> node)
     {
         var foldableContainer = new FoldableContainer();
-        foldableContainer.FoldableGroup = foldableGroup;
+        foldableContainer.FoldableGroup = _foldableGroup;
         foldableContainer.SetTitleTextOverrunBehavior(TextServer.OverrunBehavior.TrimEllipsis);
-        if (_descriptionSystem.TryGetDisplayName(node, out var name))
-            foldableContainer.SetTitle(name);
         AddChild(foldableContainer);
         MoveChild(foldableContainer, 0); // Add to the top of the list, not the bottom.
+        _foldableDictionary.Add(node, foldableContainer);
+        
+        if (_descriptionSystem.TryGetDisplayName(node, out var name))
+            foldableContainer.SetTitle(name);
 
         var vBoxContainer = new VBoxContainer();
         foldableContainer.AddChild(vBoxContainer);

@@ -57,7 +57,7 @@ public partial class StorageComponent : Component
     public float VolumeOccupied
     {
         get => _volumeOccupied;
-        set => float.Max(float.Min(value, Capacity), 0);
+        set => _volumeOccupied = float.Max(float.Min(value, Capacity), 0);
     }
 
     [ExportCategory("Instantiated")]

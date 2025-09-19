@@ -105,7 +105,7 @@ public partial class StorageSystem : NodeSystem
     }
 
     /// <summary>
-    /// Places item into the equipped bag if one is equipped, otherwise puts the item in hand.
+    /// Places storable items into the highest capacity equipped storage when interacted with
     /// </summary>
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
     {
@@ -118,14 +118,11 @@ public partial class StorageSystem : NodeSystem
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
             return;
 
-        var bag = wearsClothingComponent.ClothingSlots[ClothingSlot.Bag];
-        if (bag == null)
-            return;
-
-        if (!_nodeManager.TryGetComponent<StorageComponent>(bag, out var storageComponent))
+        if (!TryGetAvailableWornStorage((args.Interactee, wearsClothingComponent), 
+                (node, storableComponent), out var storage))
             return;
         
-        if (TryAddItemToStorage((bag, storageComponent), (node, storableComponent)))
+        if (TryAddItemToStorage(storage.Value, (node, storableComponent)))
             args.Handled = true;
     }
 
@@ -293,6 +290,49 @@ public partial class StorageSystem : NodeSystem
         var signal = new ItemPutInStorageSignal(item);
         _nodeManager.SignalBus.EmitItemPutInStorageSignal(node, ref signal);
         return true;
+    }
+
+    /// <summary>
+    /// Tries to retrieve the storage node that is worn,
+    /// that has the most capacity,
+    /// and is capable of storing the given item.
+    /// </summary>
+    public bool TryGetAvailableWornStorage(Node<WearsClothingComponent> node, Node<StorableComponent> item,
+        [NotNullWhen(true)] out Node<StorageComponent>? storage)
+    {
+        storage = null;
+        foreach (var (_, clothingItem) in node.Comp.ClothingSlots)
+        {
+            if (clothingItem == null)
+                continue;
+            
+            if (!_nodeManager.TryGetComponent<StorageComponent>(clothingItem, out var storageComponent))
+                continue;
+
+            // If we haven't yet picked a storage, pick the first available one
+            if (storage == null && CanBeAddedToStorage((clothingItem, storageComponent), item))
+            {
+                storage = (clothingItem, storageComponent);
+                continue;
+            }
+            
+            // When we do have a storage picked,
+            if (storage == null)
+                continue;
+            
+            // If the capacity of the currently viewed option is greater
+            if (storage.Value.Comp.Capacity > storageComponent.Capacity)
+                continue;
+
+            // And we're capable of adding the item to the currently viewed option
+            if (!CanBeAddedToStorage((clothingItem, storageComponent), item))
+                continue;
+            
+            // Pick it as the designated storage instead
+            storage = (clothingItem, storageComponent);
+        }
+        
+        return storage != null;
     }
 
     public bool TryRemoveItemFromStorage(Node<StorageComponent> node, Node<StorableComponent> item,

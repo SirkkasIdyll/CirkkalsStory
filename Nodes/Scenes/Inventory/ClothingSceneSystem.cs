@@ -14,7 +14,7 @@ public partial class ClothingSceneSystem : GridContainer
 	[ExportCategory("Owned")]
 	[Export] private Button _title = null!;
 	[Export] private AtlasTexture _texture = null!;
-	[Export] private Dictionary<ClothingSlot, TextureRect> _clothingSlots = [];
+	[Export] private Dictionary<ClothingSlot, ClothingTextureRect> _clothingSlots = [];
 
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
@@ -53,10 +53,11 @@ public partial class ClothingSceneSystem : GridContainer
 		if (!_descriptionSystem.TryGetSprite(args.Clothing, out var sprite2D))
 			return;
 
-		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var textureRect))
+		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var clothingTextureRect))
 			return;
 		
-		textureRect.Texture = sprite2D.Texture;
+		clothingTextureRect.Texture = sprite2D.Texture;
+		clothingTextureRect.Item = args.Clothing;
 	}
 
 	private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
@@ -64,13 +65,14 @@ public partial class ClothingSceneSystem : GridContainer
 		if (node.Owner != _character)
 			return;
 		
-		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var textureRect))
+		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var clothingTextureRect))
 			return;
 		
 		// Set sprite to generic atlas icon
 		var atlasTexture = (AtlasTexture) _texture.Duplicate();
 		atlasTexture.Region = new Rect2(new Vector2(0, 32 * (int)args.Clothing.Comp.ClothingSlot), new Vector2(32, 32));
-		textureRect.Texture = atlasTexture;
+		clothingTextureRect.Texture = atlasTexture;
+		clothingTextureRect.Item = null;
 	}
 
 	private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
@@ -82,10 +84,11 @@ public partial class ClothingSceneSystem : GridContainer
 		if (!_descriptionSystem.TryGetSprite(args.Storable, out var sprite2D))
 			return;
 
-		if (!_clothingSlots.TryGetValue(ClothingSlot.Inhand, out var textureRect))
+		if (!_clothingSlots.TryGetValue(ClothingSlot.Inhand, out var clothingTextureRect))
 			return;
 		
-		textureRect.Texture = sprite2D.Texture;
+		clothingTextureRect.Texture = sprite2D.Texture;
+		clothingTextureRect.Item = args.Storable;
 	}
 
 	private void OnItemRemovedFromHand(Node<WearsClothingComponent> node, ref ItemRemovedFromHandSignal args)
@@ -93,13 +96,14 @@ public partial class ClothingSceneSystem : GridContainer
 		if (node.Owner != _character)
 			return;
 		
-		if (!_clothingSlots.TryGetValue(ClothingSlot.Inhand, out var textureRect))
+		if (!_clothingSlots.TryGetValue(ClothingSlot.Inhand, out var clothingTextureRect))
 			return;
 		
 		// Set sprite to generic atlas icon
 		var atlasTexture = (AtlasTexture) _texture.Duplicate();
 		atlasTexture.Region = new Rect2(new Vector2(0, 32 * (int)ClothingSlot.Inhand), new Vector2(32, 32));
-		textureRect.Texture = atlasTexture;
+		clothingTextureRect.Texture = atlasTexture;
+		clothingTextureRect.Item = null;
 	}
 
 	/// <summary>
@@ -166,12 +170,15 @@ public partial class ClothingSceneSystem : GridContainer
 			var clothingSlotIndex = (int)clothingSlot;
 			// When the particular slot's image is clicked, try to unequip the clothing in that slot.
 			// It's fine if there is an attempt to unequip nothing as that will be handled in the unequip function
-			if (_clothingSlots.TryGetValue(clothingSlot, out var textureRect))
+			if (_clothingSlots.TryGetValue(clothingSlot, out var clothingTextureRect))
 			{
-				textureRect.GuiInput += @event =>
+				clothingTextureRect.Item = clothingItem;
+				clothingTextureRect.Slot = clothingSlot;
+				
+				clothingTextureRect.GuiInput += @event =>
 				{
-					if (@event.IsActionPressed("primary_interact"))
-						OnPrimaryInteract(node, clothingSlot);
+					/*if (@event.IsActionPressed("primary_interact"))
+						OnPrimaryInteract(node, clothingSlot);*/
 
 					if (@event.IsActionPressed("secondary_interact"))
 						OnSecondayInteract(node, clothingSlot);

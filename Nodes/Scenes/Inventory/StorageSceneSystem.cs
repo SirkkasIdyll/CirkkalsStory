@@ -30,6 +30,7 @@ public partial class StorageSceneSystem : VBoxContainer
 	private const string Red = "#c22e15";
 	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Dictionary<Node, Button> _buttonDictionary = [];
+	private Node? _uiBelongsToThisStorage;
 
 	public override void _ExitTree()
 	{
@@ -49,6 +50,9 @@ public partial class StorageSceneSystem : VBoxContainer
 	
 	private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
 	{
+		if (node.Owner != _uiBelongsToThisStorage)
+			return;
+		
 		var button = CreateItemButton(node, args.Storable);
 		_itemButtonContainer.AddChild(button);
 		_buttonDictionary[args.Storable] = button;
@@ -57,6 +61,9 @@ public partial class StorageSceneSystem : VBoxContainer
 
 	private void OnItemRemovedFromStorage(Node<StorageComponent> node, ref ItemRemovedFromStorageSignal args)
 	{
+		if (node.Owner != _uiBelongsToThisStorage)
+			return;
+		
 		var button = _buttonDictionary[args.Storable];
 		_itemButtonContainer.RemoveChild(button);
 		_buttonDictionary.Remove(args.Storable);
@@ -103,6 +110,7 @@ public partial class StorageSceneSystem : VBoxContainer
 	public void SetDetails(Node<StorageComponent> node)
 	{
 		_nodeSystemManager.InjectNodeSystemDependencies(this);
+		_uiBelongsToThisStorage = node;
 		
 		if (_title != null && _descriptionSystem.TryGetDisplayName(node, out var name))
 			_title.SetText(name);
