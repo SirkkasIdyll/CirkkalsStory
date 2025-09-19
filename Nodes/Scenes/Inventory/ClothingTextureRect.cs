@@ -21,8 +21,10 @@ public partial class ClothingTextureRect : TextureRect
     public override void _Ready()
     {
         base._Ready();
-        
         _nodeSystemManager.InjectNodeSystemDependencies(this);
+        
+        MouseEntered += OnMouseEntered;
+        MouseExited += OnMouseExited;
     }
 
     /// <summary>
@@ -105,4 +107,15 @@ public partial class ClothingTextureRect : TextureRect
         
         return Item == null ? default(Variant) : Item;
     }
+    
+    private void OnMouseEntered()
+    {
+        if (Item != null)
+            SetDefaultCursorShape(CursorShape.PointingHand);
+    }
+    
+    private void OnMouseExited()
+    {
+        SetDefaultCursorShape(CursorShape.Arrow);
+    }	
 }

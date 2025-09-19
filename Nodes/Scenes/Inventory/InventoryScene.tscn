@@ -39,13 +39,11 @@ stretch_mode = 4
 
 [node name="FoldableContainer2" type="FoldableContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" index="1"]
 layout_mode = 2
-folded = true
 title = "Satchel"
 title_text_overrun_behavior = 3
 foldable_group = SubResource("FoldableGroup_1n82s")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer2" index="0"]
-visible = false
 layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer2/VBoxContainer" index="0"]
