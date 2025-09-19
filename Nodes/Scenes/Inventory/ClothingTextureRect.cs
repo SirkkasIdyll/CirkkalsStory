@@ -26,18 +26,34 @@ public partial class ClothingTextureRect : TextureRect
     }
 
     /// <summary>
-    /// Just check if we get any node at all while the slot is unoccupied
+    /// Determines whether we can equip it to this slot
     /// </summary>
     public override bool _CanDropData(Vector2 atPosition, Variant data)
     {
+        var node = (Node?)data;
+        
         // Something is horribly wrong
         if (Slot == null)
             return false;
 
-        if ((Node?)data == null)
+        if (node == null)
+            return false;
+        
+        var player = _playerManagerSystem.TryGetPlayer();
+        if (player == null)
             return false;
 
-        return true;
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(player, out var wearsClothingComponent))
+            return false;
+        
+        if (Slot == ClothingSlot.Inhand && _nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
+            return _clothingSystem.CanBePutInHand((player, wearsClothingComponent), (node, storableComponent));
+
+        if (_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent)
+            && Slot == clothingComponent.ClothingSlot)
+            return _clothingSystem.CanBeEquipped((player, wearsClothingComponent), (node, clothingComponent), true);
+
+        return false;
     }
 
     /// <summary>
