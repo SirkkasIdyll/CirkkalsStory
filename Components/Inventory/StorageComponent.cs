@@ -48,13 +48,19 @@ public partial class StorageComponent : Component
     /// </summary>
     [Export]
     public AudioStreamWav? RemoveSound;
-    
+
+    private float _volumeOccupied;
+
     /// <summary>
     /// How much volume is currently occupied by <see cref="StorableComponent"/>
     /// </summary>
-    public float VolumeOccupied;
+    public float VolumeOccupied
+    {
+        get => _volumeOccupied;
+        set => float.Max(float.Min(value, Capacity), 0);
+    }
 
-    [ExportCategory("Owned")]
+    [ExportCategory("Instantiated")]
     [Export]
-    public FluctuatingAudioStreamPlayer2DSystem FluctuatingAudioStreamPlayer2DSystem = null!;
+    public FluctuatingAudioStreamPlayer2DSystem? FluctuatingAudioStreamPlayer2DSystem;
 }

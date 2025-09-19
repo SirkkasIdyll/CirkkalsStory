@@ -188,8 +188,8 @@ public partial class StorageSystem : NodeSystem
     /// </summary>
     private void OnStorageClosed(Node<StorageComponent> node, ref StorageClosedSignal args)
     {
-        node.Comp.FluctuatingAudioStreamPlayer2DSystem.SetStream(node.Comp.CloseSound);
-        node.Comp.FluctuatingAudioStreamPlayer2DSystem.Play();
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem?.SetStream(node.Comp.CloseSound);
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem?.Play();
     }
 
     /// <summary>
@@ -197,8 +197,8 @@ public partial class StorageSystem : NodeSystem
     /// </summary>
     private void OnStorageOpened(Node<StorageComponent> node, ref StorageOpenedSignal args)
     {
-        node.Comp.FluctuatingAudioStreamPlayer2DSystem.SetStream(node.Comp.OpenSound);
-        node.Comp.FluctuatingAudioStreamPlayer2DSystem.Play();
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem?.SetStream(node.Comp.OpenSound);
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem?.Play();
     }
 
     public void AttachItemInvisibly(Node main, Node nodeToAttach)
@@ -274,8 +274,8 @@ public partial class StorageSystem : NodeSystem
         node.Comp.VolumeOccupied += item.Comp.Volume;
         
         // Play insert SFX
-        node.Comp.FluctuatingAudioStreamPlayer2DSystem.SetStream(node.Comp.InsertSound);
-        node.Comp.FluctuatingAudioStreamPlayer2DSystem.Play();
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem?.SetStream(node.Comp.InsertSound);
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem?.Play();
         
         // Pickup animation
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
@@ -306,8 +306,8 @@ public partial class StorageSystem : NodeSystem
         node.Comp.VolumeOccupied -= item.Comp.Volume;
         
         // Play removal SFX
-        node.Comp.FluctuatingAudioStreamPlayer2DSystem.SetStream(node.Comp.RemoveSound);
-        node.Comp.FluctuatingAudioStreamPlayer2DSystem.Play();
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem?.SetStream(node.Comp.RemoveSound);
+        node.Comp.FluctuatingAudioStreamPlayer2DSystem?.Play();
         
         var signal = new ItemRemovedFromStorageSignal(item);
         _nodeManager.SignalBus.EmitItemRemovedFromStorageSignal(node, ref signal);

@@ -4,6 +4,7 @@ using CS.Components.Inventory;
 using CS.Components.Player;
 using CS.SlimeFactory;
 using Godot;
+using Godot.Collections;
 
 namespace CS.Nodes.Scenes.Inventory;
 
@@ -21,6 +22,7 @@ public partial class InventorySceneSystem : VBoxContainer
 
     private PackedScene _storageFragmentScene =
         ResourceLoader.Load<PackedScene>("res://Nodes/Scenes/Inventory/StorageFragmentScene.tscn");
+    private Dictionary<FoldableContainer, float> _storageDictionary = [];
 
     public void SetDetails(Node<WearsClothingComponent> node)
     {
@@ -55,6 +57,7 @@ public partial class InventorySceneSystem : VBoxContainer
         if (_descriptionSystem.TryGetDisplayName(node, out var name))
             foldableContainer.SetTitle(name);
         AddChild(foldableContainer);
+        MoveChild(foldableContainer, 0); // Add to the top of the list, not the bottom.
 
         var vBoxContainer = new VBoxContainer();
         foldableContainer.AddChild(vBoxContainer);
