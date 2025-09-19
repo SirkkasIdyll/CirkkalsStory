@@ -49,6 +49,10 @@ public partial class InventorySceneSystem : VBoxContainer
 
         if (!_nodeManager.TryGetComponent<StorageComponent>(args.Clothing, out var storageComponent))
             return;
+
+        // Storage listing already exists, don't create one.
+        if (_foldableDictionary.TryGetValue(args.Clothing, out _))
+            return;
         
         CreateStorageListing((args.Clothing, storageComponent));
     }
@@ -58,7 +62,7 @@ public partial class InventorySceneSystem : VBoxContainer
         if (node.Owner != _uiBelongsToThisMob)
             return;
 
-        if (!_foldableDictionary.TryGetValue(node, out var foldable))
+        if (!_foldableDictionary.TryGetValue(node, out _))
             return;
         
         RemoveChild(node);
