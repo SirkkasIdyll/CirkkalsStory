@@ -10,6 +10,9 @@ using Godot.Collections;
 
 namespace CS.Nodes.Scenes.Inventory;
 
+/// <summary>
+/// Manages the display of a single storage item.
+/// </summary>
 public partial class StorageSceneSystem : VBoxContainer
 {
 	[ExportCategory("Owned")]
@@ -30,7 +33,47 @@ public partial class StorageSceneSystem : VBoxContainer
 	private const string Red = "#c22e15";
 	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Dictionary<Node, Button> _buttonDictionary = [];
-	private Node? _uiBelongsToThisStorage;
+	private Node<StorageComponent>? _uiBelongsToThisStorage;
+
+	public override bool _CanDropData(Vector2 atPosition, Variant data)
+	{
+		var node = (Node?)data;
+		
+		if (node == null)
+			return false;
+		
+		var player = _playerManagerSystem.TryGetPlayer();
+		if (player == null)
+			return false;
+
+		if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storable))
+			return false;
+
+		if (_uiBelongsToThisStorage == null)
+			return false;
+
+		if (_storageSystem.CanBeAddedToStorage(_uiBelongsToThisStorage.Value, (node, storable)))
+			return true;
+		
+		return false;
+	}
+
+	public override void _DropData(Vector2 atPosition, Variant data)
+	{
+		var node = (Node)data;
+
+		var player = _playerManagerSystem.TryGetPlayer();
+		if (player == null)
+			return;
+
+		if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storable))
+			return;
+
+		if (_uiBelongsToThisStorage == null)
+			return;
+
+		_storageSystem.TryAddItemToStorage(_uiBelongsToThisStorage.Value, (node, storable), player);
+	}
 
 	public override void _ExitTree()
 	{
@@ -50,7 +93,7 @@ public partial class StorageSceneSystem : VBoxContainer
 	
 	private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
 	{
-		if (node.Owner != _uiBelongsToThisStorage)
+		if (node.Owner != _uiBelongsToThisStorage?.Owner)
 			return;
 		
 		var button = CreateItemButton(node, args.Storable);
@@ -61,7 +104,7 @@ public partial class StorageSceneSystem : VBoxContainer
 
 	private void OnItemRemovedFromStorage(Node<StorageComponent> node, ref ItemRemovedFromStorageSignal args)
 	{
-		if (node.Owner != _uiBelongsToThisStorage)
+		if (node.Owner != _uiBelongsToThisStorage?.Owner)
 			return;
 		
 		var button = _buttonDictionary[args.Storable];
@@ -156,8 +199,8 @@ public partial class StorageSceneSystem : VBoxContainer
 
 		button.GuiInput += @event =>
 		{
-			if (@event.IsActionPressed("primary_interact"))
-				OnPrimaryInteract(node, item);
+			/*if (@event.IsActionPressed("primary_interact"))
+				OnPrimaryInteract(node, item);*/
 
 			if (@event.IsActionPressed("secondary_interact"))
 				OnSecondaryInteract(node, item);

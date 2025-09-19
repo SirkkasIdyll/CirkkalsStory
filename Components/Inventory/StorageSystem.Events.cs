@@ -1,5 +1,6 @@
 ﻿using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
+using Godot;
 
 namespace CS.Components.Inventory;
 
@@ -19,21 +20,24 @@ public enum ItemSize
     ExtraLarge
 }
 
-public partial class CanBePutInStorageSignal : CancellableSignalArgs
+public partial class CanItemBePutInStorageSignal : CancellableSignalArgs
 {
     public Node<StorableComponent> Storable;
-
-    public CanBePutInStorageSignal(Node<StorableComponent> storable)
+    public Node? User;
+    
+    public CanItemBePutInStorageSignal(Node<StorableComponent> storable, Node? user = null)
     {
         Storable = storable;
+        User = user;
+
     }
 }
 
-public partial class CanBeRemovedFromStorageSignal : CancellableSignalArgs
+public partial class CanItemBeRemovedFromStorageSignal : CancellableSignalArgs
 {
     public Node<StorableComponent> Storable;
 
-    public CanBeRemovedFromStorageSignal(Node<StorableComponent> storable)
+    public CanItemBeRemovedFromStorageSignal(Node<StorableComponent> storable)
     {
         Storable = storable;
     }
@@ -42,10 +46,12 @@ public partial class CanBeRemovedFromStorageSignal : CancellableSignalArgs
 public partial class ItemPutInStorageSignal : UserSignalArgs
 {
     public Node<StorableComponent> Storable;
+    public Node? User;
 
-    public ItemPutInStorageSignal(Node<StorableComponent> storable)
+    public ItemPutInStorageSignal(Node<StorableComponent> storable, Node? user = null)
     {
         Storable = storable;
+        User = user;
     }
 }
 

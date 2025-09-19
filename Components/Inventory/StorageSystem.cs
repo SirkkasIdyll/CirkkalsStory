@@ -208,8 +208,19 @@ public partial class StorageSystem : NodeSystem
         node2DToAttach.GlobalPosition = mainNode2D.GlobalPosition;
     }
 
-    public bool CanBeAddedToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
+    /// <summary>
+    /// Checks if the storage has the capacity to fit the item,
+    /// and checks if the item can be removed from the user in question if a user is indicated.
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="item"></param>
+    /// <param name="user">The user the item originates from</param>
+    public bool CanBeAddedToStorage(Node<StorageComponent> node, Node<StorableComponent> item, Node? user = null)
     {
+        // Can't store the item inside itself. No black holes!
+        if (node.Owner == item.Owner)
+            return false;
+        
         // Item would exceed the capacity of the storage
         // TODO: Add a written reason why it failed that pops up
         if (node.Comp.VolumeOccupied + item.Comp.Volume > node.Comp.Capacity)
@@ -221,8 +232,8 @@ public partial class StorageSystem : NodeSystem
             return false;
 
         // Check other systems if they prevent it
-        var signal = new CanBePutInStorageSignal(item);
-        _nodeManager.SignalBus.EmitCanBePutInStorageSignal(node, ref signal);
+        var signal = new CanItemBePutInStorageSignal(item, user);
+        _nodeManager.SignalBus.EmitCanItemBePutInStorageSignal(node, ref signal);
 
         if (signal.Canceled)
             return false;
@@ -233,8 +244,8 @@ public partial class StorageSystem : NodeSystem
     public bool CanBeRemovedFromStorage(Node<StorageComponent> node, Node<StorableComponent> item)
     {
         // Check any other systems preventing item from being removed
-        var signal = new CanBeRemovedFromStorageSignal(item);
-        _nodeManager.SignalBus.EmitCanBeRemovedFromStorageSignal(node, ref signal);
+        var signal = new CanItemBeRemovedFromStorageSignal(item);
+        _nodeManager.SignalBus.EmitCanItemBeRemovedFromStorageSignal(node, ref signal);
 
         if (signal.Canceled)
             return false;
@@ -262,9 +273,9 @@ public partial class StorageSystem : NodeSystem
     /// Attempts to add an item to a storage, but fails if there is not enough capacity or if the item is too large
     /// If true, handle it and remove the item from wherever it is
     /// </summary>
-    public bool TryAddItemToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
+    public bool TryAddItemToStorage(Node<StorageComponent> node, Node<StorableComponent> item,  Node? user = null)
     {
-        if (!CanBeAddedToStorage(node, item))
+        if (!CanBeAddedToStorage(node, item, user))
             return false;
         
         node.Comp.Items.Add(item);
@@ -281,13 +292,13 @@ public partial class StorageSystem : NodeSystem
             tween.TweenProperty(itemNode2D, "global_position", node2D.GlobalPosition, 0.125f);
             tween.Finished += () =>
             {
-                var signal = new ItemPutInStorageSignal(item);
+                var signal = new ItemPutInStorageSignal(item, user);
                 _nodeManager.SignalBus.EmitItemPutInStorageSignal(node, ref signal);
             };
             return true;
         }
 
-        var signal = new ItemPutInStorageSignal(item);
+        var signal = new ItemPutInStorageSignal(item, user);
         _nodeManager.SignalBus.EmitItemPutInStorageSignal(node, ref signal);
         return true;
     }
@@ -310,7 +321,7 @@ public partial class StorageSystem : NodeSystem
                 continue;
 
             // If we haven't yet picked a storage, pick the first available one
-            if (storage == null && CanBeAddedToStorage((clothingItem, storageComponent), item))
+            if (storage == null && CanBeAddedToStorage((clothingItem, storageComponent), item, node))
             {
                 storage = (clothingItem, storageComponent);
                 continue;
@@ -325,7 +336,7 @@ public partial class StorageSystem : NodeSystem
                 continue;
 
             // And we're capable of adding the item to the currently viewed option
-            if (!CanBeAddedToStorage((clothingItem, storageComponent), item))
+            if (!CanBeAddedToStorage((clothingItem, storageComponent), item, node))
                 continue;
             
             // Pick it as the designated storage instead

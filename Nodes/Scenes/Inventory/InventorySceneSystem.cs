@@ -8,6 +8,9 @@ using Godot.Collections;
 
 namespace CS.Nodes.Scenes.Inventory;
 
+/// <summary>
+/// Displays all worn storage equipped to a mob.
+/// </summary>
 public partial class InventorySceneSystem : VBoxContainer
 {
     [ExportCategory("Owned")]
@@ -50,7 +53,7 @@ public partial class InventorySceneSystem : VBoxContainer
         if (!_nodeManager.TryGetComponent<StorageComponent>(args.Clothing, out var storageComponent))
             return;
 
-        // Storage listing already exists, don't create one.
+        // Storage listing already exists, don't create a duplicate.
         if (_foldableDictionary.TryGetValue(args.Clothing, out _))
             return;
         

@@ -9,6 +9,9 @@ using Godot.Collections;
 
 namespace CS.Nodes.Scenes.Inventory;
 
+/// <summary>
+/// Displays the equipment worn by a mob.
+/// </summary>
 public partial class ClothingSceneSystem : GridContainer
 {
 	[ExportCategory("Owned")]

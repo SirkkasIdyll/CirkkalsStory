@@ -4,18 +4,18 @@ namespace CS.SlimeFactory.Signals;
 
 public partial class SignalBus
 {
-    public delegate void CanBePutInStorageSignalHandler(Node<StorageComponent> node, ref CanBePutInStorageSignal args);
-    public event CanBePutInStorageSignalHandler? CanBePutInStorageSignal;
-    public void EmitCanBePutInStorageSignal(Node<StorageComponent> node, ref CanBePutInStorageSignal args)
+    public delegate void CanItemBePutInStorageSignalHandler(Node<StorageComponent> node, ref CanItemBePutInStorageSignal args);
+    public event CanItemBePutInStorageSignalHandler? CanItemBePutInStorageSignal;
+    public void EmitCanItemBePutInStorageSignal(Node<StorageComponent> node, ref CanItemBePutInStorageSignal args)
     {
-        CanBePutInStorageSignal?.Invoke(node, ref args);
+        CanItemBePutInStorageSignal?.Invoke(node, ref args);
     }
     
-    public delegate void CanBeRemovedFromStorageSignalHandler(Node<StorageComponent> node, ref CanBeRemovedFromStorageSignal args);
-    public event CanBeRemovedFromStorageSignalHandler? CanBeRemovedFromStorageSignal;
-    public void EmitCanBeRemovedFromStorageSignal(Node<StorageComponent> node, ref CanBeRemovedFromStorageSignal args)
+    public delegate void CanItemBeRemovedFromStorageSignalHandler(Node<StorageComponent> node, ref CanItemBeRemovedFromStorageSignal args);
+    public event CanItemBeRemovedFromStorageSignalHandler? CanItemBeRemovedFromStorageSignal;
+    public void EmitCanItemBeRemovedFromStorageSignal(Node<StorageComponent> node, ref CanItemBeRemovedFromStorageSignal args)
     {
-        CanBeRemovedFromStorageSignal?.Invoke(node, ref args);
+        CanItemBeRemovedFromStorageSignal?.Invoke(node, ref args);
     }
     
     public delegate void ItemPutInStorageSignalHandler(Node<StorageComponent> node, ref ItemPutInStorageSignal args);

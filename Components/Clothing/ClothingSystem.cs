@@ -22,8 +22,10 @@ public partial class ClothingSystem : NodeSystem
     {
         base._Ready();
 
+        _nodeManager.SignalBus.CanItemBePutInStorageSignal += OnCanItemBePutInStorage;
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
         _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
+        _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -33,6 +35,36 @@ public partial class ClothingSystem : NodeSystem
         // Open the equipment menu when the action is pressed, if possible
         if (@event.IsActionPressed("equipment"))
             TryOpenEquipmentUi();
+    }
+
+    /// <summary>
+    /// When attempting to put something into storage that is worn,
+    /// check that it can be unequipped.
+    /// </summary>
+    private void OnCanItemBePutInStorage(Node<StorageComponent> node, ref CanItemBePutInStorageSignal args)
+    {
+        if (args.User == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.User, out var wearsClothingComponent))
+            return;
+
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand]
+            && !CanBeUnequipped((args.User, wearsClothingComponent), ClothingSlot.Inhand))
+        {
+            args.Canceled = true;
+            return;
+        }
+
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(args.Storable, out var clothingComponent))
+            return;
+
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot]
+            && !CanBeUnequipped((args.User, wearsClothingComponent), clothingComponent.ClothingSlot))
+        {
+            args.Canceled = true;
+            return;
+        }
     }
 
     /// <summary>
@@ -103,6 +135,34 @@ public partial class ClothingSystem : NodeSystem
             && TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent)))
         {
             args.Handled = true;
+            return;
+        }
+    }
+    
+    /// <summary>
+    /// When putting something worn into storage,
+    /// make sure to unequip the item from the user. 
+    /// </summary>
+    private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
+    {
+        if (args.User == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.User, out var wearsClothingComponent))
+            return;
+
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
+        {
+            TryUnequipClothing((args.User, wearsClothingComponent), ClothingSlot.Inhand);
+            return;
+        }
+
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(args.Storable, out var clothingComponent))
+            return;
+
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+        {
+            TryUnequipClothing((args.User, wearsClothingComponent), clothingComponent.ClothingSlot);
             return;
         }
     }
