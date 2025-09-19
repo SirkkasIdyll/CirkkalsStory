@@ -21,7 +21,7 @@ public partial class InventorySceneSystem : VBoxContainer
 
     private PackedScene _storageFragmentScene =
         ResourceLoader.Load<PackedScene>("res://Nodes/Scenes/Inventory/StorageFragmentScene.tscn");
-    
+
     public void SetDetails(Node<WearsClothingComponent> node)
     {
         _nodeSystemManager.InjectNodeSystemDependencies(this);

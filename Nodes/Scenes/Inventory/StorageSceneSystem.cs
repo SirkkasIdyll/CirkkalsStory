@@ -31,6 +31,14 @@ public partial class StorageSceneSystem : VBoxContainer
 	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Dictionary<Node, Button> _buttonDictionary = [];
 
+	public override void _ExitTree()
+	{
+		base._ExitTree();
+		
+		_nodeManager.SignalBus.ItemPutInStorageSignal -= OnItemPutInStorage;
+		_nodeManager.SignalBus.ItemRemovedFromStorageSignal -= OnItemRemovedFromStorage;
+	}
+
 	public override void _Ready()
 	{
 		base._Ready();
