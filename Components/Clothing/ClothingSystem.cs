@@ -112,6 +112,9 @@ public partial class ClothingSystem : NodeSystem
     /// </summary>
     private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
     {
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
+            return;
+        
         var button = new Button();
         args.Actions.Add(button);
         button.SetText("Equip Item");
@@ -129,9 +132,6 @@ public partial class ClothingSystem : NodeSystem
             button.Disabled = true;
             return;
         }
-        
-        if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
-            return;
 
         if (node.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
             button.SetText("Unequip Item");
