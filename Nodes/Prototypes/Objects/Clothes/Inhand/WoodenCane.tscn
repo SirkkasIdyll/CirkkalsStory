@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://btdtjnjhkpah8" path="res://Nodes/Prototypes/Objects/Clothes/Inhand/BaseInhand.tscn" id="1_68oxs"]
 [ext_resource type="Texture2D" uid="uid://dudm4jbchqd0f" path="res://Resources/Sprites/Clothes/Inhand/CaneIcon.png" id="2_v4h8e"]
-[ext_resource type="SpriteFrames" uid="uid://ccqj0hadw6i17" path="res://Resources/SpriteFrames/Clothes/Inhand/WoodCane.tres" id="3_1jvng"]
+[ext_resource type="SpriteFrames" uid="uid://ccqj0hadw6i17" path="res://Resources/Sprites/Clothes/Inhand/WoodCane.tres" id="3_1jvng"]
 
 [node name="WoodenCane" instance=ExtResource("1_68oxs")]
 
@@ -18,3 +18,7 @@ texture = ExtResource("2_v4h8e")
 
 [node name="ClothingComponent" parent="." index="4"]
 EquippedSpriteFrames = ExtResource("3_1jvng")
+
+[node name="StorableComponent" parent="." index="6"]
+Volume = 2.0
+ItemSize = 2

@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=3 uid="uid://c8ddcph7q2lhd"]
+
+[ext_resource type="Script" uid="uid://d1ifsfpmh23yx" path="res://Nodes/Scenes/Inventory/StorageSceneSystem.cs" id="1_opc7o"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ratu4"]
+bg_color = Color(0.423696, 0.435013, 0.439849, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j6uqo"]
+bg_color = Color(0.360784, 0.564706, 0.333333, 1)
+
+[node name="StorageFragmentScene" type="VBoxContainer" node_paths=PackedStringArray("_storageProgressBar", "_storageProgressBarLabel", "_itemButtonContainer")]
+script = ExtResource("1_opc7o")
+_storageProgressBar = NodePath("ProgressBar")
+_storageProgressBarLabel = NodePath("ProgressBar/Label")
+_itemButtonContainer = NodePath("MarginContainer/VBoxContainer")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_ratu4")
+theme_override_styles/fill = SubResource("StyleBoxFlat_j6uqo")
+value = 50.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="ProgressBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 12
+text = "50 / 100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_type_variation = &"MarginContainerXSmall"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2

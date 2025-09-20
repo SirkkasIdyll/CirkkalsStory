@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cgnqky6ulkxxr" path="res://Nodes/Prototypes/Objects/Clothes/Face/BaseFace.tscn" id="1_skscr"]
 [ext_resource type="Texture2D" uid="uid://dwyv3m78c0sw8" path="res://Resources/Sprites/Clothes/Face/GlassesIcon.png" id="2_qoore"]
-[ext_resource type="SpriteFrames" uid="uid://le017fjetd2g" path="res://Resources/SpriteFrames/Clothes/Face/RedHalfrimGlasses.tres" id="3_ejbnm"]
+[ext_resource type="SpriteFrames" uid="uid://le017fjetd2g" path="res://Resources/Sprites/Clothes/Face/RedHalfrimGlasses.tres" id="3_ejbnm"]
 
 [node name="RedHalfrimGlasses" instance=ExtResource("1_skscr")]
 
@@ -21,3 +21,6 @@ texture = ExtResource("2_qoore")
 
 [node name="ClothingComponent" parent="." index="5"]
 EquippedSpriteFrames = ExtResource("3_ejbnm")
+
+[node name="StorableComponent" parent="." index="7"]
+Volume = 0.2

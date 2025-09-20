@@ -17,14 +17,14 @@ public class NodeSystemManager
     /// Declare that there can only ever be a single instance of the <see cref="Signals.SignalBus"/>
     /// </summary>
     public static NodeSystemManager Instance { get; } = new();
-    
+
     public readonly Dictionary<string, NodeSystem> NodeSystemDictionary = [];
     private Node? _mainScene;
-    
+
     private NodeSystemManager()
     {
     }
-    
+
     /// <summary>
     /// Gets every <see cref="NodeSystem"/> and calls their _SystemReady functions, which initializes them,
     /// the <see cref="NodeManager"/>, and the <see cref="Signals.SignalBus"/>
@@ -33,8 +33,7 @@ public class NodeSystemManager
     {
         NodeSystemDictionary.Clear();
         _mainScene = mainScene;
-        
-        // Get every NodeSystem and call their _SystemReady function since I can't type-hint Godot's _Ready function
+
         var nodeSystemEnumerator = Assembly
             .GetAssembly(typeof(NodeSystem))
             ?.GetTypes()
@@ -43,10 +42,10 @@ public class NodeSystemManager
 
         if (nodeSystemEnumerator == null)
             return;
-        
+
         while (nodeSystemEnumerator.MoveNext())
         {
-            var nodeSystem = (NodeSystem) Activator.CreateInstance(nodeSystemEnumerator.Current)!;
+            var nodeSystem = (NodeSystem)Activator.CreateInstance(nodeSystemEnumerator.Current)!;
             nodeSystem.AddToMainScene(mainScene);
             NodeSystemDictionary.Add(nodeSystem.Name, nodeSystem);
         }
@@ -59,7 +58,8 @@ public class NodeSystemManager
     {
         foreach (var nodeSystem in NodeSystemDictionary.Values)
         {
-            var fields = nodeSystem.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance ).Where(t => t.GetCustomAttribute<InjectDependency>(false) != null);
+            var fields = nodeSystem.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(t => t.GetCustomAttribute<InjectDependency>(false) != null);
             foreach (var field in fields)
             {
                 if (NodeSystemDictionary.TryGetValue(field.FieldType.Name, out var dependency))
@@ -67,11 +67,32 @@ public class NodeSystemManager
 
                 if (field.FieldType.Name == NodeManager.Instance.GetType().Name)
                     field.SetValue(nodeSystem, NodeManager.Instance);
-                
+
                 if (field.FieldType.Name == NodeSystemManager.Instance.GetType().Name)
                     field.SetValue(nodeSystem, NodeSystemManager.Instance);
                 // GD.Print("Injected " + nodeSystem.Name + " as a dependency");
             }
+        }
+    }
+
+    /// <summary>
+    /// Attempt to inject node system dependencies after the fact, usually for UI systems
+    /// </summary>
+    public void InjectNodeSystemDependencies(Control uiSystem)
+    {
+        var fields = uiSystem.GetType().GetFields(BindingFlags.NonPublic | BindingFlags.Instance)
+            .Where(t => t.GetCustomAttribute<InjectDependency>(false) != null);
+        foreach (var field in fields)
+        {
+            if (NodeSystemDictionary.TryGetValue(field.FieldType.Name, out var dependency))
+                field.SetValue(uiSystem, dependency);
+
+            if (field.FieldType.Name == NodeManager.Instance.GetType().Name)
+                field.SetValue(uiSystem, NodeManager.Instance);
+
+            if (field.FieldType.Name == NodeSystemManager.Instance.GetType().Name)
+                field.SetValue(uiSystem, NodeSystemManager.Instance);
+            // GD.Print("Injected " + nodeSystem.Name + " as a dependency");
         }
     }
 

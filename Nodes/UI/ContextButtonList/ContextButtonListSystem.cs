@@ -5,19 +5,28 @@ using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
 
-namespace CS.Nodes.UI.NodeButtonList;
+namespace CS.Nodes.UI.ContextButtonList;
 
-public partial class NodeButtonListSystem : Control
+public partial class ContextButtonListSystem : Control
 {
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
+	[InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
+	[InjectDependency] private readonly InteractSystem _interactSystem = null!;
 	
 	[ExportCategory("Owned")]
 	[Export] private VBoxContainer _vBoxContainer = null!;
 
-	public override void _Input(InputEvent @event)
+	public override void _GuiInput(InputEvent @event)
 	{
-		base._Input(@event);
+		base._GuiInput(@event);
+		
+		GetViewport().SetInputAsHandled();
+	}
+
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		base._UnhandledInput(@event);
 		
 		if (@event is not InputEventMouseButton mouseEvent)
 			return;
@@ -31,6 +40,8 @@ public partial class NodeButtonListSystem : Control
 
 	public void Setup(Array<Node2D> node2Ds)
 	{
+		_nodeSystemManager.InjectNodeSystemDependencies(this);
+		
 		foreach (var child in _vBoxContainer.GetChildren())
 			child.QueueFree();
 		
@@ -45,16 +56,16 @@ public partial class NodeButtonListSystem : Control
 			
 			button.Pressed += () =>
 			{
-				if (!_nodeSystemManager.TryGetNodeSystem<PlayerManagerSystem>(out var playerManagerSystem) ||
-				    !_nodeSystemManager.TryGetNodeSystem<InteractSystem>(out var interactSystem) ||
-				    !_nodeManager.TryGetComponent<CanInteractComponent>(playerManagerSystem.GetPlayer(), out var canInteractComponent) ||
+				var player = _playerManagerSystem.TryGetPlayer();
+				if (player == null ||
+				    !_nodeManager.TryGetComponent<CanInteractComponent>(player, out var canInteractComponent) ||
 				    !_nodeManager.TryGetComponent<InteractableComponent>(node2D, out var interactableComponent))
 				{
 					QueueFree();
 					return;
 				}
-				
-				interactSystem.TryInteract((playerManagerSystem.GetPlayer(), canInteractComponent), (node2D, interactableComponent));
+
+				_interactSystem.TryInteract((player, canInteractComponent), (node2D, interactableComponent));
 				QueueFree();
 			};
 			_vBoxContainer.AddChild(button);

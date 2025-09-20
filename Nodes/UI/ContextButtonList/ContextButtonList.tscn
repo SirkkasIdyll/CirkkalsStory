@@ -1,12 +1,12 @@
 [gd_scene load_steps=3 format=3 uid="uid://qnbqgeh2h5j1"]
 
-[ext_resource type="Script" uid="uid://cmpi3qn7w5gkk" path="res://Nodes/UI/NodeButtonList/NodeButtonListSystem.cs" id="1_us8tx"]
-[ext_resource type="Texture2D" uid="uid://53anc4smic08" path="res://Resources/Sprites/Sprite-0001.png" id="2_c34uy"]
+[ext_resource type="Script" uid="uid://pl5d7lo8i5ce" path="res://Nodes/UI/ContextButtonList/ContextButtonListSystem.cs" id="1_vvkec"]
+[ext_resource type="Texture2D" uid="uid://53anc4smic08" path="res://Resources/Sprites/Sprite-0001.png" id="2_5l3dt"]
 
-[node name="NodeButtonList" type="Control" node_paths=PackedStringArray("_vBoxContainer")]
+[node name="ContextButtonList" type="Control" node_paths=PackedStringArray("_vBoxContainer")]
 layout_mode = 3
 anchors_preset = 0
-script = ExtResource("1_us8tx")
+script = ExtResource("1_vvkec")
 _vBoxContainer = NodePath("PanelContainer/VBoxContainer")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
@@ -20,7 +20,7 @@ layout_mode = 2
 [node name="Button" type="Button" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "First entry"
-icon = ExtResource("2_c34uy")
+icon = ExtResource("2_5l3dt")
 expand_icon = true
 
 [node name="Button2" type="Button" parent="PanelContainer/VBoxContainer"]

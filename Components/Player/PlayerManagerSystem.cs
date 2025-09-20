@@ -6,7 +6,7 @@ namespace CS.Components.Player;
 // TODO: I don't exactly know where to put this besides this, figure out something more sane later
 public partial class PlayerManagerSystem : NodeSystem
 {
-    private Node _player = null!;
+    private Node? _player;
 
     /// <summary>
     /// TODO: HUNT DOWN ALL USAGES OF THIS AND UNCURSE IT
@@ -14,7 +14,7 @@ public partial class PlayerManagerSystem : NodeSystem
     /// NO NULL SAFETY, NOTHING IS GOOD ABOUT THIS
     /// 
     /// </summary>
-    public Node GetPlayer()
+    public Node? TryGetPlayer()
     {
         return _player;
     }

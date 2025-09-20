@@ -19,13 +19,17 @@ public partial class RotateSystem : NodeSystem
     public override void _Input(InputEvent @event)
     {
         base._Input(@event);
+
+        var player = _playerManagerSystem.TryGetPlayer();
+        if (player == null)
+            return;
         
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(player,
                 out var canInteractComponent))
             return;
         
         if (@event.IsActionPressed("rotate_object"))
-            OnRotateObject((_playerManagerSystem.GetPlayer(), canInteractComponent));
+            OnRotateObject((player, canInteractComponent));
     }
 
     private void OnRotateObject(Node<CanInteractComponent> node)

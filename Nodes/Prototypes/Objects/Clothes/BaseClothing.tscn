@@ -1,10 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://bps0a33hwv2dv"]
+[gd_scene load_steps=4 format=3 uid="uid://bps0a33hwv2dv"]
 
 [ext_resource type="PackedScene" uid="uid://bgv86o62nhtgd" path="res://Nodes/Prototypes/Objects/BaseInteractableObject.tscn" id="1_2nwp3"]
 [ext_resource type="Script" uid="uid://bgcnvejusbgxi" path="res://Components/Clothing/ClothingComponent.cs" id="2_wdl4o"]
+[ext_resource type="Script" uid="uid://cjohnnbkbtr4w" path="res://Components/Inventory/StorableComponent.cs" id="3_wdl4o"]
 
 [node name="BaseClothing" instance=ExtResource("1_2nwp3")]
 collision_layer = 128
 
 [node name="ClothingComponent" type="Node2D" parent="." index="3"]
 script = ExtResource("2_wdl4o")
+
+[node name="StorableComponent" type="Node2D" parent="." index="5"]
+script = ExtResource("3_wdl4o")

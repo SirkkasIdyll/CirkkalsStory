@@ -1,104 +1,441 @@
-﻿using CS.Components.Interaction;
+﻿using CS.Components.Appearance;
+using CS.Components.Interaction;
+using CS.Components.Inventory;
+using CS.Components.Player;
+using CS.Components.UI;
+using CS.Nodes.Scenes.Inventory;
+using CS.Nodes.UI.CustomWindow;
 using CS.SlimeFactory;
 using Godot;
 
 namespace CS.Components.Clothing;
 
+/// <summary>
+/// When things are put in hand they aren't really equipped. They're just placed in the hand.
+/// This causes a decent amount of annoying checks required because the hands can support holding storables
+/// in addition to clothing items.
+/// </summary>
 public partial class ClothingSystem : NodeSystem
 {
+    [InjectDependency] private readonly AppearanceSystem _appearanceSystem = null!;
     [InjectDependency] private readonly InteractSystem _interactSystem = null!;
-    
+    [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
+    [InjectDependency] private readonly StorageSystem _storageSystem = null!;
+    [InjectDependency] private readonly UserInterfaceSystem _userInterfaceSystem = null!;
+
     public override void _Ready()
     {
         base._Ready();
 
-        _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
+        _nodeManager.SignalBus.BeforeItemPutInStorageSignal += OnBeforeItemPutInStorage;
+        _nodeManager.SignalBus.CanItemBePutInStorageSignal += OnCanItemBePutInStorage;
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
+        _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
     }
 
-    private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
+    public override void _UnhandledInput(InputEvent @event)
+    {
+        base._UnhandledInput(@event);
+        
+        // Open the equipment menu when the action is pressed, if possible
+        if (@event.IsActionPressed("equipment"))
+            TryOpenEquipmentUi();
+    }
+
+    /// <summary>
+    /// Before an item can be put in storage,
+    /// if the item is currently being worn, unequip it.
+    /// </summary>
+    private void OnBeforeItemPutInStorage(Node<StorageComponent> node, ref BeforeItemPutInStorageSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(args.Storable, out var clothingComponent))
+            return;
+
+        if (clothingComponent.EquippedBy == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(clothingComponent.EquippedBy, out var wearsClothingComponent))
+            return;
+        
+        // Unequip the item from the mob's hands if it's in the hands
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
+        {
+            TryUnequipClothing((clothingComponent.EquippedBy, wearsClothingComponent), ClothingSlot.Inhand);
+            return;
+        }
+
+        // Unequip the item from the mob in the intended slot
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+        {
+            TryUnequipClothing((clothingComponent.EquippedBy, wearsClothingComponent), clothingComponent.ClothingSlot);
+            return;
+        }
+    }
+
+    /// <summary>
+    /// When attempting to put something into storage that is worn,
+    /// prevent the attempt if the item cannot be unequipped
+    /// </summary>
+    private void OnCanItemBePutInStorage(Node<StorageComponent> node, ref CanItemBePutInStorageSignal args)
+    {
+        var storedBy = args.Storable.Comp.StoredBy;
+        
+        if (storedBy == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(storedBy, out var wearsClothingComponent))
+            return;
+
+        // if the storable is in hand, prevent if it can't be unequipped
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand]
+            && !CanBeUnequipped((storedBy, wearsClothingComponent), ClothingSlot.Inhand))
+        {
+            args.Canceled = true;
+            return;
+        }
+
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(args.Storable, out var clothingComponent))
+            return;
+
+        // if the storable is a worn piece of clothing, prevent if it can't be unequipped
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot]
+            && !CanBeUnequipped((storedBy, wearsClothingComponent), clothingComponent.ClothingSlot))
+        {
+            args.Canceled = true;
+            return;
+        }
+    }
+
+    /// <summary>
+    /// When right-clicking, creates the context-menu button for equipping items
+    /// and adds it to the context menu list
+    /// </summary>
+    private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
     {
         if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
             return;
-
-        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
-            return;
-
-        TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent));
-    }
-    
-    private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
-    {
+        
         var button = new Button();
         args.Actions.Add(button);
-        button.Text = "Equip item";
-
+        button.SetText("Equip Item");
+        
+        // Disable the equip item option for users that are incapable of interacting
         if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
         {
             button.Disabled = true;
             return;
         }
+        
+        // Disable the equip item option for users that are incapable of wearing clothing
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
+        {
+            button.Disabled = true;
+            return;
+        }
 
+        if (node.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+            button.SetText("Unequip Item");
+
+        // Set the button up to equip the item if the user is in-range when pressed
         var interactee = args.Interactee;
         button.Pressed += () =>
         {
             if (!_interactSystem.InRangeUnobstructed(interactee, node.Owner, canInteractComponent.MaxInteractDistance))
                 return;
-            
-            if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
-                return;
 
-            if (!_nodeManager.TryGetComponent<WearsClothingComponent>(interactee, out var wearsClothingComponent))
-                return;
-            
-            TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
+            if (node.Owner != wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+                TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
+            else
+                TryUnequipClothing((interactee, wearsClothingComponent), clothingComponent.ClothingSlot, true);
         };
     }
 
-    public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing)
+    /// <summary>
+    /// Equip clothing when interacting with an Interactable Clothing object
+    /// </summary>
+    private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
     {
-        // Slot doesn't exist
-        if (!node.Comp.ClothingSlots.TryGetValue(clothing.Comp.ClothingSlot, out var value))
+        if (args.Handled)
+            return;
+        
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
+            return;
+
+        if (_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent)
+            && TryPutItemInHand((args.Interactee, wearsClothingComponent), (node, storableComponent)))
+        {
+            args.Handled = true;
+            return;
+        }
+        
+        if (_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent)
+            && TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent)))
+        {
+            args.Handled = true;
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Checks if the slot exists and if it's occupied, or too large
+    /// </summary>
+    public bool CanItemBePutInHand(Node<WearsClothingComponent> node, Node<StorableComponent> storable)
+    {
+        // Check if slot exists
+        if (!node.Comp.ClothingSlots.TryGetValue(ClothingSlot.Inhand, out var value))
             return false;
 
-        // Try to take off what you're currently wearing
-        // If it fails, it means you can't take off whatever you're currently wearing
-        // i.e. some kind of cursed or binded object
-        if (value != null && !TryUnequipClothing(node, clothing.Comp.ClothingSlot))
+        // If hand is occupied, don't do anything
+        if (value != null)
+            return false;
+
+        if (storable.Comp.ItemSize == ItemSize.ExtraLarge)
+            return false;
+
+        // Clothing is already equipped to a slot and apparently can't be unequipped
+        if (_nodeManager.TryGetComponent<ClothingComponent>(storable, out var clothingComponent)
+            && storable.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot]
+            && !CanBeUnequipped(node, clothingComponent.ClothingSlot))
             return false;
         
-        // Equip the clothing to that slot
-        node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] = clothing;
-        // Assign the spriteFrame to the correct AnimatedSprite2D node
-        var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + clothing.Comp.ClothingSlot);
-        if (clothing.Comp.EquippedSpriteFrames != null && spriteSlot != null)
-            spriteSlot.SpriteFrames = clothing.Comp.EquippedSpriteFrames;
+        // Check other systems for reasons why this can't be put in hand
+        var signal = new CanItemBePutInHandSignal(storable);
+        _nodeManager.SignalBus.EmitCanItemBePutInHandSignal(node, ref signal);
 
-        // Attach the clothing to the wearer and have it follow them around invisibly
-        if (node.Owner is Node2D wearerNode2D && clothing.Owner is Node2D clothingNode2D)
-        {
-            clothingNode2D.SetVisible(false);
-            clothing.Owner.Reparent(node.Owner, false);
-            clothingNode2D.GlobalPosition = wearerNode2D.GlobalPosition;
-        }
+        if (signal.Canceled)
+            return false;
 
         return true;
     }
 
-    public bool TryUnequipClothing(Node<WearsClothingComponent> node, ClothingSlot slot)
+    /// <summary>
+    /// Checks if the slot exists, and if it's occupied if we can unequip what's in that slot if needed
+    /// </summary>
+    public bool CanBeEquipped(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing,
+        bool unequipIfOccupied = false)
     {
-        // Slot doesn't exist
+        // Check if slot exists
+        if (!node.Comp.ClothingSlots.TryGetValue(clothing.Comp.ClothingSlot, out var value))
+            return false;
+        
+        // If the slot is occupied and we don't want to unequip it, return false
+        if (value != null && !unequipIfOccupied)
+            return false;
+        
+        // If we do want to unequip what's already in the slot to swap it out, check if we can
+        if (value != null && unequipIfOccupied && !CanBeUnequipped(node, clothing.Comp.ClothingSlot))
+            return false;
+
+        // If we're equipping from the person's own hands, we always want that to happen
+        if (clothing.Owner == node.Comp.ClothingSlots[ClothingSlot.Inhand] && !CanBeUnequipped(node, ClothingSlot.Inhand))
+            return false;
+        
+        // Check other systems that may be preventing the clothing from being equipped
+        // i.e. cursed and binded
+        var signal = new IsClothingEquippableSignal(clothing);
+        _nodeManager.SignalBus.EmitIsClothingEquippableSignal(node, ref signal);
+
+        if (signal.Canceled)
+            return false;
+        
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if the slot exists, if there's something in that slot, 
+    /// </summary>
+    public bool CanBeUnequipped(Node<WearsClothingComponent> node, ClothingSlot slot)
+    {
+        // Check if slot exists
         if (!node.Comp.ClothingSlots.TryGetValue(slot, out var value))
             return false;
         
-        // TODO: maybe some kind of CursedClothingComponent or something to make perma-equipped clothes that require dispelling
+        // Nothing to unequip
+        if (value == null)
+            return false;
         
-        // TODO: Put the item back into their inventory, their hand, drop it into the world, literally anything
+        // Check other systems that may be preventing the clothing from being unequipped
+        // i.e. cursed and binded
+        var signal = new IsClothingUnequippableSignal(slot);
+        _nodeManager.SignalBus.EmitIsClothingUnequippableSignal(node, ref signal);
+        
+        if (signal.Canceled)
+            return false;
+        
+        return true;
+    }
+
+    public bool IsHandEmpty(Node<WearsClothingComponent> node)
+    {
+        return node.Comp.ClothingSlots[ClothingSlot.Inhand] == null;
+    }
+
+    /// <summary>
+    /// Try to equip clothing if the slot exists
+    /// Set the boolean if you want to try unequipping the slot if it's occupied
+    /// </summary>
+    public bool TryEquipClothing(Node<WearsClothingComponent> node, Node<ClothingComponent> clothing, bool unequipIfOccupied = false)
+    {
+        if (!CanBeEquipped(node, clothing, unequipIfOccupied))
+            return false;
+
+        // Send a signal to other systems to have the item removed/unequipped before equipping it
+        var beforeClothingEquippedSignal = new BeforeClothingEquippedSignal(clothing);
+        _nodeManager.SignalBus.EmitBeforeClothingEquippedSignal(node, ref beforeClothingEquippedSignal);
+
+        // If the item is for some reason still equipped,
+        // do not proceed with equipping.
+        if (clothing.Comp.EquippedBy != null)
+            return false;
+
+        // If we're already wearing something and want to swap it out, unequip the clothing
+        // or if the item is in our hand, get it out of our hand
+        if (node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] != null && unequipIfOccupied)
+            TryUnequipClothing(node, clothing.Comp.ClothingSlot);
+        else if (clothing.Owner == node.Comp.ClothingSlots[ClothingSlot.Inhand])
+            TryUnequipClothing(node, ClothingSlot.Inhand);
+        
+        // Equip the clothing to that slot
+        node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] = clothing;
+        clothing.Comp.EquippedBy = node;
+        
+        // Assign the spriteFrame to the correct AnimatedSprite2D node
+        // This causes the item to show up on the character's body
+        var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + clothing.Comp.ClothingSlot);
+        if (clothing.Comp.EquippedSpriteFrames != null && spriteSlot != null)
+            spriteSlot.SpriteFrames = clothing.Comp.EquippedSpriteFrames;
+
+        // Handles clothing which by default occupy the inhand slot
+        if (clothing.Comp.ClothingSlot == ClothingSlot.Inhand
+            && _nodeManager.TryGetComponent<StorableComponent>(clothing, out var storableComponent))
+        {
+            var itemPutInHandSignal = new ItemPutInHandSignal((clothing, storableComponent));
+            _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref itemPutInHandSignal);
+            return true;
+        }
+        
+        var signal = new ClothingEquippedSignal(clothing);
+        _nodeManager.SignalBus.EmitClothingEquippedSignal(node, ref signal);
+        return true;
+    }
+
+    /// <summary>
+    /// Non-clothing items can be equipped to the hand if it is storable
+    /// </summary>
+    public bool TryPutItemInHand(Node<WearsClothingComponent> node, Node<StorableComponent> item)
+    {
+        if (!CanItemBePutInHand(node, item))
+            return false;
+
+        // Send a signal to other systems to have the item removed/unequipped before equipping it
+        var beforeItemPutInHandSignal = new BeforeItemPutInHandSignal(item);
+        _nodeManager.SignalBus.EmitBeforeItemPutInHandSignal(node, ref beforeItemPutInHandSignal);
+
+        // If the item is for some reason still stored,
+        // do not proceed with putting the item in hand.
+        if (item.Comp.StoredBy != null)
+            return false;
+        
+        var inHandEquippedSprite = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/Inhand");
+        inHandEquippedSprite.SpriteFrames = null;
+        
+        if (_nodeManager.TryGetComponent<ClothingComponent>(item, out var clothingComponent))
+        {
+            // when the item being put in hand is already worn in a different slot, unequip it first
+            if (item.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot])
+                TryUnequipClothing(node, clothingComponent.ClothingSlot);
+            
+            // if the clothing item is intended to be inhand, show off the sprite
+            // generic storables usually don't have an inhand sprite to show off
+            if (clothingComponent.ClothingSlot == ClothingSlot.Inhand)
+                inHandEquippedSprite.SpriteFrames = clothingComponent.EquippedSpriteFrames;
+        }
+        
+        node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
+        item.Comp.StoredBy = node;
+
+        // Pickup animation
+        if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
+        {
+            var tween = CreateTween();
+            tween.TweenProperty(itemNode2D, "global_position", node2D.GlobalPosition, 0.125f);
+            tween.Finished += () =>
+            {
+                var signal = new ItemPutInHandSignal(item);
+                _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
+            };
+            return true;
+        }
+        
+        var signal = new ItemPutInHandSignal(item);
+        _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
+        return true;
+    }
+    
+    public bool TryUnequipClothing(Node<WearsClothingComponent> node, ClothingSlot slot, bool dropItem = false)
+    {
+        if (!CanBeUnequipped(node, slot))
+            return false;
+        
+        var clothingItem = node.Comp.ClothingSlots[slot];
+        if (clothingItem == null)
+            return false;
+        
+        // Put the item back into the world and make it visible again
+        if (dropItem)
+        {
+            clothingItem.Reparent(node.Owner.GetParent());
+            if (clothingItem is Node2D clothesNode2D)
+                clothesNode2D.SetVisible(true);
+        }
+        
+        // Removes the item from the character's clothing slots and removes the appearance of it on the character
         node.Comp.ClothingSlots[slot] = null;
         var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/" + slot);
         if (spriteSlot != null)
             spriteSlot.SpriteFrames = null;
 
+        if (slot == ClothingSlot.Inhand && _nodeManager.TryGetComponent<StorableComponent>(clothingItem, out var storableComponent))
+        {
+            storableComponent.StoredBy = null;
+            var signal = new ItemRemovedFromHandSignal((clothingItem, storableComponent));
+            _nodeManager.SignalBus.EmitItemRemovedFromHandSignal(node, ref signal);
+        }
+        else if (_nodeManager.TryGetComponent<ClothingComponent>(clothingItem, out var clothingComponent))
+        {
+            clothingComponent.EquippedBy = null;
+            var signal = new ClothingUnequippedSignal((clothingItem, clothingComponent));
+            _nodeManager.SignalBus.EmitClothingUnequippedSignal(node, ref signal);
+        }
+
         return true;
     }
+
+    /// <summary>
+    /// Opens the equipment UI if all the requirements are met
+    /// </summary>
+    private void TryOpenEquipmentUi()
+    {
+        var player = _playerManagerSystem.TryGetPlayer();
+        if (player == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(player, out var wearsClothingComponent))
+            return;
+
+        if (!_nodeManager.TryGetComponent<AttachedUserInterfaceComponent>(player, out var attachedUserInterfaceComponent))
+            return;
+        
+        var control = _userInterfaceSystem.OpenAttachedUserInterface((player, attachedUserInterfaceComponent), player, "equipment");
+        if (control == null)
+            return;
+        
+        var customWindow = (CustomWindowSystem)control;
+        if (customWindow.Content == null)
+            return;
+
+        var clothingSceneSystem = (ClothingSceneSystem)customWindow.Content;
+        clothingSceneSystem.SetDetails((player, wearsClothingComponent));
+    }
 }
+

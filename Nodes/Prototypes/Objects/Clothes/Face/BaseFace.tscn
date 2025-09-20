@@ -5,4 +5,7 @@
 [node name="BaseFace" instance=ExtResource("1_x7lm8")]
 
 [node name="ClothingComponent" parent="." index="3"]
-ClothingSlot = 8
+ClothingSlot = 9
+
+[node name="StorableComponent" parent="." index="5"]
+ItemSize = 1

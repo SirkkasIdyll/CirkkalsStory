@@ -13,7 +13,6 @@ public partial class MainSceneSystem : Node2D
 
     [ExportCategory("Instantiated")]
     [Export] private PackedScene? _escapeMenuSceneSystem;
-    [Export] private PackedScene? _gameOverScene;
     
     [ExportCategory("Owned")]
     [Export] private CanvasLayer _canvasLayer = null!;

@@ -2,7 +2,7 @@
 using CS.Components.Grid;
 using CS.Components.Player;
 using CS.Nodes.UI.Chyron;
-using CS.Nodes.UI.NodeButtonList;
+using CS.Nodes.UI.ContextButtonList;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -17,8 +17,7 @@ public partial class InteractSystem : NodeSystem
     
     private ShaderMaterial _inRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/InRangeOutline.tres");
     private ShaderMaterial _outOfRangeOutline = ResourceLoader.Load<ShaderMaterial>("res://Resources/Materials/OutOfRangeOutline.tres");
-    private PackedScene _nodeButtonList =
-        ResourceLoader.Load<PackedScene>("res://Nodes/UI/NodeButtonList/NodeButtonList.tscn");
+    private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
     
     public override void _Ready()
     {
@@ -28,19 +27,22 @@ public partial class InteractSystem : NodeSystem
         _nodeManager.SignalBus.HideInteractOutlineSignal += OnHideInteractOutline;
     }
 
-    public override void _Input(InputEvent @event)
+    public override void _UnhandledInput(InputEvent @event)
     {
-        base._Input(@event);
+        base._UnhandledInput(@event);
+        
+        var player = _playerManagerSystem.TryGetPlayer();
+        if (player == null)
+            return;
 
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(_playerManagerSystem.GetPlayer(),
-                out var canInteractComponent))
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(player, out var canInteractComponent))
             return;
         
         if (@event.IsActionPressed("primary_interact"))
-            OnPrimaryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent));
+            OnPrimaryInteract((player, canInteractComponent));
         
         if (@event.IsActionPressed("secondary_interact"))
-            OnSecondaryInteract((_playerManagerSystem.GetPlayer(), canInteractComponent));
+            OnSecondaryInteract((player, canInteractComponent));
     }
 
     public override void _PhysicsProcess(double delta)
@@ -123,12 +125,10 @@ public partial class InteractSystem : NodeSystem
         if (Input.IsActionPressed("shift_modifier"))
         {
             _descriptionSystem.ShowTooltip(interactable);
-            GetViewport().SetInputAsHandled();
             return;
         }
 
         TryInteract(node, interactable);
-        GetViewport().SetInputAsHandled();
     }
 
     private void OnSecondaryInteract(Node<CanInteractComponent> node)
@@ -139,7 +139,7 @@ public partial class InteractSystem : NodeSystem
             var signal = new GetContextActionsSignal(node);
             _nodeManager.SignalBus.EmitGetContextActionsSignal((node.Comp.InteractTarget, interactableComponent), ref signal);
             
-            var nodeButtonList = _nodeButtonList.Instantiate<NodeButtonListSystem>();
+            var nodeButtonList = _contextButtonList.Instantiate<ContextButtonListSystem>();
             nodeButtonList.Setup(signal.Actions);
             CanvasLayer.AddChild(nodeButtonList);
             nodeButtonList.SetPosition(GetViewport().GetMousePosition());
@@ -158,7 +158,7 @@ public partial class InteractSystem : NodeSystem
         area2D.AddChild(collionShape2D);
         
         // Adds the area to the scene at the mouse location
-        _playerManagerSystem.GetPlayer().GetParent().AddChild(area2D);
+        _playerManagerSystem.TryGetPlayer()?.GetParent().AddChild(area2D);
         area2D.SetGlobalPosition(GetGlobalMousePosition());
         
         // After a random specified amount of time, get the overlapping bodies and narrow them down to interactables
@@ -179,7 +179,7 @@ public partial class InteractSystem : NodeSystem
                 return;
             }
             
-            var nodeButtonList = _nodeButtonList.Instantiate<NodeButtonListSystem>();
+            var nodeButtonList = _contextButtonList.Instantiate<ContextButtonListSystem>();
             nodeButtonList.Setup(interactableBodies);
             CanvasLayer.AddChild(nodeButtonList);
             nodeButtonList.SetPosition(GetViewport().GetMousePosition());

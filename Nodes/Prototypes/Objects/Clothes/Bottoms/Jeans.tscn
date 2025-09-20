@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dm6f5s3vomv02"]
+[gd_scene load_steps=5 format=3 uid="uid://dm6f5s3vomv02"]
 
 [ext_resource type="PackedScene" uid="uid://bgkgb5iluqb5o" path="res://Nodes/Prototypes/Objects/Clothes/Bottoms/BaseBottom.tscn" id="1_g7pdt"]
 [ext_resource type="Texture2D" uid="uid://dbxajv3kbsslv" path="res://Resources/Sprites/Clothes/Bottoms/JeansIcon.png" id="2_k1r3h"]
-[ext_resource type="SpriteFrames" uid="uid://cqr84e0lv8nlx" path="res://Resources/SpriteFrames/Clothes/Bottoms/Jeans.tres" id="2_vdywj"]
+[ext_resource type="SpriteFrames" uid="uid://cqr84e0lv8nlx" path="res://Resources/Sprites/Clothes/Bottoms/Jeans.tres" id="2_vdywj"]
+[ext_resource type="Script" uid="uid://dtmrn4vaol245" path="res://Components/Inventory/StorageComponent.cs" id="4_k1r3h"]
 
 [node name="Jeans" instance=ExtResource("1_g7pdt")]
 
@@ -18,3 +19,11 @@ texture = ExtResource("2_k1r3h")
 
 [node name="ClothingComponent" parent="." index="4"]
 EquippedSpriteFrames = ExtResource("2_vdywj")
+
+[node name="StorableComponent" parent="." index="6"]
+Volume = 2.0
+
+[node name="StorageComponent" type="Node2D" parent="." index="7"]
+script = ExtResource("4_k1r3h")
+Capacity = 5.0
+MaxItemSize = 2

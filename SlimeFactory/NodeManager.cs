@@ -44,6 +44,8 @@ public partial class NodeManager
             var node = ResourceLoader.Load<PackedScene>(file).Instantiate();
             if (!node.Name.ToString().StartsWith("Base"))
                 NodeDictionary.TryAdd(node.Name, node);
+            else
+                node.QueueFree();
         }
     }
 
@@ -53,6 +55,9 @@ public partial class NodeManager
 
         foreach (var file in nodeFiles)
         {
+            if (file.EndsWith(".Events.cs"))
+                continue;
+            
             var node = ResourceLoader.Load<CSharpScript>(file).New().Obj;
             if (node is Component component)
             {
@@ -123,7 +128,7 @@ public partial class NodeManager
     }
     
     /// <summary>
-    /// Goes through each child of the node and checks if the child is of the same type as T.
+    /// Checks if GetNodeOrNull returns the type of T
     /// </summary>
     public bool HasComponent<T>(Node node) where T : class, IComponent
     {
@@ -145,11 +150,10 @@ public partial class NodeManager
     }
 
     /// <summary>
-    /// Goes through each child of the node and returns the child with the type of T
+    /// Checks if GetNodeOrNull returns the type of T and returns the Node
     /// </summary>
     public bool TryGetComponent<T>(Node node, [NotNullWhen(true)] out T? component) where T : class, IComponent
     {
-        var children = node.GetChildren();
         component = node.GetNodeOrNull<T>($"{typeof(T).Name}");
         return component != null;
     }

@@ -6,14 +6,13 @@ This is a small project I'm working on to familiarize myself with the Godot engi
 
 ### Coding Practices
 
-- Don't use LINQ.
+- Add summaries for all classes and all properties even if they seem obvious. **Make your intention known, otherwise no one will understand.**
+- Events subscribed from the SignalBus need to be manually disconnected in _ExitTree(), **failure to do so will prevent Free()ing the node and cause bugs as it responds to signals.**
+- Remember to use continues when doing foreach.
 - Arrange properties and functions in alphabetical order. This lessens organizational ambiguity and makes it easier to find specific code.
-- Add summaries for all classes and all properties even if they seem obvious. Make your intention known, otherwise no one will know.
-- Use if statements to return as early as possible to reduce nesting complexity later on.
+- Use simple if statements to return early to reduce code nesting.
+- Don't use LINQ.
 - Delete unused template functions like _Ready() and _Process().
-- Parents use signal from children, then call functions from their children to update them. Children do not ever need to be aware of their parents.
-- Events subscribed from the SignalBus need to be manually disconnected in _ExitTree(), failure to do so will make the node unavailable to be freed and cause bugs.
-- CODE IN _PROCESS OR _PHYSICSPROCESS PROBABLY NEEDS CONTINUE, NOT RETURN
 
 ### Naming Practices
 

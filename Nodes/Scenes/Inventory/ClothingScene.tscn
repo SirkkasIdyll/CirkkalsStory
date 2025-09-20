@@ -1,0 +1,232 @@
+[gd_scene load_steps=19 format=3 uid="uid://bt08bpy5bn30e"]
+
+[ext_resource type="PackedScene" uid="uid://cplderic1k4iq" path="res://Nodes/UI/CustomWindow/CustomWindow.tscn" id="1_ncgnh"]
+[ext_resource type="PackedScene" uid="uid://djj4j1dplagri" path="res://Nodes/UI/Utility/SpacerScene.tscn" id="2_ecccw"]
+[ext_resource type="Script" uid="uid://1uhrqi52ittk" path="res://Nodes/Scenes/Inventory/ClothingSceneSystem.cs" id="2_ejtbp"]
+[ext_resource type="Texture2D" uid="uid://w65w7fajfxfa" path="res://Resources/Sprites/Clothes/ClothingIconTemplate.png" id="3_c1wji"]
+[ext_resource type="Script" uid="uid://c83inxk84aks0" path="res://Nodes/Scenes/Inventory/ClothingTextureRect.cs" id="5_10hi3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xmpy0"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c1wji"]
+bg_color = Color(0.25, 0.25, 0.25, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_size = 1
+shadow_offset = Vector2(1, 1)
+anti_aliasing = false
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ejtbp"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 320, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_10hi3"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 288, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ovpy"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 224, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_17w50"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5drdd"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lvs77"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tkmey"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_np617"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ecccw"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 192, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x8nxv"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m7vgx"]
+atlas = ExtResource("3_c1wji")
+region = Rect2(0, 256, 32, 32)
+
+[node name="CustomWindow" node_paths=PackedStringArray("Content") instance=ExtResource("1_ncgnh")]
+Content = NodePath("PanelContainer/MarginContainer/VBoxContainer/GridContainer")
+
+[node name="Title" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+text = "Equipment"
+
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/MarginContainer/VBoxContainer" index="1" node_paths=PackedStringArray("_title", "_clothingSlots")]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 3
+script = ExtResource("2_ejtbp")
+_title = NodePath("../HBoxContainer/Title")
+_texture = SubResource("AtlasTexture_xmpy0")
+_clothingSlots = {
+0: NodePath("Shoes/TextureRect"),
+1: NodePath("Bottom/TextureRect"),
+2: NodePath("Gloves/TextureRect"),
+3: NodePath("Top/TextureRect"),
+4: NodePath("Belt/TextureRect"),
+5: NodePath("Outerwear/TextureRect"),
+6: NodePath("Bag/TextureRect"),
+7: NodePath("Neck/TextureRect"),
+8: NodePath("Inhand/TextureRect"),
+9: NodePath("Face/TextureRect"),
+10: NodePath("Hat/TextureRect")
+}
+
+[node name="Spacer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="0" instance=ExtResource("2_ecccw")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="Hat" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="1"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Hat" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_ejtbp")
+script = ExtResource("5_10hi3")
+
+[node name="Spacer2" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="2" instance=ExtResource("2_ecccw")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="Spacer5" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="3" instance=ExtResource("2_ecccw")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="Face" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="4"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Face" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_10hi3")
+script = ExtResource("5_10hi3")
+
+[node name="Neck" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="5"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Neck" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_4ovpy")
+script = ExtResource("5_10hi3")
+
+[node name="Gloves" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="6"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Gloves" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_17w50")
+script = ExtResource("5_10hi3")
+
+[node name="Top" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="7"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Top" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_5drdd")
+script = ExtResource("5_10hi3")
+
+[node name="Outerwear" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="8"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Outerwear" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_lvs77")
+script = ExtResource("5_10hi3")
+
+[node name="Spacer8" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="9" instance=ExtResource("2_ecccw")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="Bottom" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="10"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Bottom" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_tkmey")
+script = ExtResource("5_10hi3")
+
+[node name="Shoes" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="11"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Shoes" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_np617")
+script = ExtResource("5_10hi3")
+
+[node name="Spacer9" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="12" instance=ExtResource("2_ecccw")]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="Spacer10" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="13" instance=ExtResource("2_ecccw")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="Spacer11" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="14" instance=ExtResource("2_ecccw")]
+layout_mode = 2
+size_flags_horizontal = 1
+
+[node name="Bag" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="15"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Bag" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_ecccw")
+script = ExtResource("5_10hi3")
+
+[node name="Belt" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="16"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Belt" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_x8nxv")
+script = ExtResource("5_10hi3")
+
+[node name="Inhand" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer" index="17"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_c1wji")
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/GridContainer/Inhand" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_m7vgx")
+script = ExtResource("5_10hi3")

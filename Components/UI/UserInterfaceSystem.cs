@@ -25,57 +25,67 @@ public partial class UserInterfaceSystem : NodeSystem
         _nodeManager.NodeQuery<AttachedUserInterfaceComponent>(out var dict);
         foreach (var (owner, component) in dict)
         {
-            if (component.User == null)
-                continue;
-
-            if (owner is not Node2D objectNode || component.User is not Node2D userNode)
-                continue;
+            foreach (var (action, user) in component.UserUsingInterface)
+            {
+                if (owner is not Node2D objectNode || user is not Node2D userNode)
+                    continue;
+                
+                if (!_gridSystem.TryGetDistance(userNode, objectNode, out var distance))
+                    continue;
             
-            if (!_gridSystem.TryGetDistance(userNode, objectNode, out var distance))
-                continue;
+                if (distance < component.MaxUseDistance)
+                    continue;
             
-            if (distance < component.MaxUseDistance)
-                continue;
-            
-            CloseAttachedUserInterface((owner, component));
+                CloseAttachedUserInterface((owner, component), action);
+            }
         }
     }
 
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
     {
+        if (!_nodeManager.HasComponent<OpenAttachedUserInterfaceOnInteractComponent>(node))
+            return;
+        
         if (!_nodeManager.TryGetComponent<AttachedUserInterfaceComponent>(node, out var attachedUserInterfaceComponent))
             return;
         
-        OpenAttachedUserInterface((node, attachedUserInterfaceComponent), args.Interactee);
+        OpenAttachedUserInterface((node, attachedUserInterfaceComponent), args.Interactee, "interact");
     }
     
     /// <summary>
     /// Open the attached user interface and prevent opening duplicates
     /// </summary>
-    private void OpenAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, Node user)
+    public Control? OpenAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, Node user, string action)
     {
         // Already a UI open, don't open another one
-        if (node.Comp.UserInterface != null)
-            return;
-        
-        node.Comp.UserInterface = node.Comp.UserInterfaceScene.Instantiate<Control>();
-        node.Comp.User = user;
-        node.Comp.UserInterface.TreeExited += () => CloseAttachedUserInterface(node);
-        CanvasLayer.AddChild(node.Comp.UserInterface);
+        if (node.Comp.UserInterface.ContainsKey(action))
+        {
+            // If it's the same user who tried it again, have it close the UI
+            if (node.Comp.UserUsingInterface.TryGetValue(action, out var userUsingInterface) && userUsingInterface == user)
+                CloseAttachedUserInterface(node, action);
+            
+            return null;
+        }
+
+        node.Comp.UserInterface[action] = node.Comp.UserInterfaceScenes[action].Instantiate<Control>();
+        node.Comp.UserUsingInterface[action] = user;
+        node.Comp.UserInterface[action].TreeExited += () => CloseAttachedUserInterface(node, action);
+        CanvasLayer.AddChild(node.Comp.UserInterface[action]);
+        return node.Comp.UserInterface[action];
     }
 
     /// <summary>
-    /// 
+    /// Closes the attached user interface
     /// </summary>
-    private void CloseAttachedUserInterface(Node<AttachedUserInterfaceComponent> node)
+    public void CloseAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, string action)
     {
-        if (node.Comp.UserInterface == null)
+        if (!node.Comp.UserInterface.ContainsKey(action))
             return;
         
-        if (!node.Comp.UserInterface.IsQueuedForDeletion())
-            node.Comp.UserInterface.QueueFree();
+        if (!node.Comp.UserInterface[action].IsQueuedForDeletion())
+            node.Comp.UserInterface[action].QueueFree();
         
-        node.Comp.UserInterface = null;
-        node.Comp.User = null;
+        node.Comp.UserInterface.Remove(action);
+        node.Comp.UserUsingInterface.Remove(action);
     }
 }

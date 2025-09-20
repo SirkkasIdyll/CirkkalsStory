@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bywt6heh0unqh"]
+[gd_scene load_steps=5 format=3 uid="uid://bywt6heh0unqh"]
 
 [ext_resource type="PackedScene" uid="uid://bottr68gfk55a" path="res://Nodes/Prototypes/Objects/Clothes/Outerwear/BaseOuterwear.tscn" id="1_d3q38"]
 [ext_resource type="Texture2D" uid="uid://bx5tbf5n3s85s" path="res://Resources/Sprites/Clothes/Outerwear/JacketIcon.png" id="2_cav80"]
-[ext_resource type="SpriteFrames" uid="uid://cvgbj1y11m0f2" path="res://Resources/SpriteFrames/Clothes/Outerwear/TanJacket.tres" id="2_exu3e"]
+[ext_resource type="SpriteFrames" uid="uid://cvgbj1y11m0f2" path="res://Resources/Sprites/Clothes/Outerwear/TanJacket.tres" id="2_exu3e"]
+[ext_resource type="Script" uid="uid://dtmrn4vaol245" path="res://Components/Inventory/StorageComponent.cs" id="4_cav80"]
 
 [node name="TanJacket" instance=ExtResource("1_d3q38")]
 
@@ -18,3 +19,11 @@ texture = ExtResource("2_cav80")
 
 [node name="ClothingComponent" parent="." index="4"]
 EquippedSpriteFrames = ExtResource("2_exu3e")
+
+[node name="StorableComponent" parent="." index="6"]
+Volume = 4.0
+
+[node name="StorageComponent" type="Node2D" parent="." index="7"]
+script = ExtResource("4_cav80")
+Capacity = 5.0
+MaxItemSize = 2

@@ -27,7 +27,7 @@ public partial class TempSystem : Node2D
 		var camera = new Camera2D();
 		camera.SetZoom(new Vector2(2f, 2f));
 		node.AddChild(camera);
-		gridSystem.SetPosition(playerManagerSystem.GetPlayer(), new Vector2(10, 10));
+		gridSystem.SetPosition(node, new Vector2(10, 10));
 	}
 
 	public override void _PhysicsProcess(double delta)

@@ -1,0 +1,93 @@
+[gd_scene load_steps=5 format=3 uid="uid://cu3vy6cnoktke"]
+
+[ext_resource type="PackedScene" uid="uid://cplderic1k4iq" path="res://Nodes/UI/CustomWindow/CustomWindow.tscn" id="1_qlrkv"]
+[ext_resource type="Script" uid="uid://cr7ypmq32qe0t" path="res://Nodes/Scenes/Inventory/InventorySceneSystem.cs" id="2_sea2a"]
+[ext_resource type="Texture2D" uid="uid://53anc4smic08" path="res://Resources/Sprites/Sprite-0001.png" id="3_smo22"]
+
+[sub_resource type="FoldableGroup" id="FoldableGroup_1n82s"]
+allow_folding_all = true
+
+[node name="CustomWindow" node_paths=PackedStringArray("Content") instance=ExtResource("1_qlrkv")]
+Content = NodePath("PanelContainer/MarginContainer/VBoxContainer/VBoxContainer")
+
+[node name="PanelContainer" parent="." index="0"]
+custom_minimum_size = Vector2(260, 0)
+
+[node name="Title" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+text = "Inventory"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" index="1" node_paths=PackedStringArray("_title")]
+layout_mode = 2
+script = ExtResource("2_sea2a")
+_title = NodePath("../HBoxContainer/Title")
+
+[node name="FoldableContainer" type="FoldableContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" index="0"]
+layout_mode = 2
+folded = true
+title = "Tan jacket"
+title_text_overrun_behavior = 3
+foldable_group = SubResource("FoldableGroup_1n82s")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer" index="0"]
+visible = false
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer/VBoxContainer" index="0"]
+layout_mode = 2
+texture = ExtResource("3_smo22")
+stretch_mode = 4
+
+[node name="FoldableContainer2" type="FoldableContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" index="1"]
+layout_mode = 2
+title = "Satchel"
+title_text_overrun_behavior = 3
+foldable_group = SubResource("FoldableGroup_1n82s")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer2" index="0"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer2/VBoxContainer" index="0"]
+layout_mode = 2
+texture = ExtResource("3_smo22")
+stretch_mode = 4
+
+[node name="TextureRect2" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer2/VBoxContainer" index="1"]
+layout_mode = 2
+texture = ExtResource("3_smo22")
+stretch_mode = 4
+
+[node name="TextureRect3" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer2/VBoxContainer" index="2"]
+layout_mode = 2
+texture = ExtResource("3_smo22")
+stretch_mode = 4
+
+[node name="FoldableContainer3" type="FoldableContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" index="2"]
+layout_mode = 2
+folded = true
+title = "Blue jeans"
+title_text_overrun_behavior = 3
+foldable_group = SubResource("FoldableGroup_1n82s")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer3" index="0"]
+visible = false
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer3/VBoxContainer" index="0"]
+layout_mode = 2
+texture = ExtResource("3_smo22")
+stretch_mode = 4
+
+[node name="TextureRect2" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer3/VBoxContainer" index="1"]
+layout_mode = 2
+texture = ExtResource("3_smo22")
+stretch_mode = 4
+
+[node name="TextureRect3" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer3/VBoxContainer" index="2"]
+layout_mode = 2
+texture = ExtResource("3_smo22")
+stretch_mode = 4
+
+[node name="TextureRect4" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer/FoldableContainer3/VBoxContainer" index="3"]
+layout_mode = 2
+texture = ExtResource("3_smo22")
+stretch_mode = 4
