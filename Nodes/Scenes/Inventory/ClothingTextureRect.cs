@@ -49,7 +49,7 @@ public partial class ClothingTextureRect : TextureRect
             return false;
         
         if (Slot == ClothingSlot.Inhand && _nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
-            return _clothingSystem.CanBePutInHand((player, wearsClothingComponent), (node, storableComponent));
+            return _clothingSystem.CanItemBePutInHand((player, wearsClothingComponent), (node, storableComponent));
 
         if (_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent)
             && Slot == clothingComponent.ClothingSlot)

@@ -5,7 +5,32 @@ using CS.SlimeFactory.Signals;
 namespace CS.Components.Clothing;
 
 /// <summary>
-/// Raised when a mob puts an item into the inhand slot
+/// Before clothing can be equipped,
+/// it should be removed from any storage or other equipment slot it's in
+/// </summary>
+public partial class BeforeClothingEquippedSignal : UserSignalArgs
+{
+    public Node<ClothingComponent> Clothing;
+
+    public BeforeClothingEquippedSignal(Node<ClothingComponent> clothing)
+    {
+        Clothing = clothing;
+    }
+}
+
+public partial class BeforeItemPutInHandSignal : UserSignalArgs
+{
+    public Node<StorableComponent> Storable;
+
+    public BeforeItemPutInHandSignal(Node<StorableComponent> storable)
+    {
+        Storable = storable;
+    }
+}
+
+/// <summary>
+/// Check what needs to be done to put an item into hand,
+/// without actually attempting to do the actions.
 /// </summary>
 public partial class CanItemBePutInHandSignal : CancellableSignalArgs
 {
@@ -18,7 +43,7 @@ public partial class CanItemBePutInHandSignal : CancellableSignalArgs
 }
 
 /// <summary>
-/// Raised when a mob equips a piece of clothing to a non-inhand slot
+/// Successfully equipped clothing to non-inhand slot
 /// </summary>
 public partial class ClothingEquippedSignal : UserSignalArgs
 {
@@ -31,7 +56,7 @@ public partial class ClothingEquippedSignal : UserSignalArgs
 }
 
 /// <summary>
-/// Raised when a mob unequips a piece of clothing in a non-inhand slot
+/// Successfully unequipped clothing from non-inhand slot
 /// </summary>
 public partial class ClothingUnequippedSignal : UserSignalArgs
 {
@@ -44,7 +69,8 @@ public partial class ClothingUnequippedSignal : UserSignalArgs
 }
 
 /// <summary>
-/// Raised when we want to check if something is preventing equipping the clothing
+/// Check what needs to be done to equip clothing,
+/// without actually attempting to do the actions.
 /// </summary>
 public partial class IsClothingEquippableSignal : CancellableSignalArgs
 {
@@ -57,7 +83,8 @@ public partial class IsClothingEquippableSignal : CancellableSignalArgs
 }
 
 /// <summary>
-/// Raised when we want to check if something is preventing unequipping the clothing
+/// Check what needs to be done to unequip clothing,
+/// without actually attempting to do the actions.
 /// </summary>
 public partial class IsClothingUnequippableSignal : CancellableSignalArgs
 {
@@ -70,7 +97,7 @@ public partial class IsClothingUnequippableSignal : CancellableSignalArgs
 }
 
 /// <summary>
-/// Raised when a mob puts an item into the inhand slot
+/// Successfully equipped item to inhand slot.
 /// </summary>
 public partial class ItemPutInHandSignal : UserSignalArgs
 {
@@ -83,7 +110,7 @@ public partial class ItemPutInHandSignal : UserSignalArgs
 }
 
 /// <summary>
-/// Raised when a mob has an item removed from their inhand slot
+/// Successfully removed item from inhand slot.
 /// </summary>
 public partial class ItemRemovedFromHandSignal : UserSignalArgs
 {

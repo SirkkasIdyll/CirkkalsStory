@@ -1,4 +1,5 @@
 ﻿using CS.Components.Clothing;
+using CS.Components.Inventory;
 using CS.SlimeFactory;
 using Godot;
 
@@ -9,14 +10,42 @@ public partial class AppearanceSystem : NodeSystem
     public override void _Ready()
     {
         base._Ready();
-
+        
         _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
+        _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
+        _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
+
     }
 
     private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
     {
         if (node.Owner is CharacterBody2D characterBody2D)
             OrientClothingToBody(characterBody2D);
+        
+        AttachItemInvisibly(node, args.Clothing);
+    }
+
+    private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
+    {
+        AttachItemInvisibly(node, args.Storable);
+    }
+
+    private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
+    {
+        AttachItemInvisibly(node, args.Storable);
+    }
+
+    /// <summary>
+    /// Attaches a node to another node so that it follows it around invisibly.
+    /// </summary>
+    public void AttachItemInvisibly(Node main, Node nodeToAttach)
+    {
+        if (main is not Node2D mainNode2D || nodeToAttach is not Node2D node2DToAttach)
+            return;
+        
+        node2DToAttach.SetVisible(false);
+        nodeToAttach.Reparent(main, false);
+        node2DToAttach.GlobalPosition = mainNode2D.GlobalPosition;
     }
 
     /// <summary>

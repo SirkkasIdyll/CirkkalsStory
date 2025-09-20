@@ -10,6 +10,11 @@ using Godot;
 
 namespace CS.Components.Clothing;
 
+/// <summary>
+/// When things are put in hand they aren't really equipped. They're just placed in the hand.
+/// This causes a decent amount of annoying checks required because the hands can support holding storables
+/// in addition to clothing items.
+/// </summary>
 public partial class ClothingSystem : NodeSystem
 {
     [InjectDependency] private readonly AppearanceSystem _appearanceSystem = null!;
@@ -22,10 +27,10 @@ public partial class ClothingSystem : NodeSystem
     {
         base._Ready();
 
+        _nodeManager.SignalBus.BeforeItemPutInStorageSignal += OnBeforeItemPutInStorage;
         _nodeManager.SignalBus.CanItemBePutInStorageSignal += OnCanItemBePutInStorage;
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
         _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
-        _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -38,20 +43,52 @@ public partial class ClothingSystem : NodeSystem
     }
 
     /// <summary>
+    /// Before an item can be put in storage,
+    /// if the item is currently being worn, unequip it.
+    /// </summary>
+    private void OnBeforeItemPutInStorage(Node<StorageComponent> node, ref BeforeItemPutInStorageSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(args.Storable, out var clothingComponent))
+            return;
+
+        if (clothingComponent.EquippedBy == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(clothingComponent.EquippedBy, out var wearsClothingComponent))
+            return;
+        
+        // Unequip the item from the mob's hands if it's in the hands
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
+        {
+            TryUnequipClothing((clothingComponent.EquippedBy, wearsClothingComponent), ClothingSlot.Inhand);
+            return;
+        }
+
+        // Unequip the item from the mob in the intended slot
+        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+        {
+            TryUnequipClothing((clothingComponent.EquippedBy, wearsClothingComponent), clothingComponent.ClothingSlot);
+            return;
+        }
+    }
+
+    /// <summary>
     /// When attempting to put something into storage that is worn,
     /// prevent the attempt if the item cannot be unequipped
     /// </summary>
     private void OnCanItemBePutInStorage(Node<StorageComponent> node, ref CanItemBePutInStorageSignal args)
     {
-        if (args.Storable.Comp.StoredBy == null)
+        var storedBy = args.Storable.Comp.StoredBy;
+        
+        if (storedBy == null)
             return;
 
-        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Storable.Comp.StoredBy, out var wearsClothingComponent))
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(storedBy, out var wearsClothingComponent))
             return;
 
         // if the storable is in hand, prevent if it can't be unequipped
         if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand]
-            && !CanBeUnequipped((args.Storable.Comp.StoredBy, wearsClothingComponent), ClothingSlot.Inhand))
+            && !CanBeUnequipped((storedBy, wearsClothingComponent), ClothingSlot.Inhand))
         {
             args.Canceled = true;
             return;
@@ -62,7 +99,7 @@ public partial class ClothingSystem : NodeSystem
 
         // if the storable is a worn piece of clothing, prevent if it can't be unequipped
         if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot]
-            && !CanBeUnequipped((args.Storable.Comp.StoredBy, wearsClothingComponent), clothingComponent.ClothingSlot))
+            && !CanBeUnequipped((storedBy, wearsClothingComponent), clothingComponent.ClothingSlot))
         {
             args.Canceled = true;
             return;
@@ -116,8 +153,6 @@ public partial class ClothingSystem : NodeSystem
     /// <summary>
     /// Equip clothing when interacting with an Interactable Clothing object
     /// </summary>
-    /// <param name="node"></param>
-    /// <param name="args"></param>
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
     {
         if (args.Handled)
@@ -140,42 +175,11 @@ public partial class ClothingSystem : NodeSystem
             return;
         }
     }
-    
-    /// <summary>
-    /// When putting something worn into storage,
-    /// we unequip it if it was worn by someone.
-    /// </summary>
-    private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
-    {
-        if (args.Storable.Comp.StoredBy == null)
-            return;
-
-        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Storable.Comp.StoredBy, out var wearsClothingComponent))
-            return;
-
-        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
-        {
-            TryUnequipClothing((args.Storable.Comp.StoredBy, wearsClothingComponent), ClothingSlot.Inhand);
-            return;
-        }
-
-        if (!_nodeManager.TryGetComponent<ClothingComponent>(args.Storable, out var clothingComponent))
-            return;
-
-        if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
-        {
-            TryUnequipClothing((args.Storable.Comp.StoredBy, wearsClothingComponent), clothingComponent.ClothingSlot);
-            return;
-        }
-    }
 
     /// <summary>
     /// Checks if the slot exists and if it's occupied, or too large
     /// </summary>
-    /// <param name="node"></param>
-    /// <param name="storable"></param>
-    /// <returns></returns>
-    public bool CanBePutInHand(Node<WearsClothingComponent> node, Node<StorableComponent> storable)
+    public bool CanItemBePutInHand(Node<WearsClothingComponent> node, Node<StorableComponent> storable)
     {
         // Check if slot exists
         if (!node.Comp.ClothingSlots.TryGetValue(ClothingSlot.Inhand, out var value))
@@ -275,6 +279,15 @@ public partial class ClothingSystem : NodeSystem
         if (!CanBeEquipped(node, clothing, unequipIfOccupied))
             return false;
 
+        // Send a signal to other systems to have the item removed/unequipped before equipping it
+        var beforeClothingEquippedSignal = new BeforeClothingEquippedSignal(clothing);
+        _nodeManager.SignalBus.EmitBeforeClothingEquippedSignal(node, ref beforeClothingEquippedSignal);
+
+        // If the item is for some reason still equipped,
+        // do not proceed with equipping.
+        if (clothing.Comp.EquippedBy != null)
+            return false;
+
         // If we're already wearing something and want to swap it out, unequip the clothing
         // or if the item is in our hand, get it out of our hand
         if (node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] != null && unequipIfOccupied)
@@ -311,7 +324,16 @@ public partial class ClothingSystem : NodeSystem
     /// </summary>
     public bool TryPutItemInHand(Node<WearsClothingComponent> node, Node<StorableComponent> item)
     {
-        if (!CanBePutInHand(node, item))
+        if (!CanItemBePutInHand(node, item))
+            return false;
+
+        // Send a signal to other systems to have the item removed/unequipped before equipping it
+        var beforeItemPutInHandSignal = new BeforeItemPutInHandSignal(item);
+        _nodeManager.SignalBus.EmitBeforeItemPutInHandSignal(node, ref beforeItemPutInHandSignal);
+
+        // If the item is for some reason still stored,
+        // do not proceed with putting the item in hand.
+        if (item.Comp.StoredBy != null)
             return false;
         
         var inHandEquippedSprite = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/Inhand");
@@ -327,8 +349,6 @@ public partial class ClothingSystem : NodeSystem
             // generic storables usually don't have an inhand sprite to show off
             if (clothingComponent.ClothingSlot == ClothingSlot.Inhand)
                 inHandEquippedSprite.SpriteFrames = clothingComponent.EquippedSpriteFrames;
-            
-            clothingComponent.EquippedBy = node;
         }
         
         node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;

@@ -21,18 +21,22 @@ public partial class StorageSystem : NodeSystem
     public override void _Ready()
     {
         base._Ready();
-        
-        _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
+
+        _nodeManager.SignalBus.BeforeClothingEquippedSignal += OnBeforeClothingEquipped;
+        _nodeManager.SignalBus.BeforeItemPutInHandSignal += OnBeforeItemPutInHand;
+        _nodeManager.SignalBus.BeforeItemPutInStorageSignal += OnBeforeItemPutInStorage;
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
         _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
         _nodeManager.SignalBus.IsClothingEquippableSignal += OnIsClothingEquippable;
-        _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
         _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
         _nodeManager.SignalBus.ItemRemovedFromStorageSignal += OnItemRemovedFromStorage;
         _nodeManager.SignalBus.StorageClosedSignal += OnStorageClosed;
         _nodeManager.SignalBus.StorageOpenedSignal += OnStorageOpened;
     }
 
+    /// <summary>
+    /// Open the inventory when the inventory button is pressed.
+    /// </summary>
     public override void _UnhandledInput(InputEvent @event)
     {
         base._UnhandledInput(@event);
@@ -41,27 +45,77 @@ public partial class StorageSystem : NodeSystem
             TryOpenInventoryUi();
     }
 
-    private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
+    /// <summary>
+    /// Before an item can be equipped,
+    /// remove it from the storage it's in.
+    /// </summary>
+    /// <param name="node"></param>
+    /// <param name="args"></param>
+    private void OnBeforeClothingEquipped(Node<WearsClothingComponent> node, ref BeforeClothingEquippedSignal args)
     {
-        AttachItemInvisibly(node, args.Clothing);
-        
-        _nodeManager.NodeQuery<StorageComponent>(out var dictionary);
-        foreach (var (storage, storageComponent) in dictionary)
-        {
-            // Find the storage that contains the item
-            if (!storageComponent.Items.Contains(args.Clothing))
-                continue;
-            
-            if (!_nodeManager.TryGetComponent<StorableComponent>(args.Clothing, out var storableComponent))
-                return;
+        if (!_nodeManager.TryGetComponent<StorableComponent>(args.Clothing, out var storableComponent))
+            return;
 
-            TryRemoveItemFromStorage((storage, storageComponent), (args.Clothing, storableComponent), out _);
+        // Not stored in anything
+        if (storableComponent.StoredBy == null)
+            return;
+
+        // Not in a storage, probably just worn by someone
+        if (!_nodeManager.TryGetComponent<StorageComponent>(storableComponent.StoredBy, out var storageComponent))
+            return;
+
+        TryRemoveItemFromStorage((storableComponent.StoredBy, storageComponent), (args.Clothing, storableComponent), out _);
+    }
+
+    /// <summary>
+    /// Before an item can be put in one's hand,
+    /// remove it from the storage it's in.
+    /// </summary>
+    private void OnBeforeItemPutInHand(Node<WearsClothingComponent> node, ref BeforeItemPutInHandSignal args)
+    {
+        var storedBy = args.Storable.Comp.StoredBy;
+        if (storedBy == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<StorageComponent>(storedBy, out var storageComponent))
+            return;
+
+        TryRemoveItemFromStorage((storedBy, storageComponent), args.Storable, out _);
+    }
+
+    /// <summary>
+    /// Before an item can be put in storage,
+    /// remove it from the storage it's in.
+    /// </summary>
+    private void OnBeforeItemPutInStorage(Node<StorageComponent> node, ref BeforeItemPutInStorageSignal args)
+    {
+        var storedBy = args.Storable.Comp.StoredBy;
+        if (storedBy == null)
+            return;
+
+        if (_nodeManager.TryGetComponent<StorageComponent>(storedBy, out var storageComponent))
+        {
+            TryRemoveItemFromStorage((storedBy, storageComponent), args.Storable, out _);
+            return;
+        }
+
+        if (_nodeManager.TryGetComponent<WearsClothingComponent>(storedBy, out var wearsClothingComponent)
+            && args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
+        {
+            _clothingSystem.TryUnequipClothing((storedBy, wearsClothingComponent), ClothingSlot.Inhand);
             return;
         }
     }
 
+    /// <summary>
+    /// For <see cref="StorableComponent"/> objects, when right-clicking them,
+    /// give the user the option to either pick it up or drop it if it's in their hands already
+    /// </summary>
     private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
     {
+        if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
+            return;
+        
         var button = new Button();
         args.Actions.Add(button);
         button.SetText("Pick up");
@@ -79,9 +133,6 @@ public partial class StorageSystem : NodeSystem
             button.Disabled = true;
             return;
         }
-
-        if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
-            return;
         
         if (_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent)
             && node.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
@@ -105,7 +156,8 @@ public partial class StorageSystem : NodeSystem
     }
 
     /// <summary>
-    /// Places storable items into the highest capacity equipped storage when interacted with
+    /// For <see cref="StorableComponent"/> objects, when interacted with,
+    /// attempts to place the object in the interactee's highest capacity equipped storage 
     /// </summary>
     private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
     {
@@ -126,30 +178,34 @@ public partial class StorageSystem : NodeSystem
             args.Handled = true;
     }
 
+    /// <summary>
+    /// When attempting to equip clothing, if it's currently in a storage,
+    /// check if it can be removed from that storage.
+    /// </summary>
     private void OnIsClothingEquippable(Node<WearsClothingComponent> node, ref IsClothingEquippableSignal args)
     {
-        _nodeManager.NodeQuery<StorageComponent>(out var dictionary);
-        foreach (var (storage, storageComponent) in dictionary)
-        {
-            // Find the storage that contains the item
-            if (!storageComponent.Items.Contains(args.Clothing))
-                continue;
-            
-            if (!_nodeManager.TryGetComponent<StorableComponent>(args.Clothing, out var storableComponent))
-                continue;
-
-            // If the item can't be removed from the storage, cancel the attempt to equip the clothing item
-            if (!CanBeRemovedFromStorage((storage, storageComponent), (args.Clothing, storableComponent)))
-                args.Canceled = true;
-            
+        if (!_nodeManager.TryGetComponent<StorableComponent>(args.Clothing, out var storableComponent))
             return;
-        }
+
+        // Not stored in anything
+        if (storableComponent.StoredBy == null)
+            return;
+
+        // Not in a storage, probably just worn by someone
+        if (!_nodeManager.TryGetComponent<StorageComponent>(storableComponent.StoredBy, out var storageComponent))
+            return;
+        
+        // Removable, it's fine.
+        if (CanBeRemovedFromStorage((storableComponent.StoredBy, storageComponent), (args.Clothing, storableComponent)))
+            return;
+        
+        args.Canceled = true;
     }
 
-    private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
+    /*private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
     {
-        AttachItemInvisibly(node, args.Storable);
-        
+        // TODO: THIS NEEDS TO BE AN EVENT IN THE CLOTHING SYSTEM THAT CAUSES THE STORAGE SYSTEM TO REMOVE IT FROM STORAGE
+        // TODO: BEFORE IT CAN EVEN BE EQUIPPED
         _nodeManager.NodeQuery<StorageComponent>(out var dictionary);
         foreach (var (storage, storageComponent) in dictionary)
         {
@@ -160,24 +216,24 @@ public partial class StorageSystem : NodeSystem
             TryRemoveItemFromStorage((storage, storageComponent), args.Storable, out _);
             return;
         }
-    }
+    }*/
 
+    /// <summary>
+    /// A storage increases in volume when adding items to it.
+    /// This is important when storages are stored in other storages.
+    /// </summary>
     private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
     {
-        // TODO: ITEM SHOULD ALREADY BE REMOVED BEFORE PUTTING ITEM IN STORAGE
-        // Remove item from previously belonged to storage, if we're transferring between storages
-        if (args.Storable.Comp.StoredBy != null && _nodeManager.TryGetComponent<StorageComponent>(args.Storable.Comp.StoredBy, out var storageComponent))
-            TryRemoveItemFromStorage((args.Storable.Comp.StoredBy, storageComponent), args.Storable, out _);
-        
-        // TODO: If StoredBy isn't null at this point, throw an error
-        AttachItemInvisibly(node, args.Storable);
-
         if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
             return;
         
         storableComponent.Volume += args.Storable.Comp.Volume;
     }
 
+    /// <summary>
+    /// A storage decreases in volume when removing items from it.
+    /// This is important when storages are stored in other storages.
+    /// </summary>
     private void OnItemRemovedFromStorage(Node<StorageComponent> node, ref ItemRemovedFromStorageSignal args)
     {
         if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
@@ -204,23 +260,11 @@ public partial class StorageSystem : NodeSystem
         node.Comp.FluctuatingAudioStreamPlayer2DSystem?.Play();
     }
 
-    public void AttachItemInvisibly(Node main, Node nodeToAttach)
-    {
-        if (main is not Node2D mainNode2D || nodeToAttach is not Node2D node2DToAttach)
-            return;
-        
-        node2DToAttach.SetVisible(false);
-        nodeToAttach.Reparent(main, false);
-        node2DToAttach.GlobalPosition = mainNode2D.GlobalPosition;
-    }
-
     /// <summary>
-    /// Checks if the storage has the capacity to fit the item,
-    /// and checks if the item can be removed from the node it belongs to
+    /// When attempting to add something to a storage,
+    /// checks if the storage has the capacity to fit the item,
+    /// and also if currently stored, checks if it can be removed from that storage
     /// </summary>
-    /// <param name="node"></param>
-    /// <param name="item"></param>
-    /// <param name="itemBelongsTo">The item currently is equipped or stored by this node</param>
     public bool CanBeAddedToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
     {
         // Can't store the item inside itself. No black holes!
@@ -228,16 +272,14 @@ public partial class StorageSystem : NodeSystem
             return false;
         
         // Item would exceed the capacity of the storage
-        // TODO: Add a written reason why it failed that pops up
         if (node.Comp.VolumeOccupied + item.Comp.Volume > node.Comp.Capacity)
             return false;
 
         // Item is too large to fit into the storage
-        // TODO: Add a written reason why it failed that pops up
         if (node.Comp.MaxItemSize < item.Comp.ItemSize)
             return false;
 
-        // If currently stored elsewhere, check if we can remove it from that storage
+        // If currently inside a storage, check if we can remove it from that storage
         if (item.Comp.StoredBy != null
             && _nodeManager.TryGetComponent<StorageComponent>(item.Comp.StoredBy, out var storageComponent)
             && !CanBeRemovedFromStorage((item.Comp.StoredBy, storageComponent), item))
@@ -253,9 +295,13 @@ public partial class StorageSystem : NodeSystem
         return true;
     }
 
+    /// <summary>
+    /// When attempting to remove something from storage,
+    /// checks other systems to see if there is anything preventing it. 
+    /// </summary>
     public bool CanBeRemovedFromStorage(Node<StorageComponent> node, Node<StorableComponent> item)
     {
-        // Check any other systems preventing item from being removed
+        // Check other systems preventing item from being removed
         var signal = new CanItemBeRemovedFromStorageSignal(item);
         _nodeManager.SignalBus.EmitCanItemBeRemovedFromStorageSignal(node, ref signal);
 
@@ -289,22 +335,15 @@ public partial class StorageSystem : NodeSystem
     {
         if (!CanBeAddedToStorage(node, item))
             return false;
-        
-        // If currently stored elsewhere, check if we can remove it from that storage
-        if (item.Comp.StoredBy != null)
-        {
-            if (_nodeManager.TryGetComponent<StorageComponent>(item.Comp.StoredBy, out var storageComponent))
-                TryRemoveItemFromStorage((item.Comp.StoredBy, storageComponent), item, out _);
 
-            if (_nodeManager.TryGetComponent<WearsClothingComponent>(item.Comp.StoredBy,
-                    out var wearsClothingComponent))
-            {
-                if (item.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
-                    _clothingSystem.TryUnequipClothing((item.Comp.StoredBy, wearsClothingComponent),
-                        ClothingSlot.Inhand);
-            }
-            
-        }
+        // Send a signal to other systems to have the item removed/unequipped it before storing it again
+        var beforeItemAddedToStorageSignal = new BeforeItemPutInStorageSignal(item);
+        _nodeManager.SignalBus.EmitBeforeItemPutInStorageSignal(node, ref beforeItemAddedToStorageSignal);
+        
+        // If the item is still incorrectly stored,
+        // do not add the item to the storage.
+        if (item.Comp.StoredBy != null)
+            return false;
         
         node.Comp.Items.Add(item);
         node.Comp.VolumeOccupied += item.Comp.Volume;
@@ -333,9 +372,7 @@ public partial class StorageSystem : NodeSystem
     }
 
     /// <summary>
-    /// Tries to retrieve the storage node that is worn,
-    /// that has the most capacity,
-    /// and is capable of storing the given item.
+    /// Gets the highest capacity, available storage currently equipped.
     /// </summary>
     public bool TryGetAvailableWornStorage(Node<WearsClothingComponent> node, Node<StorableComponent> item,
         [NotNullWhen(true)] out Node<StorageComponent>? storage)
@@ -374,7 +411,10 @@ public partial class StorageSystem : NodeSystem
         
         return storage != null;
     }
-
+    
+    /// <summary>
+    /// Tries to remove an item from storage
+    /// </summary>
     public bool TryRemoveItemFromStorage(Node<StorageComponent> node, Node<StorableComponent> item,
         [NotNullWhen(true)] out Node? removedItem)
     {
@@ -396,8 +436,11 @@ public partial class StorageSystem : NodeSystem
         removedItem = item;
         return true;
     }
-
-    // Opens the inventory UI if all the requirements are met
+    
+    /// <summary>
+    /// When the inventory button is pressed,
+    /// we see if the current mob has an inventory UI to open.
+    /// </summary>
     private void TryOpenInventoryUi()
     {
         var player = _playerManagerSystem.TryGetPlayer();

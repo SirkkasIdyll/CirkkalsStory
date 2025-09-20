@@ -20,6 +20,10 @@ public enum ItemSize
     ExtraLarge
 }
 
+/// <summary>
+/// Check what needs to be done for an item to be put in storage,
+/// without actually attempting to do the actions.
+/// </summary>
 public partial class CanItemBePutInStorageSignal : CancellableSignalArgs
 {
     public Node<StorableComponent> Storable;
@@ -31,6 +35,10 @@ public partial class CanItemBePutInStorageSignal : CancellableSignalArgs
     }
 }
 
+/// <summary>
+/// Check what needs to be done for an item to removed from a storage,
+/// without actually attempting to do the actions.
+/// </summary>
 public partial class CanItemBeRemovedFromStorageSignal : CancellableSignalArgs
 {
     public Node<StorableComponent> Storable;
@@ -41,6 +49,23 @@ public partial class CanItemBeRemovedFromStorageSignal : CancellableSignalArgs
     }
 }
 
+/// <summary>
+/// Before an item can be put in storage,
+/// we want to remove it from any other things it's stored in
+/// </summary>
+public partial class BeforeItemPutInStorageSignal : UserSignalArgs
+{
+    public Node<StorableComponent> Storable;
+
+    public BeforeItemPutInStorageSignal(Node<StorableComponent> storable)
+    {
+        Storable = storable;
+    }
+}
+
+/// <summary>
+/// Successfully placed an item into storage
+/// </summary>
 public partial class ItemPutInStorageSignal : UserSignalArgs
 {
     public Node<StorableComponent> Storable;
@@ -51,6 +76,9 @@ public partial class ItemPutInStorageSignal : UserSignalArgs
     }
 }
 
+/// <summary>
+/// Successfully removed an item from storage
+/// </summary>
 public partial class ItemRemovedFromStorageSignal : UserSignalArgs
 {
     public Node<StorableComponent> Storable;

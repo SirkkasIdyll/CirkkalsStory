@@ -113,7 +113,7 @@ public partial class ClothingSceneSystem : GridContainer
 	/// When clicking on an equipped piece of clothing, attempts to put the item in hand
 	/// When clicking an empty space with a piece of clothing in hand, attempts to equip the clothing to that slot
 	/// </summary>
-	private void OnPrimaryInteract(Node<WearsClothingComponent> node, ClothingSlot clothingSlot)
+	/*private void OnPrimaryInteract(Node<WearsClothingComponent> node, ClothingSlot clothingSlot)
 	{
 		var clothingItem = node.Comp.ClothingSlots[clothingSlot];
 		// If the user clicks on an empty slot, with a piece of clothing in-hand,
@@ -140,7 +140,7 @@ public partial class ClothingSceneSystem : GridContainer
 			return;
 		
 		_clothingSystem.TryPutItemInHand(node, (clothingItem, storableComponent));
-	}
+	}*/
 
 	private void OnSecondayInteract(Node<WearsClothingComponent> node, ClothingSlot clothingSlot)
 	{

@@ -105,7 +105,7 @@ public partial class StorageSceneSystem : VBoxContainer
 		UpdateStorageProgressBar(node);
 	}
 
-	private void OnPrimaryInteract(Node<StorageComponent> node, Node<StorableComponent> item)
+	/*private void OnPrimaryInteract(Node<StorageComponent> node, Node<StorableComponent> item)
 	{
 		var player = _playerManagerSystem.TryGetPlayer();
 		if (player == null)
@@ -122,7 +122,7 @@ public partial class StorageSceneSystem : VBoxContainer
 		
 		// Shouldn't really be any reason this won't work at this point
 		_clothingSystem.TryPutItemInHand((player, wearsClothingComponent), item);
-	}
+	}*/
 
 	private void OnSecondaryInteract(Node<StorageComponent> node, Node<StorableComponent> item)
 	{

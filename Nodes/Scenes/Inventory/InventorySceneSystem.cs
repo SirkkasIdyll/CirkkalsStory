@@ -65,10 +65,11 @@ public partial class InventorySceneSystem : VBoxContainer
         if (node.Owner != _uiBelongsToThisMob)
             return;
 
-        if (!_foldableDictionary.TryGetValue(node, out _))
+        if (!_foldableDictionary.TryGetValue(args.Clothing, out var foldableContainer))
             return;
         
-        RemoveChild(node);
+        RemoveChild(foldableContainer);
+        _foldableDictionary.Remove(args.Clothing);
     }
 
     public void SetDetails(Node<WearsClothingComponent> node)

@@ -18,6 +18,13 @@ public partial class SignalBus
         CanItemBeRemovedFromStorageSignal?.Invoke(node, ref args);
     }
     
+    public delegate void BeforeItemPutInStorageSignalHandler(Node<StorageComponent> node, ref BeforeItemPutInStorageSignal args);
+    public event BeforeItemPutInStorageSignalHandler? BeforeItemPutInStorageSignal;
+    public void EmitBeforeItemPutInStorageSignal(Node<StorageComponent> node, ref BeforeItemPutInStorageSignal args)
+    {
+        BeforeItemPutInStorageSignal?.Invoke(node, ref args);
+    }
+    
     public delegate void ItemPutInStorageSignalHandler(Node<StorageComponent> node, ref ItemPutInStorageSignal args);
     public event ItemPutInStorageSignalHandler? ItemPutInStorageSignal;
     public void EmitItemPutInStorageSignal(Node<StorageComponent> node, ref ItemPutInStorageSignal args)

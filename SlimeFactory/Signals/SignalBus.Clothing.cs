@@ -5,12 +5,28 @@ namespace CS.SlimeFactory.Signals;
 
 public partial class SignalBus
 {
+    public delegate void BeforeItemPutInHandSignalHandler(Node<WearsClothingComponent> node,
+        ref BeforeItemPutInHandSignal args);
+    public event BeforeItemPutInHandSignalHandler? BeforeItemPutInHandSignal;
+    public void EmitBeforeItemPutInHandSignal(Node<WearsClothingComponent> node, ref BeforeItemPutInHandSignal args)
+    {
+        BeforeItemPutInHandSignal?.Invoke(node, ref args);
+    }
+    
     public delegate void CanItemBePutInHandSignalHandler(Node<WearsClothingComponent> node,
         ref CanItemBePutInHandSignal args);
     public event CanItemBePutInHandSignalHandler? CanItemBePutInHandSignal;
     public void EmitCanItemBePutInHandSignal(Node<WearsClothingComponent> node, ref CanItemBePutInHandSignal args)
     {
         CanItemBePutInHandSignal?.Invoke(node, ref args);
+    }
+    
+    public delegate void BeforeClothingEquippedSignalHandler(Node<WearsClothingComponent> node,
+        ref BeforeClothingEquippedSignal args);
+    public event BeforeClothingEquippedSignalHandler? BeforeClothingEquippedSignal;
+    public void EmitBeforeClothingEquippedSignal(Node<WearsClothingComponent> node, ref BeforeClothingEquippedSignal args)
+    {
+        BeforeClothingEquippedSignal?.Invoke(node, ref args);
     }
     
     public delegate void ClothingEquippedSignalHandler(Node<WearsClothingComponent> node,
