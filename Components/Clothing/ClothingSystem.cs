@@ -39,18 +39,19 @@ public partial class ClothingSystem : NodeSystem
 
     /// <summary>
     /// When attempting to put something into storage that is worn,
-    /// check that it can be unequipped.
+    /// prevent the attempt if the item cannot be unequipped
     /// </summary>
     private void OnCanItemBePutInStorage(Node<StorageComponent> node, ref CanItemBePutInStorageSignal args)
     {
-        if (args.User == null)
+        if (args.Storable.Comp.StoredBy == null)
             return;
 
-        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.User, out var wearsClothingComponent))
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Storable.Comp.StoredBy, out var wearsClothingComponent))
             return;
 
+        // if the storable is in hand, prevent if it can't be unequipped
         if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand]
-            && !CanBeUnequipped((args.User, wearsClothingComponent), ClothingSlot.Inhand))
+            && !CanBeUnequipped((args.Storable.Comp.StoredBy, wearsClothingComponent), ClothingSlot.Inhand))
         {
             args.Canceled = true;
             return;
@@ -59,8 +60,9 @@ public partial class ClothingSystem : NodeSystem
         if (!_nodeManager.TryGetComponent<ClothingComponent>(args.Storable, out var clothingComponent))
             return;
 
+        // if the storable is a worn piece of clothing, prevent if it can't be unequipped
         if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot]
-            && !CanBeUnequipped((args.User, wearsClothingComponent), clothingComponent.ClothingSlot))
+            && !CanBeUnequipped((args.Storable.Comp.StoredBy, wearsClothingComponent), clothingComponent.ClothingSlot))
         {
             args.Canceled = true;
             return;
@@ -141,19 +143,19 @@ public partial class ClothingSystem : NodeSystem
     
     /// <summary>
     /// When putting something worn into storage,
-    /// make sure to unequip the item from the user. 
+    /// we unequip it if it was worn by someone.
     /// </summary>
     private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
     {
-        if (args.User == null)
+        if (args.Storable.Comp.StoredBy == null)
             return;
 
-        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.User, out var wearsClothingComponent))
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Storable.Comp.StoredBy, out var wearsClothingComponent))
             return;
 
         if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
         {
-            TryUnequipClothing((args.User, wearsClothingComponent), ClothingSlot.Inhand);
+            TryUnequipClothing((args.Storable.Comp.StoredBy, wearsClothingComponent), ClothingSlot.Inhand);
             return;
         }
 
@@ -162,7 +164,7 @@ public partial class ClothingSystem : NodeSystem
 
         if (args.Storable.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
         {
-            TryUnequipClothing((args.User, wearsClothingComponent), clothingComponent.ClothingSlot);
+            TryUnequipClothing((args.Storable.Comp.StoredBy, wearsClothingComponent), clothingComponent.ClothingSlot);
             return;
         }
     }
@@ -282,6 +284,7 @@ public partial class ClothingSystem : NodeSystem
         
         // Equip the clothing to that slot
         node.Comp.ClothingSlots[clothing.Comp.ClothingSlot] = clothing;
+        clothing.Comp.EquippedBy = node;
         
         // Assign the spriteFrame to the correct AnimatedSprite2D node
         // This causes the item to show up on the character's body
@@ -311,24 +314,25 @@ public partial class ClothingSystem : NodeSystem
         if (!CanBePutInHand(node, item))
             return false;
         
-        // when the item being put in hand is already worn in a different slot, unequip it first
-        _nodeManager.TryGetComponent<ClothingComponent>(item, out var clothingComponent);
-        if (clothingComponent != null && item.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot])
-            TryUnequipClothing(node, clothingComponent.ClothingSlot);
+        var inHandEquippedSprite = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/Inhand");
+        inHandEquippedSprite.SpriteFrames = null;
+        
+        if (_nodeManager.TryGetComponent<ClothingComponent>(item, out var clothingComponent))
+        {
+            // when the item being put in hand is already worn in a different slot, unequip it first
+            if (item.Owner == node.Comp.ClothingSlots[clothingComponent.ClothingSlot])
+                TryUnequipClothing(node, clothingComponent.ClothingSlot);
+            
+            // if the clothing item is intended to be inhand, show off the sprite
+            // generic storables usually don't have an inhand sprite to show off
+            if (clothingComponent.ClothingSlot == ClothingSlot.Inhand)
+                inHandEquippedSprite.SpriteFrames = clothingComponent.EquippedSpriteFrames;
+            
+            clothingComponent.EquippedBy = node;
+        }
         
         node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
-        
-        // Set the sprite 
-        var spriteSlot = node.Owner.GetNodeOrNull<AnimatedSprite2D>("CanvasGroup/Inhand");
-        if (spriteSlot != null)
-        {
-            if (clothingComponent != null
-                && clothingComponent.ClothingSlot == ClothingSlot.Inhand
-                && clothingComponent.EquippedSpriteFrames != null)
-                spriteSlot.SpriteFrames = clothingComponent.EquippedSpriteFrames;
-            else
-                spriteSlot.SpriteFrames = null;
-        }
+        item.Comp.StoredBy = node;
 
         // Pickup animation
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
@@ -373,11 +377,13 @@ public partial class ClothingSystem : NodeSystem
 
         if (slot == ClothingSlot.Inhand && _nodeManager.TryGetComponent<StorableComponent>(clothingItem, out var storableComponent))
         {
+            storableComponent.StoredBy = null;
             var signal = new ItemRemovedFromHandSignal((clothingItem, storableComponent));
             _nodeManager.SignalBus.EmitItemRemovedFromHandSignal(node, ref signal);
         }
         else if (_nodeManager.TryGetComponent<ClothingComponent>(clothingItem, out var clothingComponent))
         {
+            clothingComponent.EquippedBy = null;
             var signal = new ClothingUnequippedSignal((clothingItem, clothingComponent));
             _nodeManager.SignalBus.EmitClothingUnequippedSignal(node, ref signal);
         }

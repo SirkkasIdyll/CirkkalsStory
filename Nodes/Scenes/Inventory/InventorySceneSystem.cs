@@ -101,6 +101,15 @@ public partial class InventorySceneSystem : VBoxContainer
         var foldableContainer = new FoldableContainer();
         foldableContainer.FoldableGroup = _foldableGroup;
         foldableContainer.SetTitleTextOverrunBehavior(TextServer.OverrunBehavior.TrimEllipsis);
+        foldableContainer.MouseEntered += () =>
+        {
+            if (!GetViewport().GuiIsDragging())
+                return;
+            
+            // Unfold the container if the user is attempting to drag something into it
+            foldableContainer.SetFolded(false);
+        };
+        
         AddChild(foldableContainer);
         MoveChild(foldableContainer, 0); // Add to the top of the list, not the bottom.
         _foldableDictionary.Add(node, foldableContainer);

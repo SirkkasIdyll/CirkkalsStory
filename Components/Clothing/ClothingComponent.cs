@@ -16,6 +16,12 @@ public partial class ClothingComponent : Component
     /// </summary>
     [Export]
     public SpriteFrames? EquippedSpriteFrames;
+
+    /// <summary>
+    /// The node that currently has this clothing equipped
+    /// Will likely have the <see cref="WearsClothingComponent"/>
+    /// </summary>
+    public Node? EquippedBy;
 }
 
 /// <summary>

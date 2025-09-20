@@ -23,12 +23,10 @@ public enum ItemSize
 public partial class CanItemBePutInStorageSignal : CancellableSignalArgs
 {
     public Node<StorableComponent> Storable;
-    public Node? User;
     
-    public CanItemBePutInStorageSignal(Node<StorableComponent> storable, Node? user = null)
+    public CanItemBePutInStorageSignal(Node<StorableComponent> storable)
     {
         Storable = storable;
-        User = user;
 
     }
 }
@@ -46,12 +44,10 @@ public partial class CanItemBeRemovedFromStorageSignal : CancellableSignalArgs
 public partial class ItemPutInStorageSignal : UserSignalArgs
 {
     public Node<StorableComponent> Storable;
-    public Node? User;
 
-    public ItemPutInStorageSignal(Node<StorableComponent> storable, Node? user = null)
+    public ItemPutInStorageSignal(Node<StorableComponent> storable)
     {
         Storable = storable;
-        User = user;
     }
 }
 

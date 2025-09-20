@@ -164,6 +164,12 @@ public partial class StorageSystem : NodeSystem
 
     private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
     {
+        // TODO: ITEM SHOULD ALREADY BE REMOVED BEFORE PUTTING ITEM IN STORAGE
+        // Remove item from previously belonged to storage, if we're transferring between storages
+        if (args.Storable.Comp.StoredBy != null && _nodeManager.TryGetComponent<StorageComponent>(args.Storable.Comp.StoredBy, out var storageComponent))
+            TryRemoveItemFromStorage((args.Storable.Comp.StoredBy, storageComponent), args.Storable, out _);
+        
+        // TODO: If StoredBy isn't null at this point, throw an error
         AttachItemInvisibly(node, args.Storable);
 
         if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
@@ -210,12 +216,12 @@ public partial class StorageSystem : NodeSystem
 
     /// <summary>
     /// Checks if the storage has the capacity to fit the item,
-    /// and checks if the item can be removed from the user in question if a user is indicated.
+    /// and checks if the item can be removed from the node it belongs to
     /// </summary>
     /// <param name="node"></param>
     /// <param name="item"></param>
-    /// <param name="user">The user the item originates from</param>
-    public bool CanBeAddedToStorage(Node<StorageComponent> node, Node<StorableComponent> item, Node? user = null)
+    /// <param name="itemBelongsTo">The item currently is equipped or stored by this node</param>
+    public bool CanBeAddedToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
     {
         // Can't store the item inside itself. No black holes!
         if (node.Owner == item.Owner)
@@ -231,8 +237,14 @@ public partial class StorageSystem : NodeSystem
         if (node.Comp.MaxItemSize < item.Comp.ItemSize)
             return false;
 
+        // If currently stored elsewhere, check if we can remove it from that storage
+        if (item.Comp.StoredBy != null
+            && _nodeManager.TryGetComponent<StorageComponent>(item.Comp.StoredBy, out var storageComponent)
+            && !CanBeRemovedFromStorage((item.Comp.StoredBy, storageComponent), item))
+            return false;
+
         // Check other systems if they prevent it
-        var signal = new CanItemBePutInStorageSignal(item, user);
+        var signal = new CanItemBePutInStorageSignal(item);
         _nodeManager.SignalBus.EmitCanItemBePutInStorageSignal(node, ref signal);
 
         if (signal.Canceled)
@@ -273,13 +285,30 @@ public partial class StorageSystem : NodeSystem
     /// Attempts to add an item to a storage, but fails if there is not enough capacity or if the item is too large
     /// If true, handle it and remove the item from wherever it is
     /// </summary>
-    public bool TryAddItemToStorage(Node<StorageComponent> node, Node<StorableComponent> item,  Node? user = null)
+    public bool TryAddItemToStorage(Node<StorageComponent> node, Node<StorableComponent> item)
     {
-        if (!CanBeAddedToStorage(node, item, user))
+        if (!CanBeAddedToStorage(node, item))
             return false;
+        
+        // If currently stored elsewhere, check if we can remove it from that storage
+        if (item.Comp.StoredBy != null)
+        {
+            if (_nodeManager.TryGetComponent<StorageComponent>(item.Comp.StoredBy, out var storageComponent))
+                TryRemoveItemFromStorage((item.Comp.StoredBy, storageComponent), item, out _);
+
+            if (_nodeManager.TryGetComponent<WearsClothingComponent>(item.Comp.StoredBy,
+                    out var wearsClothingComponent))
+            {
+                if (item.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
+                    _clothingSystem.TryUnequipClothing((item.Comp.StoredBy, wearsClothingComponent),
+                        ClothingSlot.Inhand);
+            }
+            
+        }
         
         node.Comp.Items.Add(item);
         node.Comp.VolumeOccupied += item.Comp.Volume;
+        item.Comp.StoredBy = node;
         
         // Play insert SFX
         node.Comp.FluctuatingAudioStreamPlayer2DSystem?.SetStream(node.Comp.InsertSound);
@@ -292,13 +321,13 @@ public partial class StorageSystem : NodeSystem
             tween.TweenProperty(itemNode2D, "global_position", node2D.GlobalPosition, 0.125f);
             tween.Finished += () =>
             {
-                var signal = new ItemPutInStorageSignal(item, user);
+                var signal = new ItemPutInStorageSignal(item);
                 _nodeManager.SignalBus.EmitItemPutInStorageSignal(node, ref signal);
             };
             return true;
         }
 
-        var signal = new ItemPutInStorageSignal(item, user);
+        var signal = new ItemPutInStorageSignal(item);
         _nodeManager.SignalBus.EmitItemPutInStorageSignal(node, ref signal);
         return true;
     }
@@ -321,7 +350,7 @@ public partial class StorageSystem : NodeSystem
                 continue;
 
             // If we haven't yet picked a storage, pick the first available one
-            if (storage == null && CanBeAddedToStorage((clothingItem, storageComponent), item, node))
+            if (storage == null && CanBeAddedToStorage((clothingItem, storageComponent), item))
             {
                 storage = (clothingItem, storageComponent);
                 continue;
@@ -336,7 +365,7 @@ public partial class StorageSystem : NodeSystem
                 continue;
 
             // And we're capable of adding the item to the currently viewed option
-            if (!CanBeAddedToStorage((clothingItem, storageComponent), item, node))
+            if (!CanBeAddedToStorage((clothingItem, storageComponent), item))
                 continue;
             
             // Pick it as the designated storage instead
@@ -355,6 +384,7 @@ public partial class StorageSystem : NodeSystem
         
         node.Comp.Items.Remove(item);
         node.Comp.VolumeOccupied -= item.Comp.Volume;
+        item.Comp.StoredBy = null;
         
         // Play removal SFX
         node.Comp.FluctuatingAudioStreamPlayer2DSystem?.SetStream(node.Comp.RemoveSound);

@@ -41,10 +41,6 @@ public partial class StorageSceneSystem : VBoxContainer
 		
 		if (node == null)
 			return false;
-		
-		var player = _playerManagerSystem.TryGetPlayer();
-		if (player == null)
-			return false;
 
 		if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storable))
 			return false;
@@ -62,17 +58,13 @@ public partial class StorageSceneSystem : VBoxContainer
 	{
 		var node = (Node)data;
 
-		var player = _playerManagerSystem.TryGetPlayer();
-		if (player == null)
-			return;
-
 		if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storable))
 			return;
 
 		if (_uiBelongsToThisStorage == null)
 			return;
 
-		_storageSystem.TryAddItemToStorage(_uiBelongsToThisStorage.Value, (node, storable), player);
+		_storageSystem.TryAddItemToStorage(_uiBelongsToThisStorage.Value, (node, storable));
 	}
 
 	public override void _ExitTree()
@@ -188,7 +180,7 @@ public partial class StorageSceneSystem : VBoxContainer
 
 	private Button CreateItemButton(Node<StorageComponent> node, Node<StorableComponent> item)
 	{
-		var button = new Button();
+		var button = new StorageItemButton(item);
 		button.SetThemeTypeVariation("ButtonSmall");
 		
 		if (_descriptionSystem.TryGetDisplayName(item,  out var displayName))

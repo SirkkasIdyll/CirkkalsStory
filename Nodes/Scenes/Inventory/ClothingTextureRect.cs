@@ -99,7 +99,7 @@ public partial class ClothingTextureRect : TextureRect
             control.Scale = new Vector2(2, 2);
             
             var textureRect = (TextureRect)Duplicate();
-            textureRect.SetModulate(new Color(1f, 1f, 1f, 0.4f));
+            textureRect.SetModulate(new Color(1f, 1f, 1f, 0.6f));
             control.AddChild(textureRect);
             
             SetDragPreview(control);

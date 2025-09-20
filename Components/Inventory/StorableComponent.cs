@@ -17,4 +17,10 @@ public partial class StorableComponent : Component
     /// </summary>
     [Export]
     public float Volume;
+
+    /// <summary>
+    /// The node that is currently storing the storable
+    /// Could be a person, or a storage
+    /// </summary>
+    public Node? StoredBy;
 }
