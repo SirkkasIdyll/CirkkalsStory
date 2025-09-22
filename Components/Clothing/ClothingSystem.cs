@@ -381,9 +381,6 @@ public partial class ClothingSystem : NodeSystem
             if (clothingComponent.ClothingSlot == ClothingSlot.Inhand)
                 inHandEquippedSprite.SpriteFrames = clothingComponent.EquippedSpriteFrames;
         }
-        
-        node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
-        item.Comp.StoredBy = node;
 
         // Pickup animation
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
@@ -392,11 +389,16 @@ public partial class ClothingSystem : NodeSystem
             tween.TweenProperty(itemNode2D, "global_position", node2D.GlobalPosition, 0.125f);
             tween.Finished += () =>
             {
+                node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
+                item.Comp.StoredBy = node;
+                
                 var signal = new ItemPutInHandSignal(item);
                 _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
             };
             return true;
         }
+        node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
+        item.Comp.StoredBy = node;
         
         var signal = new ItemPutInHandSignal(item);
         _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
