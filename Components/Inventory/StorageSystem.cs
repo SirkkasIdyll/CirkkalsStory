@@ -4,6 +4,7 @@ using CS.Components.Interaction;
 using CS.Components.Player;
 using CS.Components.UI;
 using CS.Nodes.Scenes.Inventory;
+using CS.Nodes.UI.ContextMenu;
 using CS.Nodes.UI.CustomWindow;
 using CS.SlimeFactory;
 using Godot;
@@ -108,51 +109,56 @@ public partial class StorageSystem : NodeSystem
     }
 
     /// <summary>
+    /// Items can be dropped if in hand
+    /// </summary>
+    private void OnContextActionIndexPressed(ContextMenu contextMenu, int index)
+    {
+        if (!contextMenu.IndexIdMatchesAction(index, ContextMenuAction.Drop))
+            return;
+        
+        var dictionary = (Dictionary<string, Node>)contextMenu.GetItemMetadata(index);
+        var node = dictionary["node"];
+        var interactee = dictionary["interactee"];
+
+        if (!_nodeManager.HasComponent<StorableComponent>(node))
+            return;
+        
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(interactee, out var canInteractComponent))
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(interactee, out var wearsClothingComponent))
+            return;
+        
+        if (!_interactSystem.InRangeUnobstructed(interactee, node, canInteractComponent.MaxInteractDistance))
+            return;
+        
+        _clothingSystem.TryUnequipClothing((interactee, wearsClothingComponent), ClothingSlot.Inhand, true);
+    }
+
+    /// <summary>
     /// For <see cref="StorableComponent"/> objects, when right-clicking them,
-    /// give the user the option to either pick it up or drop it if it's in their hands already
+    /// give the user to drop the item in hand
     /// </summary>
     private void OnGetContextActions(Node<InteractableComponent> node, ref GetContextActionsSignal args)
     {
-        if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent))
+        if (!_nodeManager.HasComponent<StorableComponent>(node))
             return;
         
-        var button = new Button();
-        args.Actions.Add(button);
-        button.SetText("Pick up");
-        
-        // Disable the equip item option for users that are incapable of interacting
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
-        {
-            button.Disabled = true;
-            return;
-        }
-        
-        // Disable the equip item option for users that are incapable of wearing clothing
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
-        {
-            button.Disabled = true;
             return;
-        }
-        
-        if (_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent)
-            && node.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
-            button.SetText("Put item in hand");
+
+        var contextMenu = args.ContextMenu;
+        args.ContextMenu.IndexPressed += index => OnContextActionIndexPressed(contextMenu, (int)index);
         
         if (node.Owner == wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
-            button.SetText("Drop item");
-        
-        // Set the button up to equip the item if the user is in-range when pressed
-        var interactee = args.Interactee;
-        button.Pressed += () =>
-        {
-            if (!_interactSystem.InRangeUnobstructed(interactee, node.Owner, canInteractComponent.MaxInteractDistance))
-                return;
+            contextMenu.AddItem("Drop", (int)ContextMenuAction.Drop);
 
-            if (node.Owner != wearsClothingComponent.ClothingSlots[ClothingSlot.Inhand])
-                _clothingSystem.TryPutItemInHand((interactee, wearsClothingComponent), (node, storableComponent));
-            else
-                _clothingSystem.TryUnequipClothing((interactee, wearsClothingComponent), ClothingSlot.Inhand, true);
-        };
+        var index = contextMenu.GetItemCount() - 1;
+        contextMenu.SetItemMetadata(index, new Dictionary<string, Node>()
+        {
+            { "node", node },
+            { "interactee", args.Interactee }
+        });
     }
 
     /// <summary>
@@ -169,6 +175,12 @@ public partial class StorageSystem : NodeSystem
 
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
             return;
+        
+        if (_clothingSystem.TryPutItemInHand((args.Interactee, wearsClothingComponent), (node, storableComponent)))
+        {
+            args.Handled = true;
+            return;
+        }
 
         if (!TryGetAvailableWornStorage((args.Interactee, wearsClothingComponent), 
                 (node, storableComponent), out var storage))

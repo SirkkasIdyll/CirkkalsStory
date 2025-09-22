@@ -1,8 +1,6 @@
 using CS.Components.Clothing;
 using CS.Components.Description;
 using CS.Components.Interaction;
-using CS.Components.Inventory;
-using CS.Nodes.UI.ContextButtonList;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -24,7 +22,6 @@ public partial class ClothingSceneSystem : GridContainer
 	[InjectDependency] private readonly ClothingSystem _clothingSystem = null!;
 	[InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
 
-	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Node? _character;
 
 	public override void _ExitTree()
@@ -153,11 +150,7 @@ public partial class ClothingSceneSystem : GridContainer
 		
 		var signal = new GetContextActionsSignal(node);
 		_nodeManager.SignalBus.EmitGetContextActionsSignal((clothingItem, interactableComponent), ref signal);
-            
-		var nodeButtonList = _contextButtonList.Instantiate<ContextButtonListSystem>();
-		nodeButtonList.Setup(signal.Actions);
-		_clothingSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(nodeButtonList);
-		nodeButtonList.SetPosition(GetViewport().GetMousePosition());
+		_clothingSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
 	}
 
 	public void SetDetails(Node<WearsClothingComponent> node)
