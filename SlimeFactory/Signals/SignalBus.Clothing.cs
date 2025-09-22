@@ -1,5 +1,4 @@
 ﻿using CS.Components.Clothing;
-using CS.Components.Inventory;
 
 namespace CS.SlimeFactory.Signals;
 

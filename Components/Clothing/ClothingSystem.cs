@@ -4,9 +4,11 @@ using CS.Components.Inventory;
 using CS.Components.Player;
 using CS.Components.UI;
 using CS.Nodes.Scenes.Inventory;
+using CS.Nodes.UI.ContextMenu;
 using CS.Nodes.UI.CustomWindow;
 using CS.SlimeFactory;
 using Godot;
+using Godot.Collections;
 
 namespace CS.Components.Clothing;
 
@@ -30,7 +32,6 @@ public partial class ClothingSystem : NodeSystem
         _nodeManager.SignalBus.BeforeItemPutInStorageSignal += OnBeforeItemPutInStorage;
         _nodeManager.SignalBus.CanItemBePutInStorageSignal += OnCanItemBePutInStorage;
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
-        _nodeManager.SignalBus.InteractWithSignal += OnInteractWith;
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -107,6 +108,37 @@ public partial class ClothingSystem : NodeSystem
     }
 
     /// <summary>
+    /// Choose to either equip the clothing, or unequip it if already equipped
+    /// </summary>
+    private void OnContextMenuActionPressed(ContextMenu contextMenu, int index)
+    {
+        if (!contextMenu.IndexIdMatchesAction(index, ContextMenuAction.Equip)
+            && !contextMenu.IndexIdMatchesAction(index, ContextMenuAction.Unequip))
+            return;
+        
+        var dictionary = (Dictionary<string, Node>)contextMenu.GetItemMetadata(index);
+        var node = dictionary["node"];
+        var interactee = dictionary["interactee"];
+
+        if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
+            return;
+        
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(interactee, out var canInteractComponent))
+            return;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(interactee, out var wearsClothingComponent))
+            return;
+
+        if (!_interactSystem.InRangeUnobstructed(interactee, node, canInteractComponent.MaxInteractDistance))
+            return;
+
+        if (node == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
+            TryUnequipClothing((interactee, wearsClothingComponent), clothingComponent.ClothingSlot, true);
+        else
+            TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
+    }
+
+    /// <summary>
     /// When right-clicking, creates the context-menu button for equipping items
     /// and adds it to the context menu list
     /// </summary>
@@ -115,65 +147,23 @@ public partial class ClothingSystem : NodeSystem
         if (!_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent))
             return;
         
-        var button = new Button();
-        args.Actions.Add(button);
-        button.SetText("Equip Item");
-        
-        // Disable the equip item option for users that are incapable of interacting
-        if (!_nodeManager.TryGetComponent<CanInteractComponent>(args.Interactee, out var canInteractComponent))
-        {
-            button.Disabled = true;
-            return;
-        }
-        
-        // Disable the equip item option for users that are incapable of wearing clothing
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
-        {
-            button.Disabled = true;
             return;
-        }
 
+        var contextMenu = args.ContextMenu;
+        args.ContextMenu.IndexPressed += index => OnContextMenuActionPressed(contextMenu, (int)index);
+        
         if (node.Owner == wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
-            button.SetText("Unequip Item");
+            contextMenu.AddItem("Unequip item", (int)ContextMenuAction.Unequip);
+        else
+            contextMenu.AddItem("Equip item", (int)ContextMenuAction.Equip);
 
-        // Set the button up to equip the item if the user is in-range when pressed
-        var interactee = args.Interactee;
-        button.Pressed += () =>
+        var index = contextMenu.GetItemCount() - 1;
+        contextMenu.SetItemMetadata(index, new Dictionary<string, Node>()
         {
-            if (!_interactSystem.InRangeUnobstructed(interactee, node.Owner, canInteractComponent.MaxInteractDistance))
-                return;
-
-            if (node.Owner != wearsClothingComponent.ClothingSlots[clothingComponent.ClothingSlot])
-                TryEquipClothing((interactee, wearsClothingComponent), (node, clothingComponent));
-            else
-                TryUnequipClothing((interactee, wearsClothingComponent), clothingComponent.ClothingSlot, true);
-        };
-    }
-
-    /// <summary>
-    /// Equip clothing when interacting with an Interactable Clothing object
-    /// </summary>
-    private void OnInteractWith(Node<InteractableComponent> node, ref InteractWithSignal args)
-    {
-        if (args.Handled)
-            return;
-        
-        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(args.Interactee, out var wearsClothingComponent))
-            return;
-
-        if (_nodeManager.TryGetComponent<StorableComponent>(node, out var storableComponent)
-            && TryPutItemInHand((args.Interactee, wearsClothingComponent), (node, storableComponent)))
-        {
-            args.Handled = true;
-            return;
-        }
-        
-        if (_nodeManager.TryGetComponent<ClothingComponent>(node, out var clothingComponent)
-            && TryEquipClothing((args.Interactee, wearsClothingComponent), (node, clothingComponent)))
-        {
-            args.Handled = true;
-            return;
-        }
+            { "node", node },
+            { "interactee", args.Interactee }
+        });
     }
 
     /// <summary>

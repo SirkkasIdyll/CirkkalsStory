@@ -1,7 +1,6 @@
 ﻿using CS.Components.Description;
 using CS.SlimeFactory;
 using Godot;
-using Godot.Collections;
 
 namespace CS.Nodes.Scenes.Inventory;
 

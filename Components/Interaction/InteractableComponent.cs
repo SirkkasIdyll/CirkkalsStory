@@ -1,9 +1,8 @@
 ﻿using CS.Components.Player;
-using CS.Nodes.UI.Chyron;
+using CS.Nodes.UI.ContextMenu;
 using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
 using Godot;
-using Godot.Collections;
 
 namespace CS.Components.Interaction;
 
@@ -80,10 +79,14 @@ public partial class InteractWithSignal : HandledSignalArgs
 public partial class GetContextActionsSignal : UserSignalArgs
 {
     public Node Interactee;
-    public Array<Button> Actions = [];
+    public ContextMenu ContextMenu;
 
     public GetContextActionsSignal(Node interactee)
     {
         Interactee = interactee;
+        ContextMenu = new ContextMenu();
+        
+        // Add initial item to serve as the placeholder for the interact action to guarantee order
+        ContextMenu.AddItem("Interact", (int)ContextMenuAction.Interact);
     }
 }

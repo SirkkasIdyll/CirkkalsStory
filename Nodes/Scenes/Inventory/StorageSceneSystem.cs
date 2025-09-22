@@ -3,7 +3,6 @@ using CS.Components.Description;
 using CS.Components.Interaction;
 using CS.Components.Inventory;
 using CS.Components.Player;
-using CS.Nodes.UI.ContextButtonList;
 using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
@@ -31,7 +30,6 @@ public partial class StorageSceneSystem : VBoxContainer
 	private const string Green = "#5c9055";
 	private const string Yellow = "#dfcb43";
 	private const string Red = "#c22e15";
-	private PackedScene _contextButtonList = ResourceLoader.Load<PackedScene>("res://Nodes/UI/ContextButtonList/ContextButtonList.tscn");
 	private Dictionary<Node, Button> _buttonDictionary = [];
 	private Node<StorageComponent>? _uiBelongsToThisStorage;
 
@@ -135,11 +133,7 @@ public partial class StorageSceneSystem : VBoxContainer
 		
 		var signal = new GetContextActionsSignal(player);
 		_nodeManager.SignalBus.EmitGetContextActionsSignal((item, interactableComponent), ref signal);
-		
-		var nodeButtonList = _contextButtonList.Instantiate<ContextButtonListSystem>();
-		nodeButtonList.Setup(signal.Actions);
-		_storageSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(nodeButtonList);
-		nodeButtonList.SetPosition(GetViewport().GetMousePosition());
+		_storageSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
 	}
 
 	public void SetDetails(Node<StorageComponent> node)

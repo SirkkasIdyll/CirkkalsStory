@@ -1,6 +1,5 @@
 ﻿using CS.SlimeFactory;
 using CS.SlimeFactory.Signals;
-using Godot;
 
 namespace CS.Components.Inventory;
 

@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3 uid="uid://bda67clwlali6"]
+
+[ext_resource type="Script" uid="uid://dc4rpyhoq7o25" path="res://Nodes/UI/ContextMenu/ContextMenu.cs" id="1_7mitr"]
+[ext_resource type="Texture2D" uid="uid://i5efadcuhrl8" path="res://Resources/Sprites/Clothes/Tops/ShirtIcon.png" id="1_o5eso"]
+
+[node name="DONOTUSEJUSTFORDISPLAY" type="PopupMenu"]
+oversampling_override = 1.0
+initial_position = 2
+size = Vector2i(276, 394)
+visible = true
+item_count = 10
+item_0/text = "Do this "
+item_0/id = 0
+item_1/text = "Don't do this"
+item_1/id = 1
+item_1/disabled = true
+item_2/id = 9
+item_2/separator = true
+item_3/text = "Checkable option"
+item_3/checkable = 1
+item_3/id = 2
+item_4/text = "Checkable radio"
+item_4/checkable = 2
+item_4/id = 3
+item_5/text = "Checked option"
+item_5/checkable = 1
+item_5/checked = true
+item_5/id = 4
+item_6/text = "This is a separator"
+item_6/id = 5
+item_6/separator = true
+item_7/text = "Option 1"
+item_7/id = 6
+item_8/text = "Option 2"
+item_8/id = 7
+item_9/text = "Option 3"
+item_9/icon = ExtResource("1_o5eso")
+item_9/id = 8
+script = ExtResource("1_7mitr")
