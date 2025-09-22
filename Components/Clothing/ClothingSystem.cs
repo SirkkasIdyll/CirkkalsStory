@@ -1,4 +1,5 @@
 ﻿using CS.Components.Appearance;
+using CS.Components.Grid;
 using CS.Components.Interaction;
 using CS.Components.Inventory;
 using CS.Components.Player;
@@ -20,6 +21,7 @@ namespace CS.Components.Clothing;
 public partial class ClothingSystem : NodeSystem
 {
     [InjectDependency] private readonly AppearanceSystem _appearanceSystem = null!;
+    [InjectDependency] private readonly GridSystem _gridSystem = null!;
     [InjectDependency] private readonly InteractSystem _interactSystem = null!;
     [InjectDependency] private readonly PlayerManagerSystem _playerManagerSystem = null!;
     [InjectDependency] private readonly StorageSystem _storageSystem = null!;
@@ -41,6 +43,20 @@ public partial class ClothingSystem : NodeSystem
         // Open the equipment menu when the action is pressed, if possible
         if (@event.IsActionPressed("equipment"))
             TryOpenEquipmentUi();
+
+
+
+        if (@event.IsActionPressed("drop_item"))
+        {
+            var player = _playerManagerSystem.TryGetPlayer();
+            if (player == null)
+                return;
+
+            if (!_nodeManager.TryGetComponent<WearsClothingComponent>(player, out var wearsClothingComponent))
+                return;
+
+            TryDropitem((player, wearsClothingComponent));
+        }
     }
 
     /// <summary>
@@ -258,6 +274,31 @@ public partial class ClothingSystem : NodeSystem
     public bool IsHandEmpty(Node<WearsClothingComponent> node)
     {
         return node.Comp.ClothingSlots[ClothingSlot.Inhand] == null;
+    }
+
+    public bool TryDropitem(Node<WearsClothingComponent> node)
+    {
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(node, out var canInteractComponent))
+            return false;
+        
+        var inhandItem = node.Comp.ClothingSlots[ClothingSlot.Inhand];
+        if (inhandItem == null)
+            return false;
+        
+        if (!TryUnequipClothing(node, ClothingSlot.Inhand, true))
+            return false;
+
+        var mousePosition = _gridSystem.GlobalPositionToGridPosition(GetGlobalMousePosition());
+        var nodePosition = _gridSystem.GetPosition(node);
+
+        if (nodePosition == null)
+            return false;
+        
+        var distanceVector = new Vector2(mousePosition.X - nodePosition.Value.X, mousePosition.Y - nodePosition.Value.Y);
+        var limitedDistanceVector = distanceVector.LimitLength(canInteractComponent.MaxInteractDistance * 0.9f);
+        _gridSystem.SetPosition(inhandItem, nodePosition.Value + limitedDistanceVector);
+        
+        return true;
     }
 
     /// <summary>
