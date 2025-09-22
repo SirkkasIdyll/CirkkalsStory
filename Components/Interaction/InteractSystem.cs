@@ -311,7 +311,11 @@ public partial class InteractSystem : NodeSystem
                     contextMenu.AddIconItem(sprite.Texture, name, (int)ContextMenuAction.Interact);
                 
                 var index = contextMenu.GetItemCount() - 1;
-                contextMenu.SetItemMetadata(index, node2D);
+                contextMenu.SetItemMetadata(index, new Dictionary<string, Node>()
+                {
+                    { "node", node2D },
+                    { "interactee", player }
+                });
             }
             CanvasLayer.AddChild(contextMenu);
             area2D.QueueFree();
