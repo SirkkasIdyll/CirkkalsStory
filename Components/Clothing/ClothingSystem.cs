@@ -1,4 +1,5 @@
-﻿using CS.Components.Appearance;
+﻿using System;
+using CS.Components.Appearance;
 using CS.Components.Grid;
 using CS.Components.Interaction;
 using CS.Components.Inventory;
@@ -43,9 +44,7 @@ public partial class ClothingSystem : NodeSystem
         // Open the equipment menu when the action is pressed, if possible
         if (@event.IsActionPressed("equipment"))
             TryOpenEquipmentUi();
-
-
-
+        
         if (@event.IsActionPressed("drop_item"))
         {
             var player = _playerManagerSystem.TryGetPlayer();
@@ -55,7 +54,10 @@ public partial class ClothingSystem : NodeSystem
             if (!_nodeManager.TryGetComponent<WearsClothingComponent>(player, out var wearsClothingComponent))
                 return;
 
-            TryDropitem((player, wearsClothingComponent));
+            if (Input.IsActionPressed("shift_modifier"))
+                TryThrowItem((player, wearsClothingComponent));
+            else
+                TryDropitem((player, wearsClothingComponent));
         }
     }
 
@@ -402,6 +404,36 @@ public partial class ClothingSystem : NodeSystem
         
         var signal = new ItemPutInHandSignal(item);
         _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
+        return true;
+    }
+
+    public bool TryThrowItem(Node<WearsClothingComponent> node)
+    {
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(node, out var canInteractComponent))
+            return false;
+        
+        var inhandItem = node.Comp.ClothingSlots[ClothingSlot.Inhand];
+        if (inhandItem == null)
+            return false;
+
+        if (inhandItem is not RigidBody2D rigidBody2D)
+            return false;
+        
+        if (!TryUnequipClothing(node, ClothingSlot.Inhand, true))
+            return false;
+
+        var mousePosition = _gridSystem.GlobalPositionToGridPosition(GetGlobalMousePosition());
+        var nodePosition = _gridSystem.GetPosition(node);
+
+        if (nodePosition == null)
+            return false;
+        
+        rigidBody2D.SetGlobalPosition(_gridSystem.GridPositionToGlobalPosition(nodePosition.Value));
+        var distanceVector = new Vector2(mousePosition.X - nodePosition.Value.X, mousePosition.Y - nodePosition.Value.Y);
+        var limitedDistanceVector = distanceVector.LimitLength(canInteractComponent.MaxInteractDistance * 3f);
+        rigidBody2D.ApplyCentralImpulse(limitedDistanceVector * 160f);
+        rigidBody2D.SetRotationDegrees(Random.Shared.Next(0, 360));
+        
         return true;
     }
     

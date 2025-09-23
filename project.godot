@@ -122,6 +122,11 @@ drop_item={
 2d_physics/layer_3="Furniture"
 2d_physics/layer_4="Tabletop"
 
+[physics]
+
+2d/default_linear_damp=4.9
+2d/default_angular_damp=4.9
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
