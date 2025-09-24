@@ -289,17 +289,35 @@ public partial class ClothingSystem : NodeSystem
         
         if (!TryUnequipClothing(node, ClothingSlot.Inhand, true))
             return false;
-
-        var mousePosition = _gridSystem.GlobalPositionToGridPosition(GetGlobalMousePosition());
-        var nodePosition = _gridSystem.GetPosition(node);
-
-        if (nodePosition == null)
+        
+        var nodeGridPosition = _gridSystem.GetPosition(node);
+        if (nodeGridPosition == null)
             return false;
         
-        var distanceVector = new Vector2(mousePosition.X - nodePosition.Value.X, mousePosition.Y - nodePosition.Value.Y);
-        var limitedDistanceVector = distanceVector.LimitLength(canInteractComponent.MaxInteractDistance * 0.9f);
-        _gridSystem.SetPosition(inhandItem, nodePosition.Value + limitedDistanceVector);
         
+        if (_interactSystem.IsObstructed(node, GetGlobalMousePosition(), out var collisionInfo)
+            && node.Owner is Node2D node2D)
+        {
+            var collisionPosition = (Vector2)collisionInfo["position"];
+            var distanceToCollisionVector = new Vector2(collisionPosition.X - node2D.GlobalPosition.X,
+                collisionPosition.Y - node2D.GlobalPosition.Y);
+
+            if (inhandItem is Node2D itemNode2D)
+            {
+                itemNode2D.SetGlobalPosition(itemNode2D.GlobalPosition + distanceToCollisionVector
+                    .LimitLength(canInteractComponent.MaxInteractDistance * 32f * 0.9f));
+            }
+        }
+        else
+        {
+            var mouseGridPosition = _gridSystem.GlobalPositionToGridPosition(GetGlobalMousePosition());
+            var distanceVector = new Vector2(mouseGridPosition.X - nodeGridPosition.Value.X,
+                mouseGridPosition.Y - nodeGridPosition.Value.Y);
+            
+            var addToPosition = distanceVector.LimitLength(canInteractComponent.MaxInteractDistance * 0.9f);
+            _gridSystem.SetPosition(inhandItem, nodeGridPosition.Value + addToPosition);
+        }
+       
         return true;
     }
 
