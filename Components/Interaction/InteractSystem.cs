@@ -1,4 +1,5 @@
-﻿using CS.Components.Description;
+﻿using System.Diagnostics.CodeAnalysis;
+using CS.Components.Description;
 using CS.Components.Grid;
 using CS.Components.Player;
 using CS.Nodes.UI.Chyron;
@@ -226,17 +227,48 @@ public partial class InteractSystem : NodeSystem
         return true;
     }
 
-    public bool IsObstructed(Node origin, Node target, uint collisionMask = 1)
+    /// <summary>
+    /// Check for obstruction between two nodes
+    /// </summary>
+    public bool IsObstructed(Node origin, Node target, [NotNullWhen(true)]out Dictionary? collisionInfo, uint collisionMask = 1)
     {
+        collisionInfo = null;
+        
         if (origin is not PhysicsBody2D node2DA || target is not PhysicsBody2D node2DB)
             return false;
         
         var spaceState = GetWorld2D().DirectSpaceState;
         var query = PhysicsRayQueryParameters2D.Create(node2DA.GlobalPosition, node2DB.GlobalPosition, collisionMask, [node2DA.GetRid()]);
         var result = spaceState.IntersectRay(query);
-        
-        if (result == null || result.Count != 0)
+
+        if (result != null && result.Count != 0)
+        {
+            collisionInfo = result;
             return true;
+        }
+
+        return false;
+    }
+    
+    /// <summary>
+    /// Check for obstruction between a node and a global position
+    /// </summary>
+    public bool IsObstructed(Node origin, Vector2 target, [NotNullWhen(true)]out Dictionary? collisionInfo, uint collisionMask = 1)
+    {
+        collisionInfo = null;
+        
+        if (origin is not PhysicsBody2D node2DA)
+            return false;
+        
+        var spaceState = GetWorld2D().DirectSpaceState;
+        var query = PhysicsRayQueryParameters2D.Create(node2DA.GlobalPosition, target, collisionMask, [node2DA.GetRid()]);
+        var result = spaceState.IntersectRay(query);
+
+        if (result != null && result.Count != 0)
+        {
+            collisionInfo = result;
+            return true;
+        }
 
         return false;
     }
@@ -340,7 +372,7 @@ public partial class InteractSystem : NodeSystem
             if (canvasGroup == null)
                 continue;
 
-            if (IsObstructed(user, target))
+            if (IsObstructed(user, target, out _))
                 continue;
 
             if (!_gridSystem.TryGetDistance(user, target, out var distance))
