@@ -291,11 +291,11 @@ public partial class ClothingSystem : NodeSystem
         if (!TryUnequipClothing(node, ClothingSlot.Inhand, true))
             return false;
 
+        // Get the owner's position so we can get the vector from owner to mouse
         if (node.Owner is not Node2D node2D)
             return false;
-
+        
         _nodeManager.TryAddComponent<MoveUntilCollideComponent>(inhandItem);
-
         if (!_nodeManager.TryGetComponent<MoveUntilCollideComponent>(inhandItem, out var moveUntilCollideComponent))
             return false;
 
@@ -401,6 +401,7 @@ public partial class ClothingSystem : NodeSystem
             {
                 node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
                 item.Comp.StoredBy = node;
+                itemNode2D.SetGlobalRotation(0); // Reset position so dropping it is normal
                 
                 var signal = new ItemPutInHandSignal(item);
                 _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
