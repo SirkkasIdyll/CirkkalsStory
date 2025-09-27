@@ -14,12 +14,18 @@ public partial class MoveUntilCollideComponent : Component
     /// </summary>
     [Export]
     public Vector2 MotionVector;
-    
+
     /// <summary>
     /// Remove this component after collision occurs
     /// </summary>
     [Export]
-    public bool RemoveOnCollide;
+    public bool RemoveOnCollide = true;
+
+    /// <summary>
+    /// Remove this component if time elapses
+    /// </summary>
+    [Export]
+    public bool RemoveOnTimeElapsed = true;
     
     /// <summary>
     /// Margin beyond the collision body to consider the objects colliding,
@@ -61,14 +67,16 @@ public partial class MoveUntilCollideComponent : Component
         var kinematicCollision2D = physicsBody2D.MoveAndCollide(MotionVector * (float)delta, safeMargin: SafeMarginCollision);
         
         if (Timed && TimeRemaining <= 0)
-        {
             MotionVector = Vector2.Zero;
-            return;
-        }
+        
+        if (RemoveOnTimeElapsed && Timed && TimeRemaining <= 0)
+            _nodeManager.RemoveComponent<MoveUntilCollideComponent>(GetParent());
 
+        // When null, no collision has occurred
         if (kinematicCollision2D == null)
             return;
-
+        
+        // If a collision has occurred, remove component if setting is set
         if (RemoveOnCollide)
             _nodeManager.RemoveComponent<MoveUntilCollideComponent>(GetParent());
     }

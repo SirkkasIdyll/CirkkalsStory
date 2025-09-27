@@ -302,7 +302,6 @@ public partial class ClothingSystem : NodeSystem
         var mousePosition = GetGlobalMousePosition();
         var destinationVector = new Vector2(mousePosition.X - node2D.Position.X, mousePosition.Y - node2D.Position.Y);
         moveUntilCollideComponent.Timed = true;
-        moveUntilCollideComponent.RemoveOnCollide = true;
         moveUntilCollideComponent.TimeRemaining = 0.05f;
         moveUntilCollideComponent.MotionVector =
             destinationVector.LimitLength(canInteractComponent.MaxInteractDistance * GridSystem.TileSize * 0.9f)
