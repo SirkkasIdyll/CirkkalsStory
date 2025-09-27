@@ -130,13 +130,13 @@ public partial class NodeManager
     /// <summary>
     /// Checks if GetNodeOrNull returns the type of T
     /// </summary>
-    public bool HasComponent<T>(Node node) where T : class, IComponent
+    public bool HasComponent<T>(Node node) where T : Component, IComponent
     {
         var comp = node.GetNodeOrNull<T>($"{typeof(T).Name}");
         return comp != null;
     }
     
-    public bool TryAddComponent<T>(Node node) where T : class, IComponent
+    public bool TryAddComponent<T>(Node node) where T : Component, IComponent
     {
         CompDictionary.TryGetValue(typeof(T).Name, out var component);
 
@@ -152,10 +152,24 @@ public partial class NodeManager
     /// <summary>
     /// Checks if GetNodeOrNull returns the type of T and returns the Node
     /// </summary>
-    public bool TryGetComponent<T>(Node node, [NotNullWhen(true)] out T? component) where T : class, IComponent
+    public bool TryGetComponent<T>(Node node, [NotNullWhen(true)] out T? component) where T : Component, IComponent
     {
         component = node.GetNodeOrNull<T>($"{typeof(T).Name}");
         return component != null;
+    }
+
+    /// <summary>
+    /// Removes the component if it exists and is a child of the node
+    /// QueueFrees the component as well
+    /// </summary>
+    public void RemoveComponent<T>(Node node) where T : Component, IComponent 
+    {
+        var component = node.GetNodeOrNull<T>($"{typeof(T).Name}");
+        if (component == null)
+            return;
+        
+        node.RemoveChild(component);
+        component.QueueFree();
     }
 
     /// <summary>

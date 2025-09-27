@@ -3,6 +3,7 @@ using CS.Components.Appearance;
 using CS.Components.Grid;
 using CS.Components.Interaction;
 using CS.Components.Inventory;
+using CS.Components.Movement;
 using CS.Components.Player;
 using CS.Components.UI;
 using CS.Nodes.Scenes.Inventory;
@@ -289,34 +290,22 @@ public partial class ClothingSystem : NodeSystem
         
         if (!TryUnequipClothing(node, ClothingSlot.Inhand, true))
             return false;
-        
-        var nodeGridPosition = _gridSystem.GetPosition(node);
-        if (nodeGridPosition == null)
+
+        // Get the owner's position so we can get the vector from owner to mouse
+        if (node.Owner is not Node2D node2D)
             return false;
         
-        
-        if (_interactSystem.IsObstructed(node, GetGlobalMousePosition(), out var collisionInfo)
-            && node.Owner is Node2D node2D)
-        {
-            var collisionPosition = (Vector2)collisionInfo["position"];
-            var distanceToCollisionVector = new Vector2(collisionPosition.X - node2D.GlobalPosition.X,
-                collisionPosition.Y - node2D.GlobalPosition.Y);
+        _nodeManager.TryAddComponent<MoveUntilCollideComponent>(inhandItem);
+        if (!_nodeManager.TryGetComponent<MoveUntilCollideComponent>(inhandItem, out var moveUntilCollideComponent))
+            return false;
 
-            if (inhandItem is Node2D itemNode2D)
-            {
-                itemNode2D.SetGlobalPosition(itemNode2D.GlobalPosition + distanceToCollisionVector
-                    .LimitLength(canInteractComponent.MaxInteractDistance * 32f * 0.9f));
-            }
-        }
-        else
-        {
-            var mouseGridPosition = _gridSystem.GlobalPositionToGridPosition(GetGlobalMousePosition());
-            var distanceVector = new Vector2(mouseGridPosition.X - nodeGridPosition.Value.X,
-                mouseGridPosition.Y - nodeGridPosition.Value.Y);
-            
-            var addToPosition = distanceVector.LimitLength(canInteractComponent.MaxInteractDistance * 0.9f);
-            _gridSystem.SetPosition(inhandItem, nodeGridPosition.Value + addToPosition);
-        }
+        var mousePosition = GetGlobalMousePosition();
+        var destinationVector = new Vector2(mousePosition.X - node2D.Position.X, mousePosition.Y - node2D.Position.Y);
+        moveUntilCollideComponent.Timed = true;
+        moveUntilCollideComponent.TimeRemaining = 0.05f;
+        moveUntilCollideComponent.MotionVector =
+            destinationVector.LimitLength(canInteractComponent.MaxInteractDistance * GridSystem.TileSize * 0.9f)
+            / moveUntilCollideComponent.TimeRemaining;
        
         return true;
     }
@@ -411,6 +400,7 @@ public partial class ClothingSystem : NodeSystem
             {
                 node.Comp.ClothingSlots[ClothingSlot.Inhand] = item;
                 item.Comp.StoredBy = node;
+                itemNode2D.SetGlobalRotation(0); // Reset position so dropping it is normal
                 
                 var signal = new ItemPutInHandSignal(item);
                 _nodeManager.SignalBus.EmitItemPutInHandSignal(node, ref signal);
