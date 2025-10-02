@@ -1,14 +1,18 @@
-[gd_scene load_steps=21 format=3 uid="uid://buqgt44k0b5gc"]
+[gd_scene load_steps=35 format=3 uid="uid://buqgt44k0b5gc"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kbtkb"]
 [ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="2_opdnh"]
 [ext_resource type="Script" uid="uid://bxjdo37wkcuk7" path="res://Components/Movement/MovementComponent.cs" id="3_klnpo"]
 [ext_resource type="AudioStream" uid="uid://dyc6gj2kewjcm" path="res://Resources/Sounds/SFX/FootstepsWoodSoli 6017_62_1_short.wav" id="4_klnpo"]
 [ext_resource type="Script" uid="uid://ctw2xmwbf73hi" path="res://Components/Interaction/CanInteractComponent.cs" id="6_mtcbf"]
-[ext_resource type="Shader" uid="uid://cyowv87u2bat5" path="res://Resources/Shaders/Temp.gdshader" id="7_0n3qf"]
-[ext_resource type="Texture2D" uid="uid://inort5mwf5rt" path="res://Resources/Sprites/Mobs/GoodBody.png" id="7_04rii"]
+[ext_resource type="Shader" uid="uid://cyowv87u2bat5" path="res://Resources/Shaders/FogOfWarTest.gdshader" id="7_0n3qf"]
+[ext_resource type="Texture2D" uid="uid://sulynh5fwfxf" path="res://Resources/Sprites/Mobs/Humanoids/Dragon.png" id="7_7ln1c"]
+[ext_resource type="Texture2D" uid="uid://c1excsr75gpwt" path="res://Resources/Sprites/Mobs/Humanoids/Deer.png" id="7_ydmoe"]
+[ext_resource type="Texture2D" uid="uid://bjx35cg62ydk" path="res://Resources/Sprites/Mobs/Humanoids/DragonTail.png" id="8_04rii"]
+[ext_resource type="Texture2D" uid="uid://cdw48ygbtna8k" path="res://Resources/Sprites/Mobs/Humanoids/DeerAntlers.png" id="9_ydmoe"]
 [ext_resource type="Script" uid="uid://df6m317f3irhk" path="res://Components/UI/AttachedUserInterfaceComponent.cs" id="9_yxf2p"]
 [ext_resource type="PackedScene" uid="uid://bt08bpy5bn30e" path="res://Nodes/Scenes/Inventory/ClothingScene.tscn" id="10_7ln1c"]
+[ext_resource type="Texture2D" uid="uid://bncharm827fky" path="res://Resources/Sprites/Mobs/Humanoids/DeerTail.png" id="10_kqw0x"]
 [ext_resource type="Script" uid="uid://ytx7wy5nsn36" path="res://Components/Clothing/WearsClothingComponent.cs" id="11_6bs64"]
 [ext_resource type="PackedScene" uid="uid://cu3vy6cnoktke" path="res://Nodes/Scenes/Inventory/InventoryScene.tscn" id="11_7ln1c"]
 
@@ -37,19 +41,30 @@ colors = PackedColorArray(0, 0, 0, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_va6o6"]
 gradient = SubResource("Gradient_6mltn")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wjsfm"]
-atlas = ExtResource("7_04rii")
+[sub_resource type="AtlasTexture" id="AtlasTexture_5sbft"]
+atlas = ExtResource("7_ydmoe")
 region = Rect2(48, 0, 48, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xuu0h"]
-atlas = ExtResource("7_04rii")
+[sub_resource type="AtlasTexture" id="AtlasTexture_04rii"]
+atlas = ExtResource("7_7ln1c")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mijd0"]
+atlas = ExtResource("7_ydmoe")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6bs64"]
+atlas = ExtResource("7_7ln1c")
 region = Rect2(0, 0, 48, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_mtcbf"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_wjsfm")
+"texture": SubResource("AtlasTexture_5sbft")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_04rii")
 }],
 "loop": true,
 "name": &"back",
@@ -57,7 +72,78 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xuu0h")
+"texture": SubResource("AtlasTexture_mijd0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6bs64")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bxab3"]
+atlas = ExtResource("9_ydmoe")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kqw0x"]
+atlas = ExtResource("9_ydmoe")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xuu0h"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bxab3")
+}],
+"loop": true,
+"name": &"back",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kqw0x")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fh7kf"]
+atlas = ExtResource("10_kqw0x")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ep6do"]
+atlas = ExtResource("8_04rii")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jpf2w"]
+atlas = ExtResource("10_kqw0x")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ydmoe"]
+atlas = ExtResource("8_04rii")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bxab3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fh7kf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ep6do")
+}],
+"loop": true,
+"name": &"back",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jpf2w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ydmoe")
 }],
 "loop": true,
 "name": &"default",
@@ -119,27 +205,34 @@ texture = SubResource("GradientTexture2D_va6o6")
 [node name="Body" type="AnimatedSprite2D" parent="CanvasGroup" index="0"]
 sprite_frames = SubResource("SpriteFrames_mtcbf")
 
-[node name="Shoes" type="AnimatedSprite2D" parent="CanvasGroup" index="1"]
+[node name="Antler" type="AnimatedSprite2D" parent="CanvasGroup" index="1"]
+sprite_frames = SubResource("SpriteFrames_xuu0h")
+animation = &"back"
 
-[node name="Bottom" type="AnimatedSprite2D" parent="CanvasGroup" index="2"]
+[node name="Shoes" type="AnimatedSprite2D" parent="CanvasGroup" index="2"]
 
-[node name="Gloves" type="AnimatedSprite2D" parent="CanvasGroup" index="3"]
+[node name="Bottom" type="AnimatedSprite2D" parent="CanvasGroup" index="3"]
 
-[node name="Top" type="AnimatedSprite2D" parent="CanvasGroup" index="4"]
+[node name="Tail" type="AnimatedSprite2D" parent="CanvasGroup" index="4"]
+sprite_frames = SubResource("SpriteFrames_bxab3")
 
-[node name="Belt" type="AnimatedSprite2D" parent="CanvasGroup" index="5"]
+[node name="Gloves" type="AnimatedSprite2D" parent="CanvasGroup" index="5"]
 
-[node name="Outerwear" type="AnimatedSprite2D" parent="CanvasGroup" index="6"]
+[node name="Top" type="AnimatedSprite2D" parent="CanvasGroup" index="6"]
 
-[node name="Bag" type="AnimatedSprite2D" parent="CanvasGroup" index="7"]
+[node name="Belt" type="AnimatedSprite2D" parent="CanvasGroup" index="7"]
 
-[node name="Neck" type="AnimatedSprite2D" parent="CanvasGroup" index="8"]
+[node name="Outerwear" type="AnimatedSprite2D" parent="CanvasGroup" index="8"]
 
-[node name="Inhand" type="AnimatedSprite2D" parent="CanvasGroup" index="9"]
+[node name="Bag" type="AnimatedSprite2D" parent="CanvasGroup" index="9"]
 
-[node name="Face" type="AnimatedSprite2D" parent="CanvasGroup" index="10"]
+[node name="Neck" type="AnimatedSprite2D" parent="CanvasGroup" index="10"]
 
-[node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="11"]
+[node name="Inhand" type="AnimatedSprite2D" parent="CanvasGroup" index="11"]
+
+[node name="Face" type="AnimatedSprite2D" parent="CanvasGroup" index="12"]
+
+[node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="13"]
 
 [node name="WearsClothingComponent" type="Node2D" parent="." index="11"]
 script = ExtResource("11_6bs64")
