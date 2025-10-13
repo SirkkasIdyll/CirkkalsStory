@@ -1,0 +1,30 @@
+[gd_resource type="SpriteFrames" load_steps=4 format=3 uid="uid://ccqj0hadw6i17"]
+
+[ext_resource type="Texture2D" uid="uid://d28wg2qgivb2v" path="res://Resources/Sprites/Clothes/Inhand/Cane.png" id="1_f1bgh"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w4e5x"]
+atlas = ExtResource("1_f1bgh")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7w3ij"]
+atlas = ExtResource("1_f1bgh")
+region = Rect2(0, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w4e5x")
+}],
+"loop": true,
+"name": &"back",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7w3ij")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
