@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://dyc6gj2kewjcm"
+path="res://.godot/imported/FootstepsWoodSoli 6017_62_1_short.wav-b55197506cca24547384f1f67a814a5f.sample"
+
+[deps]
+
+source_file="res://Resources/Sounds/SFX/FootstepsWoodSoli 6017_62_1_short.wav"
+dest_files=["res://.godot/imported/FootstepsWoodSoli 6017_62_1_short.wav-b55197506cca24547384f1f67a814a5f.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

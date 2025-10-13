@@ -1,0 +1,30 @@
+[gd_resource type="SpriteFrames" load_steps=4 format=3 uid="uid://cvgbj1y11m0f2"]
+
+[ext_resource type="Texture2D" uid="uid://bfbr685hs877" path="res://Resources/Sprites/Clothes/Outerwear/Jacket.png" id="1_x240a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ic6yy"]
+atlas = ExtResource("1_x240a")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0i3oh"]
+atlas = ExtResource("1_x240a")
+region = Rect2(0, 0, 48, 48)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ic6yy")
+}],
+"loop": true,
+"name": &"back",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0i3oh")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
