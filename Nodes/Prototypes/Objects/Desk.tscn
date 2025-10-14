@@ -9,6 +9,9 @@ size = Vector2(32, 20)
 [node name="Desk" instance=ExtResource("1_rw3es")]
 collision_layer = 2
 
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Desk"
+
 [node name="Sprite2D" type="Sprite2D" parent="CanvasGroup" index="0"]
 texture = ExtResource("2_pueo4")
 
