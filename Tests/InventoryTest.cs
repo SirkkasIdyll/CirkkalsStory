@@ -282,6 +282,42 @@ public class InventoryTest
         AssertBool(wearsClothingComponent!.ClothingSlots[clothingComponent.ClothingSlot] == glasses).IsTrue();
     }
 
+    [TestCase]
+    public async Task PutEquippedClothingInHand()
+    {
+        _nodeManager.TrySpawnNode("MobPlayer", out var mobPlayer);
+        AssertObject(mobPlayer).IsNotNull();
+        AddNode(mobPlayer!);
+
+        _nodeManager.TrySpawnNode("RedHalfrimGlasses", out var glasses);
+        AssertObject(glasses).IsNotNull();
+        AddNode(glasses!);
+        
+        _nodeManager.TryGetComponent<WearsClothingComponent>(mobPlayer!, out var wearsClothingComponent);
+        AssertObject(wearsClothingComponent).IsNotNull();
+        _nodeManager.TryGetComponent<StorableComponent>(glasses!, out var storableComponent);
+        AssertObject(storableComponent).IsNotNull();
+        _nodeManager.TryGetComponent<ClothingComponent>(glasses!, out var clothingComponent);
+        AssertObject(clothingComponent).IsNotNull();
+        
+        AssertBool(_clothingSystem.TryEquipClothing((mobPlayer!, wearsClothingComponent!), (glasses!, clothingComponent!))).IsTrue();
+        await Task.Delay(DelayTime);
+        
+        AssertBool(clothingComponent!.EquippedBy == mobPlayer).IsTrue();
+        AssertBool(wearsClothingComponent!.ClothingSlots[clothingComponent.ClothingSlot] == glasses).IsTrue();
+        AssertBool(storableComponent!.StoredBy == null).IsTrue();
+
+        AssertBool(_clothingSystem.TryPutItemInHand((mobPlayer!, wearsClothingComponent!),
+            (glasses!, storableComponent!))).IsTrue();
+        await Task.Delay(DelayTime);
+        
+        AssertBool(storableComponent!.StoredBy == mobPlayer).IsTrue();
+        AssertBool(clothingComponent!.EquippedBy == null).IsTrue();
+        AssertBool(wearsClothingComponent!.ClothingSlots[ClothingSlot.Inhand] == glasses).IsTrue();
+        AssertBool(wearsClothingComponent!.ClothingSlots[clothingComponent.ClothingSlot] == null).IsTrue();
+        
+    }
+
     /// <summary>
     /// Put a pair of glasses into a satchel
     /// </summary>
