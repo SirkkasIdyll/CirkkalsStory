@@ -12,6 +12,9 @@ shader = ExtResource("2_aduej")
 
 [node name="BrickWall" instance=ExtResource("1_effiu")]
 
+[node name="DescriptionComponent" parent="." index="0"]
+DisplayName = "Brick wall"
+
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." index="1"]
 polygon = PackedVector2Array(-16, -16, -16, 16, 16, 16, 16, -16)
 

@@ -365,7 +365,7 @@ public partial class StorageSystem : NodeSystem
         node.Comp.FluctuatingAudioStreamPlayer2DSystem?.SetStream(node.Comp.InsertSound);
         node.Comp.FluctuatingAudioStreamPlayer2DSystem?.Play();
         
-        // Pickup animation
+        // Pickup animation but towards the storage item (if visible)
         if (node.Owner is Node2D node2D && item.Owner is Node2D itemNode2D && itemNode2D.IsVisibleInTree())
         {
             var tween = CreateTween();
