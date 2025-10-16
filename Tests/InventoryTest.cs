@@ -312,6 +312,48 @@ public class InventoryTest
             AssertBool(node2D.IsVisibleInTree()).IsFalse();
     }
 
+    [TestCase]
+    public async Task TransferItemBetweenStorages()
+    {
+        _nodeManager.TrySpawnNode("RedHalfrimGlasses", out var glasses);
+        AssertObject(glasses).IsNotNull();
+        AddNode(glasses!);
+
+        _nodeManager.TrySpawnNode("Satchel", out var satchel);
+        AssertObject(satchel).IsNotNull();
+        AddNode(satchel!);
+        
+        _nodeManager.TrySpawnNode("Satchel", out var satchelTwo);
+        AssertObject(satchelTwo).IsNotNull();
+        AddNode(satchelTwo!);
+
+        _nodeManager.TryGetComponent<StorageComponent>(satchel!, out var storageComponent);
+        AssertObject(storageComponent).IsNotNull();
+        _nodeManager.TryGetComponent<StorageComponent>(satchelTwo!, out var twoStorageComponent);
+        AssertObject(twoStorageComponent).IsNotNull();
+        _nodeManager.TryGetComponent<StorableComponent>(glasses!, out var storableComponent);
+        AssertObject(storableComponent).IsNotNull();
+        
+        AssertBool(_storageSystem.TryAddItemToStorage((satchel!, storageComponent!), (glasses!, storableComponent!)));
+        await Task.Delay(DelayTime);
+        
+        AssertBool(storageComponent!.VolumeOccupied > 0
+                   && Math.Abs(storageComponent!.VolumeOccupied - storableComponent!.Volume) < Tolerance).IsTrue();
+        AssertBool(storageComponent.Items[0] == glasses).IsTrue();
+        AssertBool(storableComponent!.StoredBy == satchel).IsTrue();
+
+        AssertBool(_storageSystem.TryAddItemToStorage((satchelTwo!, twoStorageComponent!), (glasses!, storableComponent!)))
+            .IsTrue();
+        await Task.Delay(DelayTime);
+        
+        AssertBool(storageComponent.Items.Count == 0).IsTrue();
+        AssertBool(storageComponent.VolumeOccupied < Tolerance).IsTrue();
+        AssertBool(twoStorageComponent!.VolumeOccupied > 0
+                   && Math.Abs(twoStorageComponent!.VolumeOccupied - storableComponent!.Volume) < Tolerance).IsTrue();
+        AssertBool(twoStorageComponent.Items[0] == glasses).IsTrue();
+        AssertBool(storableComponent!.StoredBy == satchelTwo).IsTrue();
+    }
+
     /// <summary>
     /// Put a pair of glasses into a satchel and then remove it from the satchel
     /// </summary>
