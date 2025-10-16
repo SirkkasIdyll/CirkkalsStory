@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CS.SlimeFactory.Signals;
 using Godot;
+using static GdUnit4.Assertions;
 
 namespace CS.SlimeFactory;
 
@@ -195,6 +196,7 @@ public readonly struct Node<TComp> where TComp : IComponent?
     private Node(Node owner, TComp comp)
     {
         Debug.Assert(comp?.Owner == owner);
+        AssertBool(comp?.Owner == owner).IsTrue();
         
         Owner = owner;
         Comp = comp;
