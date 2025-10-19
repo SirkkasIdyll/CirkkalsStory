@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://buqgt44k0b5gc"]
+[gd_scene load_steps=36 format=3 uid="uid://buqgt44k0b5gc"]
 
 [ext_resource type="PackedScene" uid="uid://cncg0vu0rs250" path="res://Nodes/Prototypes/Mobs/BaseMob.tscn" id="1_kbtkb"]
 [ext_resource type="Script" uid="uid://bhqbdofd50orh" path="res://Nodes/UI/Audio/LoopingAudioStreamPlayer2DSystem.cs" id="2_opdnh"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://bncharm827fky" path="res://Resources/Sprites/Mobs/Humanoids/DeerTail.png" id="10_kqw0x"]
 [ext_resource type="Script" uid="uid://ytx7wy5nsn36" path="res://Components/Clothing/WearsClothingComponent.cs" id="11_6bs64"]
 [ext_resource type="PackedScene" uid="uid://cu3vy6cnoktke" path="res://Nodes/Scenes/Inventory/InventoryScene.tscn" id="11_7ln1c"]
+[ext_resource type="Script" uid="uid://ddcvhqyjsfi5l" path="res://Components/Pulling/CanPullThingsComponent.cs" id="16_bxab3"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_8wxkm"]
 radius = 5.5
@@ -243,3 +244,6 @@ UserInterfaceScenes = Dictionary[String, PackedScene]({
 "equipment": ExtResource("10_7ln1c"),
 "inventory": ExtResource("11_7ln1c")
 })
+
+[node name="CanPullThingsComponent" type="Node2D" parent="." index="13"]
+script = ExtResource("16_bxab3")

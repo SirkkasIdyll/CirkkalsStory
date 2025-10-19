@@ -76,6 +76,10 @@ public partial class InteractWithSignal : HandledSignalArgs
     }
 }
 
+/// <summary>
+/// Provides the Interactee and the ContextMenu.
+/// To add a new <see cref="ContextMenuAction"/>, append to the enum and add the item to the ContextMenu.
+/// </summary>
 public partial class GetContextActionsSignal : UserSignalArgs
 {
     public Node Interactee;
