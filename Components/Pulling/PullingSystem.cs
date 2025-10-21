@@ -1,5 +1,6 @@
 ﻿using CS.Components.Grid;
 using CS.Components.Interaction;
+using CS.Components.Movement;
 using CS.Nodes.UI.ContextMenu;
 using CS.SlimeFactory;
 using Godot;
@@ -17,6 +18,7 @@ public partial class PullingSystem : NodeSystem
         base._Ready();
         
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
+        _nodeManager.SignalBus.MovementAttemptSignal += OnMovementAttempt;
     }
 
     private void OnContextActionIndexPressed(ContextMenu contextMenu, int index)
@@ -64,6 +66,29 @@ public partial class PullingSystem : NodeSystem
         
         if (!_nodeManager.HasComponent<CanPullThingsComponent>(args.Interactee))
             contextMenu.SetItemDisabled(index, true);
+    }
+
+    /// <summary>
+    /// When a character wants to move, attempt to release the player from being pulled
+    /// If it fails, cancel the movement attempt
+    /// </summary>
+    private void OnMovementAttempt(Node<MovementComponent> node, ref MovementAttemptSignal args)
+    {
+        if (!_nodeManager.TryGetComponent<PullableComponent>(node, out var pullableComponent))
+            return;
+
+        if (!pullableComponent.IsBeingPulled)
+            return;
+
+        if (pullableComponent.PulledBy == null)
+            return;
+
+        if (!_nodeManager.TryGetComponent<CanPullThingsComponent>(pullableComponent.PulledBy,
+                out var canPullThingsComponent))
+            return;
+
+        if (!TryStopPull((pullableComponent.PulledBy, canPullThingsComponent), (node, pullableComponent)))
+            args.Canceled = true;
     }
 
     /// <summary>
@@ -116,9 +141,7 @@ public partial class PullingSystem : NodeSystem
             return false;
         
         // If we're already pulling another target, try to stop pulling it
-        if (puller.Comp.Target != null
-            && _nodeManager.TryGetComponent<PullableComponent>(puller.Comp.Target, out var pullableComponent)
-            && !TryStopPull(puller, (puller.Comp.Target, pullableComponent)))
+        if (!TryStopPull(puller))
             return false;
 
         puller.Comp.Target = pullable;
@@ -130,7 +153,21 @@ public partial class PullingSystem : NodeSystem
     }
 
     /// <summary>
-    /// Attempt to stop pulling a target, if you are pulling the target
+    /// Stop pulling whatever you happen to be pulling
+    /// </summary>
+    public bool TryStopPull(Node<CanPullThingsComponent> puller)
+    {
+        if (puller.Comp.Target == null)
+            return true;
+        
+        if (!_nodeManager.TryGetComponent<PullableComponent>(puller.Comp.Target, out var pullableComponent))
+            return false;
+
+        return TryStopPull(puller, (puller.Comp.Target, pullableComponent));
+    }
+
+    /// <summary>
+    /// Attempt to stop pulling a given target
     /// </summary>
     public bool TryStopPull(Node<CanPullThingsComponent> puller, Node<PullableComponent> pullable)
     {

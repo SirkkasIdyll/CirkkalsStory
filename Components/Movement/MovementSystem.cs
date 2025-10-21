@@ -1,6 +1,7 @@
 ﻿using CS.Components.Appearance;
 using CS.Components.Player;
 using CS.SlimeFactory;
+using CS.SlimeFactory.Signals;
 using Godot;
 
 namespace CS.Components.Movement;
@@ -40,6 +41,9 @@ public partial class MovementSystem : NodeSystem
     public void MovePlayer()
     {
         var node = _playerManagerSystem.TryGetPlayer();
+        var inputDirection = Input.GetVector("left", "right", "up", "down");
+        if (inputDirection == Vector2.Zero)
+            return;
 
         if (node is not CharacterBody2D characterBody)
             return;
@@ -47,33 +51,26 @@ public partial class MovementSystem : NodeSystem
         if (!_nodeManager.TryGetComponent<MovementComponent>(node, out var movementComponent))
             return;
         
-        // Walk speed
-        var inputDirection = Input.GetVector("left", "right", "up", "down");
+        // Check if anything is preventing us from moving
+        var movementAttemptSignal = new MovementAttemptSignal(characterBody);
+        _nodeManager.SignalBus.EmitMovementAttemptSignal((node, movementComponent), ref movementAttemptSignal);
+        
+        if (movementAttemptSignal.Canceled)
+            return;
+        
+        // Set desired movement speed before other systems modify it
         if (Input.IsActionPressed("shift_modifier"))
             characterBody.Velocity = inputDirection * movementComponent.WalkingSpeed;
         else
             characterBody.Velocity = inputDirection * movementComponent.RunningSpeed;
+
+        // Emit movement signal so systems can modify velocity before moving, or update the sprite based on movement
+        var movementSignal = new MovementSignal(characterBody);
+        _nodeManager.SignalBus.EmitMovementSignal((node, movementComponent), ref movementSignal);
         
-        // Orient sprite by mouse or by keyboard movement
-        if (Input.IsActionPressed("aim"))
-        {
-            var facingRight = characterBody.GlobalPosition.X < GetGlobalMousePosition().X;
-            var facingForward = characterBody.GlobalPosition.Y - 50 < GetGlobalMousePosition().Y;
-            _appearanceSystem.OrientCharacterSprite(characterBody, facingRight, facingForward);
-        }
-        else
-        {
-            if (inputDirection.X < 0)
-                _appearanceSystem.OrientCharacterSprite(characterBody, faceRight: false);
-            else if (inputDirection.X > 0)
-                _appearanceSystem.OrientCharacterSprite(characterBody, faceRight: true);
-            
-            if (inputDirection.Y < 0)
-                _appearanceSystem.OrientCharacterSprite(characterBody, faceForward: false);
-            else if (inputDirection.Y > 0)
-                _appearanceSystem.OrientCharacterSprite(characterBody, faceForward: true);
-        }
+        characterBody.MoveAndSlide();
         
+        // TODO: (move this outside of the movement system so that sounds can play based on tile walked on)
         // Play footstep sfx
         if (movementComponent.SoundEffect != null)
         {
@@ -85,7 +82,25 @@ public partial class MovementSystem : NodeSystem
             if (inputDirection == Vector2.Zero && movementComponent.SoundEffect.Playing)
                 movementComponent.SoundEffect.SetStreamPaused(true);
         }
+    }
+}
 
-        characterBody.MoveAndSlide();
+public partial class MovementAttemptSignal : CancellableSignalArgs
+{
+    public CharacterBody2D CharacterBody2D;
+
+    public MovementAttemptSignal(CharacterBody2D characterBody2D)
+    {
+        CharacterBody2D = characterBody2D;
+    }
+}
+
+public partial class MovementSignal : UserSignalArgs
+{
+    public CharacterBody2D CharacterBody2D;
+
+    public MovementSignal(CharacterBody2D characterBody2D)
+    {
+        CharacterBody2D = characterBody2D;
     }
 }
