@@ -38,7 +38,6 @@ public partial class AppearanceSystem : NodeSystem
 
     private void OnMovementSignal(Node<MovementComponent> node, ref MovementSignal args)
     {
-
         // Orient sprite by mouse or by keyboard movement
         if (Input.IsActionPressed("aim"))
         {

@@ -48,6 +48,9 @@ public partial class PullableComponent : Component
 
         if (!_gridSystem.TryGetDistanceVector(PulledBy, GetParent(), out var distanceVector))
             return;
+        
+        if (distanceVector.Value.Length() < canPullThingsComponent.InitialPullDistance)
+            return;
 
         if (Mathf.Abs(distanceVector.Value.Length() - canPullThingsComponent.InitialPullDistance) < Tolerance)
             return;

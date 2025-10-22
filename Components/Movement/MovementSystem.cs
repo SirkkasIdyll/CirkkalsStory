@@ -42,14 +42,18 @@ public partial class MovementSystem : NodeSystem
     {
         var node = _playerManagerSystem.TryGetPlayer();
         var inputDirection = Input.GetVector("left", "right", "up", "down");
-        if (inputDirection == Vector2.Zero)
-            return;
 
         if (node is not CharacterBody2D characterBody)
             return;
         
         if (!_nodeManager.TryGetComponent<MovementComponent>(node, out var movementComponent))
             return;
+
+        if (inputDirection == Vector2.Zero)
+        {
+            movementComponent.SoundEffect?.SetStreamPaused(true);
+            return;
+        }
         
         // Check if anything is preventing us from moving
         var movementAttemptSignal = new MovementAttemptSignal(characterBody);
@@ -79,8 +83,8 @@ public partial class MovementSystem : NodeSystem
                     movementComponent.SoundEffect.SetStreamPaused(false); 
                 else movementComponent.SoundEffect.Play();
         
-            if (inputDirection == Vector2.Zero && movementComponent.SoundEffect.Playing)
-                movementComponent.SoundEffect.SetStreamPaused(true);
+            /*if (inputDirection == Vector2.Zero && movementComponent.SoundEffect.Playing)
+                movementComponent.SoundEffect.SetStreamPaused(true);*/
         }
     }
 }
