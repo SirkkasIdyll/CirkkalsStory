@@ -12,6 +12,7 @@ public partial class PullingSystem : NodeSystem
 {
     [InjectDependency] private readonly GridSystem _gridSystem = null!;
     [InjectDependency] private readonly InteractSystem _interactSystem = null!;
+    private const float Tolerance = 0.01f;
     
     public override void _Ready()
     {
@@ -19,6 +20,7 @@ public partial class PullingSystem : NodeSystem
         
         _nodeManager.SignalBus.GetContextActionsSignal += OnGetContextActions;
         _nodeManager.SignalBus.MovementAttemptSignal += OnMovementAttempt;
+        _nodeManager.SignalBus.MovementSignal += OnMovement;
     }
 
     private void OnContextActionIndexPressed(ContextMenu contextMenu, int index)
@@ -69,7 +71,7 @@ public partial class PullingSystem : NodeSystem
     }
 
     /// <summary>
-    /// When a character wants to move, attempt to release the player from being pulled
+    /// When a character wants to move, attempt to release the pullable mover from being pulled
     /// If it fails, cancel the movement attempt
     /// </summary>
     private void OnMovementAttempt(Node<MovementComponent> node, ref MovementAttemptSignal args)
@@ -89,6 +91,49 @@ public partial class PullingSystem : NodeSystem
 
         if (!TryStopPull((pullableComponent.PulledBy, canPullThingsComponent), (node, pullableComponent)))
             args.Canceled = true;
+    }
+
+    /// <summary>
+    /// When moving while pulling something,
+    /// don't allow the player to move farther than max interact distance
+    /// </summary>
+    private void OnMovement(Node<MovementComponent> node, ref MovementSignal args)
+    {
+        if (node.Owner is not CharacterBody2D characterBody2D)
+            return;
+        
+        if (!_nodeManager.TryGetComponent<CanPullThingsComponent>(node, out var canPullThingsComponent))
+            return;
+
+        if (!_nodeManager.TryGetComponent<CanInteractComponent>(node, out var canInteractComponent))
+            return;
+
+        // Not pulling anything
+        if (canPullThingsComponent.Target == null)
+            return;
+
+        if (canPullThingsComponent.Target is not Node2D node2D)
+            return;
+        
+        if (!_gridSystem.TryGetDistanceVector(node, canPullThingsComponent.Target, out var distanceVector))
+            return;
+
+        // Prevents jittering
+        if (Mathf.Abs(distanceVector.Value.Length() - canInteractComponent.MaxInteractDistance) < Tolerance)
+            return;
+        
+        if (distanceVector.Value.Length() < canInteractComponent.MaxInteractDistance)
+            return;
+
+        var position = _gridSystem.GetPosition(node2D);
+        if (position == null)
+            return;
+        
+        // if we are attempting to move farther than interaction distance
+        // limit the position of the player to be within interaction distance
+        // and cause the player to slide in a circle around the pulled object rather than moving normally
+        _gridSystem.SetPosition(characterBody2D, position.Value + distanceVector.Value.Normalized() * canInteractComponent.MaxInteractDistance);
+        characterBody2D.Velocity = characterBody2D.Velocity.Slide(distanceVector.Value.Normalized());
     }
 
     /// <summary>
