@@ -49,5 +49,7 @@ public enum ContextMenuAction
     Drop,
     Equip,
     Interact,
-    Unequip
+    Unequip,
+    Pull,
+    StopPull
 }

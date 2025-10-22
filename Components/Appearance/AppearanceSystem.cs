@@ -1,5 +1,6 @@
 ﻿using CS.Components.Clothing;
 using CS.Components.Inventory;
+using CS.Components.Movement;
 using CS.SlimeFactory;
 using Godot;
 
@@ -14,7 +15,7 @@ public partial class AppearanceSystem : NodeSystem
         _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
         _nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
         _nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
-
+        _nodeManager.SignalBus.MovementSignal += OnMovementSignal;
     }
 
     private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
@@ -33,6 +34,30 @@ public partial class AppearanceSystem : NodeSystem
     private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
     {
         AttachItemInvisibly(node, args.Storable);
+    }
+
+    private void OnMovementSignal(Node<MovementComponent> node, ref MovementSignal args)
+    {
+        // Orient sprite by mouse or by keyboard movement
+        if (Input.IsActionPressed("aim"))
+        {
+            var facingRight = args.CharacterBody2D.GlobalPosition.X < GetGlobalMousePosition().X;
+            var facingForward = args.CharacterBody2D.GlobalPosition.Y - 50 < GetGlobalMousePosition().Y;
+            OrientCharacterSprite(args.CharacterBody2D, facingRight, facingForward);
+        }
+        else
+        {
+            var inputDirection = Input.GetVector("left", "right", "up", "down");
+            if (inputDirection.X < 0)
+                OrientCharacterSprite(args.CharacterBody2D, faceRight: false);
+            else if (inputDirection.X > 0)
+                OrientCharacterSprite(args.CharacterBody2D, faceRight: true);
+            
+            if (inputDirection.Y < 0)
+                OrientCharacterSprite(args.CharacterBody2D, faceForward: false);
+            else if (inputDirection.Y > 0)
+                OrientCharacterSprite(args.CharacterBody2D, faceForward: true);
+        }
     }
 
     /// <summary>

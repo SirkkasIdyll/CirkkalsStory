@@ -70,6 +70,21 @@ public partial class GridSystem : NodeSystem
     }
 
     /// <summary>
+    /// Gets the distance vector between two nodes on the game's grid
+    /// </summary>
+    public bool TryGetDistanceVector(Node A, Node B, [NotNullWhen(true)] out Vector2? distanceVector)
+    {
+        distanceVector = null;
+        
+        if (A is not Node2D node2DA || B is not Node2D node2DB)
+            return false;
+
+        distanceVector = GlobalPositionToGridPosition(node2DA.GlobalPosition) -
+                             GlobalPositionToGridPosition(node2DB.GlobalPosition);
+        return true;
+    }
+
+    /// <summary>
     /// Gets the distance between two nodes on the game's grid
     /// </summary>
     public bool TryGetDistance(Node A, Node B, [NotNullWhen(true)] out float? distance)
