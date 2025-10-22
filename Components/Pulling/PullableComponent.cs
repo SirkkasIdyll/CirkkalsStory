@@ -20,6 +20,7 @@ public partial class PullableComponent : Component
     private readonly NodeManager _nodeManager = NodeManager.Instance;
     private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
     private GridSystem _gridSystem = null!;
+    private const float Tolerance = 0.01f;
 
     public override void _Ready()
     {
@@ -48,7 +49,7 @@ public partial class PullableComponent : Component
         if (!_gridSystem.TryGetDistanceVector(PulledBy, GetParent(), out var distanceVector))
             return;
 
-        if (distanceVector.Value.Length() < canPullThingsComponent.InitialPullDistance)
+        if (Mathf.Abs(distanceVector.Value.Length() - canPullThingsComponent.InitialPullDistance) < Tolerance)
             return;
         
         physicsBody2D.MoveAndCollide(distanceVector.Value * (float)delta * 60f);
