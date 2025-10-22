@@ -55,6 +55,12 @@ public partial class PullableComponent : Component
         if (Mathf.Abs(distanceVector.Value.Length() - canPullThingsComponent.InitialPullDistance) < Tolerance)
             return;
         
-        physicsBody2D.MoveAndCollide(distanceVector.Value * (float)delta * 60f);
+        var kinematicCollision2D = physicsBody2D.MoveAndCollide(distanceVector.Value * (float)delta * 60f);
+        
+        // Apply drag force to collided objects to get them out of the way
+        if (kinematicCollision2D?.GetCollider() is not RigidBody2D rigidBody2D)
+            return;
+        
+        rigidBody2D.ApplyCentralImpulse(-kinematicCollision2D.GetNormal() * distanceVector.Value * (float)delta * 60f);
     }
 }
