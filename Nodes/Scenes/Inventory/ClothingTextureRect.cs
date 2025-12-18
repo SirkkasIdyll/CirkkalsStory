@@ -100,6 +100,7 @@ public partial class ClothingTextureRect : TextureRect
             
             var textureRect = (TextureRect)Duplicate();
             textureRect.SetModulate(new Color(1f, 1f, 1f, 0.6f));
+            textureRect.SetPosition(textureRect.GetPosition() - new Vector2(16, 16));
             control.AddChild(textureRect);
             
             SetDragPreview(control);
