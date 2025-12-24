@@ -59,8 +59,8 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 	}
 
 	/// <summary>
-	/// Attempts to store a <see cref="StorableComponent"/>
-	/// inside a storage
+	/// Attempts to store a <see cref="StorableComponent"/> in a <see cref="StorageComponent"/>
+	/// when drag is dropped
 	/// </summary>
 	public override void _DropData(Vector2 atPosition, Variant data)
 	{
@@ -104,9 +104,7 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		if (node.Owner != _uiOwner)
 			return;
 		
-		var button = CreateItemButton(node, args.Storable);
-		_itemButtonContainer.AddChild(button);
-		_buttonDictionary[args.Storable] = button;
+		AddItemButtons(node, [args.Storable]);
 		UpdateStorageProgressBar(node);
 	}
 
@@ -119,9 +117,7 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		if (node.Owner != _uiOwner)
 			return;
 		
-		var button = _buttonDictionary[args.Storable];
-		_itemButtonContainer.RemoveChild(button);
-		_buttonDictionary.Remove(args.Storable);
+		RemoveItemButtons(node, [args.Storable]);
 		UpdateStorageProgressBar(node);
 	}
 
@@ -161,6 +157,13 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		_storageSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
 	}
 	
+	/// <summary>
+	/// Sets the title to the name of the item
+	/// Adds a SFX when the storage is closed
+	/// Initializes the storage weight display
+	/// Creates buttons for the items inside the storage
+	/// And sends a signal that we've opened the storage
+	/// </summary>
 	public void SetDetails(Node node)
 	{
 		_uiOwner = node;
@@ -188,6 +191,9 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		_nodeManager.SignalBus.EmitStorageOpenedSignal((_uiOwner, _uiStorageComponent), ref signal);
 	}
 
+	/// <summary>
+	/// Creates interactable buttons for each item inside a storage
+	/// </summary>
 	private void AddItemButtons(Node<StorageComponent> node, Array<Node> items)
 	{
 		foreach (var item in items)
@@ -195,32 +201,36 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 			if (!_nodeManager.TryGetComponent<StorableComponent>(item, out var storableComponent))
 				continue;
 
-			var button = CreateItemButton(node, (item, storableComponent));
+			var button = new StorageItemButton(item);
+			button.SetThemeTypeVariation("ButtonSmall");
+		
+			if (_descriptionSystem.TryGetDisplayName(item,  out var displayName))
+				button.SetText(displayName);
+
+			if (_descriptionSystem.TryGetSprite(item, out var sprite))
+				button.Icon = sprite.Texture;
+
+			button.GuiInput += @event =>
+			{
+				/*if (@event.IsActionPressed("primary_interact"))
+					OnPrimaryInteract(node, item);*/
+
+				if (@event.IsActionPressed("secondary_interact"))
+					OnSecondaryInteract(node, (item, storableComponent));
+			}; 
+			
 			_itemButtonContainer.AddChild(button);
 			_buttonDictionary[item] = button;
 		}
 	}
 
-	private Button CreateItemButton(Node<StorageComponent> node, Node<StorableComponent> item)
+	private void RemoveItemButtons(Node<StorageComponent> node, Array<Node> items)
 	{
-		var button = new StorageItemButton(item);
-		button.SetThemeTypeVariation("ButtonSmall");
-		
-		if (_descriptionSystem.TryGetDisplayName(item,  out var displayName))
-			button.SetText(displayName);
-
-		if (_descriptionSystem.TryGetSprite(item, out var sprite))
-			button.Icon = sprite.Texture;
-
-		button.GuiInput += @event =>
+		foreach (var item in items)
 		{
-			/*if (@event.IsActionPressed("primary_interact"))
-				OnPrimaryInteract(node, item);*/
-
-			if (@event.IsActionPressed("secondary_interact"))
-				OnSecondaryInteract(node, item);
-		};
-		return button;
+			_itemButtonContainer.RemoveChild(_buttonDictionary[item]);
+			_buttonDictionary.Remove(item);
+		}
 	}
 
 	private void OnMouseEntered()
