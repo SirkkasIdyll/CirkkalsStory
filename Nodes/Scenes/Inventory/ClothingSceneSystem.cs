@@ -10,7 +10,7 @@ namespace CS.Nodes.Scenes.Inventory;
 /// <summary>
 /// Displays the equipment worn by a mob.
 /// </summary>
-public partial class ClothingSceneSystem : GridContainer
+public partial class ClothingSceneSystem : GridContainer, IModifiableScene
 {
 	[ExportCategory("Owned")]
 	[Export] private Button _title = null!;
@@ -21,8 +21,9 @@ public partial class ClothingSceneSystem : GridContainer
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	[InjectDependency] private readonly ClothingSystem _clothingSystem = null!;
 	[InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
-
-	private Node? _character;
+	
+	private Node? _uiOwner;
+	private WearsClothingComponent? _uiWearsClothingComponent;
 
 	public override void _ExitTree()
 	{
@@ -37,6 +38,7 @@ public partial class ClothingSceneSystem : GridContainer
 	public override void _Ready()
 	{
 		base._Ready();
+		_nodeSystemManager.InjectNodeSystemDependencies(this);
 
 		_nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
 		_nodeManager.SignalBus.ClothingUnequippedSignal += OnClothingUnequipped;
@@ -46,7 +48,7 @@ public partial class ClothingSceneSystem : GridContainer
 
 	private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
 	{
-		if (node.Owner != _character)
+		if (node.Owner != _uiOwner)
 			return;
 		
 		// Set sprite to clothing's icon
@@ -62,7 +64,7 @@ public partial class ClothingSceneSystem : GridContainer
 
 	private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
 	{
-		if (node.Owner != _character)
+		if (node.Owner != _uiOwner)
 			return;
 		
 		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var clothingTextureRect))
@@ -77,7 +79,7 @@ public partial class ClothingSceneSystem : GridContainer
 
 	private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
 	{
-		if (node.Owner != _character)
+		if (node.Owner != _uiOwner)
 			return;
 		
 		// Set sprite to clothing's icon
@@ -93,7 +95,7 @@ public partial class ClothingSceneSystem : GridContainer
 
 	private void OnItemRemovedFromHand(Node<WearsClothingComponent> node, ref ItemRemovedFromHandSignal args)
 	{
-		if (node.Owner != _character)
+		if (node.Owner != _uiOwner)
 			return;
 		
 		if (!_clothingSlots.TryGetValue(ClothingSlot.Inhand, out var clothingTextureRect))
@@ -153,15 +155,19 @@ public partial class ClothingSceneSystem : GridContainer
 		_clothingSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
 	}
 
-	public void SetDetails(Node<WearsClothingComponent> node)
+	public void SetDetails(Node node)
 	{
-		_nodeSystemManager.InjectNodeSystemDependencies(this);
+		_uiOwner = node;
 
-		_character = node;
+		if (!_nodeManager.TryGetComponent<WearsClothingComponent>(node, out var wearsClothingComponent))
+			return;
+
+		_uiWearsClothingComponent = wearsClothingComponent;
+		
 		if (_descriptionSystem.TryGetDisplayName(node, out var name))
 			_title.SetText(name + "'s Equipment");
 		
-		foreach (var (clothingSlot, clothingItem) in node.Comp.ClothingSlots)
+		foreach (var (clothingSlot, clothingItem) in _uiWearsClothingComponent.ClothingSlots)
 		{
 			var clothingSlotIndex = (int)clothingSlot;
 			// When the particular slot's image is clicked, try to unequip the clothing in that slot.
@@ -177,7 +183,7 @@ public partial class ClothingSceneSystem : GridContainer
 						OnPrimaryInteract(node, clothingSlot);*/
 
 					if (@event.IsActionPressed("secondary_interact"))
-						OnSecondayInteract(node, clothingSlot);
+						OnSecondayInteract((_uiOwner, _uiWearsClothingComponent), clothingSlot);
 				};
 			}
 

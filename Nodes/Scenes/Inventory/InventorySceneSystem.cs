@@ -11,7 +11,7 @@ namespace CS.Nodes.Scenes.Inventory;
 /// <summary>
 /// Displays all worn storage equipped to a mob.
 /// </summary>
-public partial class InventorySceneSystem : VBoxContainer
+public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
 {
     [ExportCategory("Owned")]
     [Export] private Button _title = null!;
@@ -27,7 +27,9 @@ public partial class InventorySceneSystem : VBoxContainer
         ResourceLoader.Load<PackedScene>("res://Nodes/Scenes/Inventory/StorageFragmentScene.tscn");
     private FoldableGroup _foldableGroup = new();
     private Dictionary<Node, FoldableContainer> _foldableDictionary = [];
-    private Node? _uiBelongsToThisMob;
+    
+    private Node? _uiOwner;
+    private WearsClothingComponent? _uiWearsClothingComponent;
 
     public override void _ExitTree()
     {
@@ -40,6 +42,7 @@ public partial class InventorySceneSystem : VBoxContainer
     public override void _Ready()
     {
         base._Ready();
+        _nodeSystemManager.InjectNodeSystemDependencies(this);
 
         _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
         _nodeManager.SignalBus.ClothingUnequippedSignal += OnClothingUnequipped;
@@ -47,7 +50,7 @@ public partial class InventorySceneSystem : VBoxContainer
 
     private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
     {
-        if (node.Owner != _uiBelongsToThisMob)
+        if (node.Owner != _uiOwner)
             return;
 
         if (!_nodeManager.TryGetComponent<StorageComponent>(args.Clothing, out var storageComponent))
@@ -62,7 +65,7 @@ public partial class InventorySceneSystem : VBoxContainer
 
     private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
     {
-        if (node.Owner != _uiBelongsToThisMob)
+        if (node.Owner != _uiOwner)
             return;
 
         if (!_foldableDictionary.TryGetValue(args.Clothing, out var foldableContainer))
@@ -72,10 +75,14 @@ public partial class InventorySceneSystem : VBoxContainer
         _foldableDictionary.Remove(args.Clothing);
     }
 
-    public void SetDetails(Node<WearsClothingComponent> node)
+    public void SetDetails(Node node)
     {
-        _nodeSystemManager.InjectNodeSystemDependencies(this);
-        _uiBelongsToThisMob = node;
+        _uiOwner = node;
+
+        if (!_nodeManager.TryGetComponent<WearsClothingComponent>(node, out var wearsClothingComponent))
+            return;
+        
+        _uiWearsClothingComponent = wearsClothingComponent;
 
         // Foldable groups connect the storage UIs together so that only is expanded at a time
         _foldableGroup.AllowFoldingAll = true;
@@ -85,7 +92,7 @@ public partial class InventorySceneSystem : VBoxContainer
             child.QueueFree();
         
         // For each item equipped that has storage, add it to the inventory scene
-        foreach (var (_, clothingNode) in node.Comp.ClothingSlots)
+        foreach (var (_, clothingNode) in _uiWearsClothingComponent.ClothingSlots)
         {
             if (clothingNode == null)
                 continue;

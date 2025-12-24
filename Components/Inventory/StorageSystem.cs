@@ -475,6 +475,6 @@ public partial class StorageSystem : NodeSystem
             return;
         
         var inventorySceneSystem = (InventorySceneSystem)customWindow.Content;
-        inventorySceneSystem.SetDetails((player, wearsClothingComponent));
+        inventorySceneSystem.SetDetails(player);
     }
 }

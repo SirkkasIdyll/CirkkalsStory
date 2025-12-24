@@ -10,9 +10,9 @@ using Godot.Collections;
 namespace CS.Nodes.Scenes.Inventory;
 
 /// <summary>
-/// Manages the display of a single storage item.
+/// Related to the <see cref="StorageComponent"/>
 /// </summary>
-public partial class StorageSceneSystem : VBoxContainer
+public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 {
 	[ExportCategory("Owned")]
 	[Export] private Button? _title;
@@ -31,8 +31,14 @@ public partial class StorageSceneSystem : VBoxContainer
 	private const string Yellow = "#dfcb43";
 	private const string Red = "#c22e15";
 	private Dictionary<Node, Button> _buttonDictionary = [];
-	private Node<StorageComponent>? _uiBelongsToThisStorage;
+	
+	private Node? _uiOwner;
+	private StorageComponent? _uiStorageComponent;
 
+	/// <summary>
+	/// Checks if something has a <see cref="StorableComponent"/>
+	/// and can fit inside the storage being dragged over
+	/// </summary>
 	public override bool _CanDropData(Vector2 atPosition, Variant data)
 	{
 		var node = (Node?)data;
@@ -43,15 +49,19 @@ public partial class StorageSceneSystem : VBoxContainer
 		if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storable))
 			return false;
 
-		if (_uiBelongsToThisStorage == null)
+		if (_uiOwner == null || _uiStorageComponent == null)
 			return false;
 
-		if (_storageSystem.CanBeAddedToStorage(_uiBelongsToThisStorage.Value, (node, storable)))
+		if (_storageSystem.CanBeAddedToStorage((_uiOwner, _uiStorageComponent), (node, storable)))
 			return true;
 		
 		return false;
 	}
 
+	/// <summary>
+	/// Attempts to store a <see cref="StorableComponent"/>
+	/// inside a storage
+	/// </summary>
 	public override void _DropData(Vector2 atPosition, Variant data)
 	{
 		var node = (Node)data;
@@ -59,10 +69,10 @@ public partial class StorageSceneSystem : VBoxContainer
 		if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storable))
 			return;
 
-		if (_uiBelongsToThisStorage == null)
+		if (_uiOwner == null || _uiStorageComponent == null)
 			return;
 
-		_storageSystem.TryAddItemToStorage(_uiBelongsToThisStorage.Value, (node, storable));
+		_storageSystem.TryAddItemToStorage((_uiOwner, _uiStorageComponent), (node, storable));
 	}
 
 	public override void _ExitTree()
@@ -76,14 +86,22 @@ public partial class StorageSceneSystem : VBoxContainer
 	public override void _Ready()
 	{
 		base._Ready();
+		_nodeSystemManager.InjectNodeSystemDependencies(this);
+
+		MouseEntered += OnMouseEntered;
+		MouseExited += OnMouseExited;
 
 		_nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
 		_nodeManager.SignalBus.ItemRemovedFromStorageSignal += OnItemRemovedFromStorage;
 	}
 	
+	/// <summary>
+	/// When a <see cref="StorableComponent"/> is put in a <see cref="StorageComponent"/>,
+	/// create the UI button for that item in the storage UI
+	/// </summary>
 	private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
 	{
-		if (node.Owner != _uiBelongsToThisStorage?.Owner)
+		if (node.Owner != _uiOwner)
 			return;
 		
 		var button = CreateItemButton(node, args.Storable);
@@ -92,9 +110,13 @@ public partial class StorageSceneSystem : VBoxContainer
 		UpdateStorageProgressBar(node);
 	}
 
+	/// <summary>
+	/// When a <see cref="StorableComponent"/> is removed from a <see cref="StorageComponent"/>,
+	/// remove the UI button for that item in the storage UI
+	/// </summary>
 	private void OnItemRemovedFromStorage(Node<StorageComponent> node, ref ItemRemovedFromStorageSignal args)
 	{
-		if (node.Owner != _uiBelongsToThisStorage?.Owner)
+		if (node.Owner != _uiOwner)
 			return;
 		
 		var button = _buttonDictionary[args.Storable];
@@ -122,6 +144,9 @@ public partial class StorageSceneSystem : VBoxContainer
 		_clothingSystem.TryPutItemInHand((player, wearsClothingComponent), item);
 	}*/
 
+	/// <summary>
+	/// Open context menu when right-clicking on a <see cref="StorageComponent"/>
+	/// </summary>
 	private void OnSecondaryInteract(Node<StorageComponent> node, Node<StorableComponent> item)
 	{
 		var player = _playerManagerSystem.TryGetPlayer();
@@ -135,28 +160,32 @@ public partial class StorageSceneSystem : VBoxContainer
 		_nodeManager.SignalBus.EmitGetContextActionsSignal((item, interactableComponent), ref signal);
 		_storageSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
 	}
-
-	public void SetDetails(Node<StorageComponent> node)
+	
+	public void SetDetails(Node node)
 	{
-		_nodeSystemManager.InjectNodeSystemDependencies(this);
-		_uiBelongsToThisStorage = node;
+		_uiOwner = node;
+
+		if (!_nodeManager.TryGetComponent<StorageComponent>(_uiOwner, out var storageComponent))
+			return;
 		
-		if (_title != null && _descriptionSystem.TryGetDisplayName(node, out var name))
+		_uiStorageComponent = storageComponent;
+		
+		if (_title != null && _descriptionSystem.TryGetDisplayName(_uiOwner, out var name))
 			_title.SetText(name);
 		
 		// Play closing storage SFX
 		TreeExiting += () =>
 		{
 			var signal = new StorageClosedSignal();
-			_nodeManager.SignalBus.EmitStorageClosedSignal(node, ref signal);
+			_nodeManager.SignalBus.EmitStorageClosedSignal((_uiOwner, _uiStorageComponent), ref signal);
 		};
 		
-		UpdateStorageProgressBar(node);
-		var items = _storageSystem.GetStorageItems(node);
-		AddItemButtons(node, items);
+		UpdateStorageProgressBar((_uiOwner, _uiStorageComponent));
+		var items = _storageSystem.GetStorageItems((_uiOwner, _uiStorageComponent));
+		AddItemButtons((_uiOwner, _uiStorageComponent), items);
 
 		var signal = new StorageOpenedSignal();
-		_nodeManager.SignalBus.EmitStorageOpenedSignal(node, ref signal);
+		_nodeManager.SignalBus.EmitStorageOpenedSignal((_uiOwner, _uiStorageComponent), ref signal);
 	}
 
 	private void AddItemButtons(Node<StorageComponent> node, Array<Node> items)
@@ -192,6 +221,16 @@ public partial class StorageSceneSystem : VBoxContainer
 				OnSecondaryInteract(node, item);
 		};
 		return button;
+	}
+
+	private void OnMouseEntered()
+	{
+		
+	}
+
+	private void OnMouseExited()
+	{
+		
 	}
 
 	private void UpdateStorageProgressBar(Node<StorageComponent> node)
