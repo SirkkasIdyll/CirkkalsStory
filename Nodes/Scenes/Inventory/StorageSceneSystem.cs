@@ -10,7 +10,8 @@ using Godot.Collections;
 namespace CS.Nodes.Scenes.Inventory;
 
 /// <summary>
-/// Related to the <see cref="StorageComponent"/>
+/// Displays a <see cref="StorageComponent"/>'s name, capacity, and the <see cref="StorableComponent"/> items inside it
+/// Used for managing the items inside a storage
 /// </summary>
 public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 {

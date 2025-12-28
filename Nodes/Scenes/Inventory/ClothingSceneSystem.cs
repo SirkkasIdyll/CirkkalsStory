@@ -8,7 +8,8 @@ using Godot.Collections;
 namespace CS.Nodes.Scenes.Inventory;
 
 /// <summary>
-/// Displays the equipment worn by a mob.
+/// Displays the <see cref="ClothingComponent"/> worn.
+/// Used for equipping and unequipping clothes.
 /// </summary>
 public partial class ClothingSceneSystem : GridContainer, IModifiableScene
 {

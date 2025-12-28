@@ -9,7 +9,8 @@ using Godot.Collections;
 namespace CS.Nodes.Scenes.Inventory;
 
 /// <summary>
-/// Displays all worn storage equipped to a mob.
+/// Displays all worn <see cref="StorageComponent"/> equipped.
+/// Each storage will create a new <see cref="StorageSceneSystem"/> listing
 /// </summary>
 public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
 {
