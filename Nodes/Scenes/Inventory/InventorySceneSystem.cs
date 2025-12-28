@@ -9,7 +9,7 @@ using Godot.Collections;
 namespace CS.Nodes.Scenes.Inventory;
 
 /// <summary>
-/// Displays all worn <see cref="StorageComponent"/> equipped.
+/// Displays all <see cref="StorageComponent"/> equipped.
 /// Each storage will create a new <see cref="StorageSceneSystem"/> listing
 /// </summary>
 public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
@@ -48,34 +48,7 @@ public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
         _nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
         _nodeManager.SignalBus.ClothingUnequippedSignal += OnClothingUnequipped;
     }
-
-    private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
-    {
-        if (node.Owner != _uiOwner)
-            return;
-
-        if (!_nodeManager.TryGetComponent<StorageComponent>(args.Clothing, out var storageComponent))
-            return;
-
-        // Storage listing already exists, don't create a duplicate.
-        if (_foldableDictionary.TryGetValue(args.Clothing, out _))
-            return;
-
-        CreateStorageListing((args.Clothing, storageComponent));
-    }
-
-    private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
-    {
-        if (node.Owner != _uiOwner)
-            return;
-
-        if (!_foldableDictionary.TryGetValue(args.Clothing, out var foldableContainer))
-            return;
-
-        RemoveChild(foldableContainer);
-        _foldableDictionary.Remove(args.Clothing);
-    }
-
+    
     public void ModifyScene(Node node)
     {
         _uiOwner = node;
@@ -105,6 +78,33 @@ public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
         }
     }
 
+    private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
+    {
+        if (node.Owner != _uiOwner)
+            return;
+
+        if (!_nodeManager.TryGetComponent<StorageComponent>(args.Clothing, out var storageComponent))
+            return;
+
+        // Storage listing already exists, don't create a duplicate.
+        if (_foldableDictionary.TryGetValue(args.Clothing, out _))
+            return;
+
+        CreateStorageListing((args.Clothing, storageComponent));
+    }
+
+    private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
+    {
+        if (node.Owner != _uiOwner)
+            return;
+
+        if (!_foldableDictionary.TryGetValue(args.Clothing, out var foldableContainer))
+            return;
+
+        RemoveChild(foldableContainer);
+        _foldableDictionary.Remove(args.Clothing);
+    }
+    
     private void CreateStorageListing(Node<StorageComponent> node)
     {
         var foldableContainer = new FoldableContainer();

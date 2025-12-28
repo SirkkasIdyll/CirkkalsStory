@@ -32,7 +32,7 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 	private const string Yellow = "#dfcb43";
 	private const string Red = "#c22e15";
 	private Dictionary<Node, Button> _buttonDictionary = [];
-	
+	private (Node Node, Button Button)? _previewButton;
 	private Node? _uiOwner;
 	private StorageComponent? _uiStorageComponent;
 
@@ -53,10 +53,21 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		if (_uiOwner == null || _uiStorageComponent == null)
 			return false;
 
-		if (_storageSystem.CanBeAddedToStorage((_uiOwner, _uiStorageComponent), (node, storable)))
-			return true;
+
+		if (!_storageSystem.CanBeAddedToStorage((_uiOwner, _uiStorageComponent), (node, storable)))
+			return false;
 		
-		return false;
+		// If we can add it to storage,
+		// create a ghost preview of what it would look like if added
+		if (_previewButton == null && !_buttonDictionary.ContainsKey(node))
+		{
+			AddItemButtons((_uiOwner, _uiStorageComponent), [node]);
+			_previewButton = (node, _buttonDictionary[node]);
+			_previewButton.Value.Button.SetSelfModulate(new Color(1f,1f,1f, 0.5f));
+			_previewButton.Value.Button.SetMouseFilter(MouseFilterEnum.Pass);
+		}
+		
+		return true;
 	}
 
 	/// <summary>
@@ -73,12 +84,20 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		if (_uiOwner == null || _uiStorageComponent == null)
 			return;
 
+		if (_previewButton != null)
+		{
+			RemoveItemButtons((_uiOwner, _uiStorageComponent), [_previewButton.Value.Node]);
+			_previewButton = null;
+		}
+			
 		_storageSystem.TryAddItemToStorage((_uiOwner, _uiStorageComponent), (node, storable));
 	}
 
 	public override void _ExitTree()
 	{
 		base._ExitTree();
+
+		MouseExited -= OnMouseExited;
 		
 		_nodeManager.SignalBus.ItemPutInStorageSignal -= OnItemPutInStorage;
 		_nodeManager.SignalBus.ItemRemovedFromStorageSignal -= OnItemRemovedFromStorage;
@@ -89,11 +108,44 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		base._Ready();
 		_nodeSystemManager.InjectNodeSystemDependencies(this);
 
-		MouseEntered += OnMouseEntered;
 		MouseExited += OnMouseExited;
-
+		
 		_nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
 		_nodeManager.SignalBus.ItemRemovedFromStorageSignal += OnItemRemovedFromStorage;
+	}
+	
+	/// <summary>
+	/// Sets the title to the name of the item
+	/// Adds a SFX when the storage is closed
+	/// Initializes the storage weight display
+	/// Creates buttons for the items inside the storage
+	/// And sends a signal that we've opened the storage
+	/// </summary>
+	public void ModifyScene(Node node)
+	{
+		_uiOwner = node;
+
+		if (!_nodeManager.TryGetComponent<StorageComponent>(_uiOwner, out var storageComponent))
+			return;
+		
+		_uiStorageComponent = storageComponent;
+		
+		if (_title != null && _descriptionSystem.TryGetDisplayName(_uiOwner, out var name))
+			_title.SetText(name);
+		
+		// Play closing storage SFX
+		TreeExiting += () =>
+		{
+			var signal = new StorageClosedSignal();
+			_nodeManager.SignalBus.EmitStorageClosedSignal((_uiOwner, _uiStorageComponent), ref signal);
+		};
+		
+		UpdateStorageProgressBar((_uiOwner, _uiStorageComponent));
+		var items = _storageSystem.GetStorageItems((_uiOwner, _uiStorageComponent));
+		AddItemButtons((_uiOwner, _uiStorageComponent), items);
+
+		var signal = new StorageOpenedSignal();
+		_nodeManager.SignalBus.EmitStorageOpenedSignal((_uiOwner, _uiStorageComponent), ref signal);
 	}
 	
 	/// <summary>
@@ -120,6 +172,18 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		
 		RemoveItemButtons(node, [args.Storable]);
 		UpdateStorageProgressBar(node);
+	}
+
+	private void OnMouseExited()
+	{
+		// if (new Rect2(new Vector2(), Size).HasPoint(GetLocalMousePosition()))
+		// 	return;
+		
+		if (_uiOwner == null || _uiStorageComponent == null || _previewButton == null)
+			return;
+		
+		RemoveItemButtons((_uiOwner, _uiStorageComponent), [_previewButton.Value.Node]);
+		_previewButton = null;
 	}
 
 	/*private void OnPrimaryInteract(Node<StorageComponent> node, Node<StorableComponent> item)
@@ -156,40 +220,6 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 		var signal = new GetContextActionsSignal(player);
 		_nodeManager.SignalBus.EmitGetContextActionsSignal((item, interactableComponent), ref signal);
 		_storageSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
-	}
-	
-	/// <summary>
-	/// Sets the title to the name of the item
-	/// Adds a SFX when the storage is closed
-	/// Initializes the storage weight display
-	/// Creates buttons for the items inside the storage
-	/// And sends a signal that we've opened the storage
-	/// </summary>
-	public void ModifyScene(Node node)
-	{
-		_uiOwner = node;
-
-		if (!_nodeManager.TryGetComponent<StorageComponent>(_uiOwner, out var storageComponent))
-			return;
-		
-		_uiStorageComponent = storageComponent;
-		
-		if (_title != null && _descriptionSystem.TryGetDisplayName(_uiOwner, out var name))
-			_title.SetText(name);
-		
-		// Play closing storage SFX
-		TreeExiting += () =>
-		{
-			var signal = new StorageClosedSignal();
-			_nodeManager.SignalBus.EmitStorageClosedSignal((_uiOwner, _uiStorageComponent), ref signal);
-		};
-		
-		UpdateStorageProgressBar((_uiOwner, _uiStorageComponent));
-		var items = _storageSystem.GetStorageItems((_uiOwner, _uiStorageComponent));
-		AddItemButtons((_uiOwner, _uiStorageComponent), items);
-
-		var signal = new StorageOpenedSignal();
-		_nodeManager.SignalBus.EmitStorageOpenedSignal((_uiOwner, _uiStorageComponent), ref signal);
 	}
 
 	/// <summary>
@@ -232,16 +262,6 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 			_itemButtonContainer.RemoveChild(_buttonDictionary[item]);
 			_buttonDictionary.Remove(item);
 		}
-	}
-
-	private void OnMouseEntered()
-	{
-		
-	}
-
-	private void OnMouseExited()
-	{
-		
 	}
 
 	private void UpdateStorageProgressBar(Node<StorageComponent> node)
