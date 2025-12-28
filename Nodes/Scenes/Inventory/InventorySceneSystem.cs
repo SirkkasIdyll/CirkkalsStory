@@ -29,8 +29,7 @@ public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
     private FoldableGroup _foldableGroup = new();
     private Dictionary<Node, FoldableContainer> _foldableDictionary = [];
 
-    private Node? _uiOwner;
-    private WearsClothingComponent? _uiWearsClothingComponent;
+    private Node<WearsClothingComponent>? _uiOwner;
 
     public override void _ExitTree()
     {
@@ -51,12 +50,10 @@ public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
     
     public void ModifyScene(Node node)
     {
-        _uiOwner = node;
-
         if (!_nodeManager.TryGetComponent<WearsClothingComponent>(node, out var wearsClothingComponent))
             return;
 
-        _uiWearsClothingComponent = wearsClothingComponent;
+        _uiOwner = (node, wearsClothingComponent);
 
         // Foldable groups connect the storage UIs together so that only is expanded at a time
         _foldableGroup.AllowFoldingAll = true;
@@ -66,7 +63,7 @@ public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
             child.QueueFree();
 
         // For each item equipped that has storage, add it to the inventory scene
-        foreach (var (_, clothingNode) in _uiWearsClothingComponent.ClothingSlots)
+        foreach (var (_, clothingNode) in _uiOwner.Value.Comp.ClothingSlots)
         {
             if (clothingNode == null)
                 continue;
@@ -80,7 +77,7 @@ public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
 
     private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
     {
-        if (node.Owner != _uiOwner)
+        if (_uiOwner == null || node.Owner != _uiOwner.Value.Owner)
             return;
 
         if (!_nodeManager.TryGetComponent<StorageComponent>(args.Clothing, out var storageComponent))
@@ -95,7 +92,7 @@ public partial class InventorySceneSystem : VBoxContainer, IModifiableScene
 
     private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
     {
-        if (node.Owner != _uiOwner)
+        if (_uiOwner == null || node.Owner != _uiOwner.Value.Owner)
             return;
 
         if (!_foldableDictionary.TryGetValue(args.Clothing, out var foldableContainer))
