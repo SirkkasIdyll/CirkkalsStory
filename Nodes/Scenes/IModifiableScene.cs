@@ -14,5 +14,5 @@ public interface IModifiableScene
     /// title and specific details of the UI should be set
     /// </summary>
     /// <param name="node"></param>
-    public void SetDetails(Node node);
+    public void ModifyScene(Node node);
 }

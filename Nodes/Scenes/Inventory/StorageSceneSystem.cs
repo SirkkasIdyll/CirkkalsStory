@@ -164,7 +164,7 @@ public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 	/// Creates buttons for the items inside the storage
 	/// And sends a signal that we've opened the storage
 	/// </summary>
-	public void SetDetails(Node node)
+	public void ModifyScene(Node node)
 	{
 		_uiOwner = node;
 

@@ -155,7 +155,7 @@ public partial class ClothingSceneSystem : GridContainer, IModifiableScene
 		_clothingSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
 	}
 
-	public void SetDetails(Node node)
+	public void ModifyScene(Node node)
 	{
 		_uiOwner = node;
 
