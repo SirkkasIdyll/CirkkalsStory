@@ -508,7 +508,7 @@ public partial class ClothingSystem : NodeSystem
             return;
 
         var clothingSceneSystem = (ClothingSceneSystem)customWindow.Content;
-        clothingSceneSystem.SetDetails((player, wearsClothingComponent));
+        clothingSceneSystem.ModifyScene(player);
     }
 }
 
