@@ -186,7 +186,10 @@ script = ExtResource("2_opdnh")
 [node name="CanInteractComponent" type="Node2D" parent="." index="7"]
 script = ExtResource("6_mtcbf")
 
-[node name="FogOfWar" type="Node2D" parent="." index="8"]
+[node name="CanPullThingsComponent" type="Node2D" parent="." index="8"]
+script = ExtResource("16_bxab3")
+
+[node name="FogOfWar" type="Node2D" parent="." index="9"]
 visible = false
 
 [node name="PointLight2D" type="PointLight2D" parent="FogOfWar" index="0"]
@@ -235,15 +238,12 @@ sprite_frames = SubResource("SpriteFrames_bxab3")
 
 [node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="13"]
 
-[node name="WearsClothingComponent" type="Node2D" parent="." index="11"]
+[node name="WearsClothingComponent" type="Node2D" parent="." index="12"]
 script = ExtResource("11_6bs64")
 
-[node name="AttachedUserInterfaceComponent" type="Node2D" parent="." index="12"]
+[node name="AttachedUserInterfaceComponent" type="Node2D" parent="." index="13"]
 script = ExtResource("9_yxf2p")
 UserInterfaceScenes = Dictionary[String, PackedScene]({
 "equipment": ExtResource("10_7ln1c"),
 "inventory": ExtResource("11_7ln1c")
 })
-
-[node name="CanPullThingsComponent" type="Node2D" parent="." index="13"]
-script = ExtResource("16_bxab3")
