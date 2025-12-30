@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cnjtgnvw1uq03"]
+
+[ext_resource type="PackedScene" uid="uid://cplderic1k4iq" path="res://Nodes/UI/CustomWindow/CustomWindow.tscn" id="1_kimlc"]
+[ext_resource type="Script" uid="uid://cplt4hlsliu23" path="res://Nodes/Scenes/MagicCircle/MagicCircleSceneSystem.cs" id="2_1koiw"]
+
+[node name="CustomWindow" instance=ExtResource("1_kimlc")]
+
+[node name="Title" parent="PanelContainer/MarginContainer/VBoxContainer/HBoxContainer" index="0"]
+text = "Magic Circle Window"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer" index="1"]
+layout_mode = 2
+script = ExtResource("2_1koiw")
