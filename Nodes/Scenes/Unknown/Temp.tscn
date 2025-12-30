@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://m7oi1ohgvdft"]
+[gd_scene load_steps=25 format=4 uid="uid://m7oi1ohgvdft"]
 
 [ext_resource type="Script" uid="uid://uo4mriwgqow8" path="res://Nodes/Scenes/Unknown/TempSystem.cs" id="1_s21w5"]
 [ext_resource type="Texture2D" uid="uid://b5bhtdcnhjkxn" path="res://Resources/Sprites/Tileset32.png" id="2_6mltn"]
@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://bqusc51x5eqgl" path="res://Nodes/Prototypes/Objects/Clothes/Face/RedHalfrimGlasses.tscn" id="18_u7g01"]
 [ext_resource type="PackedScene" uid="uid://xd78swtfom8" path="res://Nodes/Prototypes/Objects/Clothes/Inhand/WoodenCane.tscn" id="19_6vrkc"]
 [ext_resource type="PackedScene" uid="uid://bubhjug0wt7lo" path="res://Nodes/Prototypes/Objects/Clothes/Bags/Satchel.tscn" id="20_u7g01"]
+[ext_resource type="PackedScene" uid="uid://c5tsxbf3frywg" path="res://Nodes/Prototypes/Objects/MaaagicCircle/MaaaagicCircle.tscn" id="21_1o5ya"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_g45lb"]
 polygon = PackedVector2Array(-16, -16, 16, -16, 16, 16, -16, 16)
@@ -398,3 +399,6 @@ position = Vector2(283, 529)
 
 [node name="Satchel" parent="." instance=ExtResource("20_u7g01")]
 position = Vector2(298, 521)
+
+[node name="MaaaagicCircle" parent="." instance=ExtResource("21_1o5ya")]
+position = Vector2(207, 400)

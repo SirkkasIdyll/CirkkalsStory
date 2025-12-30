@@ -182,12 +182,12 @@ public partial class StorageSystem : NodeSystem
             return;
         }
 
-        if (!TryGetAvailableWornStorage((args.Interactee, wearsClothingComponent), 
-                (node, storableComponent), out var storage))
-            return;
-        
-        if (TryAddItemToStorage(storage.Value, (node, storableComponent)))
-            args.Handled = true;
+        // if (!TryGetAvailableWornStorage((args.Interactee, wearsClothingComponent), 
+        //         (node, storableComponent), out var storage))
+        //     return;
+        //
+        // if (TryAddItemToStorage(storage.Value, (node, storableComponent)))
+        //     args.Handled = true;
     }
 
     /// <summary>
@@ -475,6 +475,6 @@ public partial class StorageSystem : NodeSystem
             return;
         
         var inventorySceneSystem = (InventorySceneSystem)customWindow.Content;
-        inventorySceneSystem.SetDetails((player, wearsClothingComponent));
+        inventorySceneSystem.ModifyScene(player);
     }
 }

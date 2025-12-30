@@ -10,9 +10,10 @@ using Godot.Collections;
 namespace CS.Nodes.Scenes.Inventory;
 
 /// <summary>
-/// Manages the display of a single storage item.
+/// Displays a <see cref="StorageComponent"/>'s name, capacity, and the <see cref="StorableComponent"/> items inside it
+/// Used for managing the items inside a storage
 /// </summary>
-public partial class StorageSceneSystem : VBoxContainer
+public partial class StorageSceneSystem : VBoxContainer, IModifiableScene
 {
 	[ExportCategory("Owned")]
 	[Export] private Button? _title;
@@ -31,8 +32,13 @@ public partial class StorageSceneSystem : VBoxContainer
 	private const string Yellow = "#dfcb43";
 	private const string Red = "#c22e15";
 	private Dictionary<Node, Button> _buttonDictionary = [];
-	private Node<StorageComponent>? _uiBelongsToThisStorage;
+	private (Node Node, Button Button)? _previewButton;
+	private Node<StorageComponent>? _uiOwner;
 
+	/// <summary>
+	/// Checks if something has a <see cref="StorableComponent"/>
+	/// and can fit inside the storage being dragged over
+	/// </summary>
 	public override bool _CanDropData(Vector2 atPosition, Variant data)
 	{
 		var node = (Node?)data;
@@ -43,15 +49,29 @@ public partial class StorageSceneSystem : VBoxContainer
 		if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storable))
 			return false;
 
-		if (_uiBelongsToThisStorage == null)
+		if (_uiOwner == null)
 			return false;
-
-		if (_storageSystem.CanBeAddedToStorage(_uiBelongsToThisStorage.Value, (node, storable)))
-			return true;
 		
-		return false;
+		if (!_storageSystem.CanBeAddedToStorage(_uiOwner.Value, (node, storable)))
+			return false;
+		
+		// If we can add it to storage,
+		// create a ghost preview of what it would look like if added
+		if (_previewButton == null && !_buttonDictionary.ContainsKey(node))
+		{
+			AddItemButtons(_uiOwner.Value, [node]);
+			_previewButton = (node, _buttonDictionary[node]);
+			_previewButton.Value.Button.SetSelfModulate(new Color(1f,1f,1f, 0.5f));
+			_previewButton.Value.Button.SetMouseFilter(MouseFilterEnum.Pass);
+		}
+		
+		return true;
 	}
 
+	/// <summary>
+	/// Attempts to store a <see cref="StorableComponent"/> in a <see cref="StorageComponent"/>
+	/// when drag is dropped
+	/// </summary>
 	public override void _DropData(Vector2 atPosition, Variant data)
 	{
 		var node = (Node)data;
@@ -59,15 +79,23 @@ public partial class StorageSceneSystem : VBoxContainer
 		if (!_nodeManager.TryGetComponent<StorableComponent>(node, out var storable))
 			return;
 
-		if (_uiBelongsToThisStorage == null)
+		if (_uiOwner == null)
 			return;
 
-		_storageSystem.TryAddItemToStorage(_uiBelongsToThisStorage.Value, (node, storable));
+		if (_previewButton != null)
+		{
+			RemoveItemButtons(_uiOwner.Value, [_previewButton.Value.Node]);
+			_previewButton = null;
+		}
+			
+		_storageSystem.TryAddItemToStorage(_uiOwner.Value, (node, storable));
 	}
 
 	public override void _ExitTree()
 	{
 		base._ExitTree();
+
+		MouseExited -= OnMouseExited;
 		
 		_nodeManager.SignalBus.ItemPutInStorageSignal -= OnItemPutInStorage;
 		_nodeManager.SignalBus.ItemRemovedFromStorageSignal -= OnItemRemovedFromStorage;
@@ -76,31 +104,82 @@ public partial class StorageSceneSystem : VBoxContainer
 	public override void _Ready()
 	{
 		base._Ready();
+		_nodeSystemManager.InjectNodeSystemDependencies(this);
 
+		MouseExited += OnMouseExited;
+		
 		_nodeManager.SignalBus.ItemPutInStorageSignal += OnItemPutInStorage;
 		_nodeManager.SignalBus.ItemRemovedFromStorageSignal += OnItemRemovedFromStorage;
 	}
 	
+	/// <summary>
+	/// Sets the title to the name of the item
+	/// Adds a SFX when the storage is closed
+	/// Initializes the storage weight display
+	/// Creates buttons for the items inside the storage
+	/// And sends a signal that we've opened the storage
+	/// </summary>
+	public void ModifyScene(Node node)
+	{
+		if (!_nodeManager.TryGetComponent<StorageComponent>(node, out var storageComponent))
+			return;
+
+		_uiOwner = (node, storageComponent);
+		
+		if (_title != null && _descriptionSystem.TryGetDisplayName(_uiOwner, out var name))
+			_title.SetText(name);
+		
+		// Play closing storage SFX
+		TreeExiting += () =>
+		{
+			var signal = new StorageClosedSignal();
+			_nodeManager.SignalBus.EmitStorageClosedSignal(_uiOwner.Value, ref signal);
+		};
+		
+		UpdateStorageProgressBar(_uiOwner.Value);
+		var items = _storageSystem.GetStorageItems(_uiOwner.Value);
+		AddItemButtons(_uiOwner.Value, items);
+
+		var signal = new StorageOpenedSignal();
+		_nodeManager.SignalBus.EmitStorageOpenedSignal(_uiOwner.Value, ref signal);
+	}
+	
+	/// <summary>
+	/// When a <see cref="StorableComponent"/> is put in a <see cref="StorageComponent"/>,
+	/// create the UI button for that item in the storage UI
+	/// </summary>
 	private void OnItemPutInStorage(Node<StorageComponent> node, ref ItemPutInStorageSignal args)
 	{
-		if (node.Owner != _uiBelongsToThisStorage?.Owner)
+		if (_uiOwner == null || node.Owner != _uiOwner.Value.Owner)
 			return;
 		
-		var button = CreateItemButton(node, args.Storable);
-		_itemButtonContainer.AddChild(button);
-		_buttonDictionary[args.Storable] = button;
+		AddItemButtons(node, [args.Storable]);
 		UpdateStorageProgressBar(node);
 	}
 
+	/// <summary>
+	/// When a <see cref="StorableComponent"/> is removed from a <see cref="StorageComponent"/>,
+	/// remove the UI button for that item in the storage UI
+	/// </summary>
 	private void OnItemRemovedFromStorage(Node<StorageComponent> node, ref ItemRemovedFromStorageSignal args)
 	{
-		if (node.Owner != _uiBelongsToThisStorage?.Owner)
+		if (_uiOwner == null || node.Owner != _uiOwner.Value.Owner)
 			return;
 		
-		var button = _buttonDictionary[args.Storable];
-		_itemButtonContainer.RemoveChild(button);
-		_buttonDictionary.Remove(args.Storable);
+		RemoveItemButtons(node, [args.Storable]);
 		UpdateStorageProgressBar(node);
+	}
+
+	private void OnMouseExited()
+	{
+		// if (new Rect2(new Vector2(), Size).HasPoint(GetLocalMousePosition()))
+		// 	return;
+		
+		if (_uiOwner == null || _previewButton == null)
+			return;
+		
+		RemoveItemButtons(_uiOwner.Value, [_previewButton.Value.Node]);
+		_previewButton = null;
 	}
 
 	/*private void OnPrimaryInteract(Node<StorageComponent> node, Node<StorableComponent> item)
@@ -122,6 +201,9 @@ public partial class StorageSceneSystem : VBoxContainer
 		_clothingSystem.TryPutItemInHand((player, wearsClothingComponent), item);
 	}*/
 
+	/// <summary>
+	/// Open context menu when right-clicking on a <see cref="StorageComponent"/>
+	/// </summary>
 	private void OnSecondaryInteract(Node<StorageComponent> node, Node<StorableComponent> item)
 	{
 		var player = _playerManagerSystem.TryGetPlayer();
@@ -136,29 +218,9 @@ public partial class StorageSceneSystem : VBoxContainer
 		_storageSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
 	}
 
-	public void SetDetails(Node<StorageComponent> node)
-	{
-		_nodeSystemManager.InjectNodeSystemDependencies(this);
-		_uiBelongsToThisStorage = node;
-		
-		if (_title != null && _descriptionSystem.TryGetDisplayName(node, out var name))
-			_title.SetText(name);
-		
-		// Play closing storage SFX
-		TreeExiting += () =>
-		{
-			var signal = new StorageClosedSignal();
-			_nodeManager.SignalBus.EmitStorageClosedSignal(node, ref signal);
-		};
-		
-		UpdateStorageProgressBar(node);
-		var items = _storageSystem.GetStorageItems(node);
-		AddItemButtons(node, items);
-
-		var signal = new StorageOpenedSignal();
-		_nodeManager.SignalBus.EmitStorageOpenedSignal(node, ref signal);
-	}
-
+	/// <summary>
+	/// Creates interactable buttons for each item inside a storage
+	/// </summary>
 	private void AddItemButtons(Node<StorageComponent> node, Array<Node> items)
 	{
 		foreach (var item in items)
@@ -166,32 +228,36 @@ public partial class StorageSceneSystem : VBoxContainer
 			if (!_nodeManager.TryGetComponent<StorableComponent>(item, out var storableComponent))
 				continue;
 
-			var button = CreateItemButton(node, (item, storableComponent));
+			var button = new StorageItemButton(item);
+			button.SetThemeTypeVariation("ButtonSmall");
+		
+			if (_descriptionSystem.TryGetDisplayName(item,  out var displayName))
+				button.SetText(displayName);
+
+			if (_descriptionSystem.TryGetSprite(item, out var sprite))
+				button.Icon = sprite.Texture;
+
+			button.GuiInput += @event =>
+			{
+				/*if (@event.IsActionPressed("primary_interact"))
+					OnPrimaryInteract(node, item);*/
+
+				if (@event.IsActionPressed("secondary_interact"))
+					OnSecondaryInteract(node, (item, storableComponent));
+			}; 
+			
 			_itemButtonContainer.AddChild(button);
 			_buttonDictionary[item] = button;
 		}
 	}
 
-	private Button CreateItemButton(Node<StorageComponent> node, Node<StorableComponent> item)
+	private void RemoveItemButtons(Node<StorageComponent> node, Array<Node> items)
 	{
-		var button = new StorageItemButton(item);
-		button.SetThemeTypeVariation("ButtonSmall");
-		
-		if (_descriptionSystem.TryGetDisplayName(item,  out var displayName))
-			button.SetText(displayName);
-
-		if (_descriptionSystem.TryGetSprite(item, out var sprite))
-			button.Icon = sprite.Texture;
-
-		button.GuiInput += @event =>
+		foreach (var item in items)
 		{
-			/*if (@event.IsActionPressed("primary_interact"))
-				OnPrimaryInteract(node, item);*/
-
-			if (@event.IsActionPressed("secondary_interact"))
-				OnSecondaryInteract(node, item);
-		};
-		return button;
+			_itemButtonContainer.RemoveChild(_buttonDictionary[item]);
+			_buttonDictionary.Remove(item);
+		}
 	}
 
 	private void UpdateStorageProgressBar(Node<StorageComponent> node)

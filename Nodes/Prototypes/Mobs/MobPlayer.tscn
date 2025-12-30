@@ -42,30 +42,30 @@ colors = PackedColorArray(0, 0, 0, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_va6o6"]
 gradient = SubResource("Gradient_6mltn")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_5sbft"]
-atlas = ExtResource("7_ydmoe")
-region = Rect2(48, 0, 48, 48)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_04rii"]
 atlas = ExtResource("7_7ln1c")
 region = Rect2(48, 0, 48, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_mijd0"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_5sbft"]
 atlas = ExtResource("7_ydmoe")
-region = Rect2(0, 0, 48, 48)
+region = Rect2(48, 0, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6bs64"]
 atlas = ExtResource("7_7ln1c")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mijd0"]
+atlas = ExtResource("7_ydmoe")
 region = Rect2(0, 0, 48, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_mtcbf"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_5sbft")
+"texture": SubResource("AtlasTexture_04rii")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_04rii")
+"texture": SubResource("AtlasTexture_5sbft")
 }],
 "loop": true,
 "name": &"back",
@@ -73,10 +73,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_mijd0")
+"texture": SubResource("AtlasTexture_6bs64")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6bs64")
+"texture": SubResource("AtlasTexture_mijd0")
 }],
 "loop": true,
 "name": &"default",
@@ -110,30 +110,30 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fh7kf"]
-atlas = ExtResource("10_kqw0x")
-region = Rect2(48, 0, 48, 48)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_ep6do"]
 atlas = ExtResource("8_04rii")
 region = Rect2(48, 0, 48, 48)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_jpf2w"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_fh7kf"]
 atlas = ExtResource("10_kqw0x")
-region = Rect2(0, 0, 48, 48)
+region = Rect2(48, 0, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ydmoe"]
 atlas = ExtResource("8_04rii")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jpf2w"]
+atlas = ExtResource("10_kqw0x")
 region = Rect2(0, 0, 48, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_bxab3"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fh7kf")
+"texture": SubResource("AtlasTexture_ep6do")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ep6do")
+"texture": SubResource("AtlasTexture_fh7kf")
 }],
 "loop": true,
 "name": &"back",
@@ -141,10 +141,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_jpf2w")
+"texture": SubResource("AtlasTexture_ydmoe")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_ydmoe")
+"texture": SubResource("AtlasTexture_jpf2w")
 }],
 "loop": true,
 "name": &"default",
@@ -186,7 +186,10 @@ script = ExtResource("2_opdnh")
 [node name="CanInteractComponent" type="Node2D" parent="." index="7"]
 script = ExtResource("6_mtcbf")
 
-[node name="FogOfWar" type="Node2D" parent="." index="8"]
+[node name="CanPullThingsComponent" type="Node2D" parent="." index="8"]
+script = ExtResource("16_bxab3")
+
+[node name="FogOfWar" type="Node2D" parent="." index="9"]
 visible = false
 
 [node name="PointLight2D" type="PointLight2D" parent="FogOfWar" index="0"]
@@ -207,8 +210,8 @@ texture = SubResource("GradientTexture2D_va6o6")
 sprite_frames = SubResource("SpriteFrames_mtcbf")
 
 [node name="Antler" type="AnimatedSprite2D" parent="CanvasGroup" index="1"]
+visible = false
 sprite_frames = SubResource("SpriteFrames_xuu0h")
-animation = &"back"
 
 [node name="Shoes" type="AnimatedSprite2D" parent="CanvasGroup" index="2"]
 
@@ -235,15 +238,12 @@ sprite_frames = SubResource("SpriteFrames_bxab3")
 
 [node name="Hat" type="AnimatedSprite2D" parent="CanvasGroup" index="13"]
 
-[node name="WearsClothingComponent" type="Node2D" parent="." index="11"]
+[node name="WearsClothingComponent" type="Node2D" parent="." index="12"]
 script = ExtResource("11_6bs64")
 
-[node name="AttachedUserInterfaceComponent" type="Node2D" parent="." index="12"]
+[node name="AttachedUserInterfaceComponent" type="Node2D" parent="." index="13"]
 script = ExtResource("9_yxf2p")
 UserInterfaceScenes = Dictionary[String, PackedScene]({
 "equipment": ExtResource("10_7ln1c"),
 "inventory": ExtResource("11_7ln1c")
 })
-
-[node name="CanPullThingsComponent" type="Node2D" parent="." index="13"]
-script = ExtResource("16_bxab3")

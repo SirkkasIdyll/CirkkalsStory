@@ -41,6 +41,7 @@ public partial class StorageItemButton : Button
             var textureRect = new TextureRect();
             textureRect.Texture = sprite.Texture;
             textureRect.SetModulate(new Color(1f, 1f, 1f, 0.6f));
+            textureRect.SetPosition(textureRect.GetPosition() - new Vector2(16, 16));
             control.AddChild(textureRect);
             
             SetDragPreview(control);

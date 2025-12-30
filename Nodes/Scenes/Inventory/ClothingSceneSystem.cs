@@ -8,9 +8,10 @@ using Godot.Collections;
 namespace CS.Nodes.Scenes.Inventory;
 
 /// <summary>
-/// Displays the equipment worn by a mob.
+/// Displays the <see cref="ClothingComponent"/> worn.
+/// Used for equipping and unequipping clothes.
 /// </summary>
-public partial class ClothingSceneSystem : GridContainer
+public partial class ClothingSceneSystem : GridContainer, IModifiableScene
 {
 	[ExportCategory("Owned")]
 	[Export] private Button _title = null!;
@@ -21,8 +22,8 @@ public partial class ClothingSceneSystem : GridContainer
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
 	[InjectDependency] private readonly ClothingSystem _clothingSystem = null!;
 	[InjectDependency] private readonly DescriptionSystem _descriptionSystem = null!;
-
-	private Node? _character;
+	
+	private Node<WearsClothingComponent>? _uiOwner;
 
 	public override void _ExitTree()
 	{
@@ -37,16 +38,62 @@ public partial class ClothingSceneSystem : GridContainer
 	public override void _Ready()
 	{
 		base._Ready();
+		_nodeSystemManager.InjectNodeSystemDependencies(this);
 
 		_nodeManager.SignalBus.ClothingEquippedSignal += OnClothingEquipped;
 		_nodeManager.SignalBus.ClothingUnequippedSignal += OnClothingUnequipped;
 		_nodeManager.SignalBus.ItemPutInHandSignal += OnItemPutInHand;
 		_nodeManager.SignalBus.ItemRemovedFromHandSignal += OnItemRemovedFromHand;
 	}
+	
+	public void ModifyScene(Node node)
+	{
+		if (!_nodeManager.TryGetComponent<WearsClothingComponent>(node, out var wearsClothingComponent))
+			return;
+
+		_uiOwner = (node, wearsClothingComponent);
+		
+		if (_descriptionSystem.TryGetDisplayName(node, out var name))
+			_title.SetText(name + "'s Equipment");
+		
+		foreach (var (clothingSlot, clothingItem) in _uiOwner.Value.Comp.ClothingSlots)
+		{
+			var clothingSlotIndex = (int)clothingSlot;
+			// When the particular slot's image is clicked, try to unequip the clothing in that slot.
+			// It's fine if there is an attempt to unequip nothing as that will be handled in the unequip function
+			if (_clothingSlots.TryGetValue(clothingSlot, out var clothingTextureRect))
+			{
+				clothingTextureRect.Item = clothingItem;
+				clothingTextureRect.Slot = clothingSlot;
+				
+				clothingTextureRect.GuiInput += @event =>
+				{
+					/*if (@event.IsActionPressed("primary_interact"))
+						OnPrimaryInteract(node, clothingSlot);*/
+
+					if (@event.IsActionPressed("secondary_interact"))
+						OnSecondayInteract(_uiOwner.Value, clothingSlot);
+				};
+			}
+
+			// No clothing equipped in this slot, set it to the generic icon and continue
+			if (clothingItem == null)
+			{
+				var atlasTexture = (AtlasTexture) _texture.Duplicate();
+				atlasTexture.Region = new Rect2(new Vector2(0, 32 * clothingSlotIndex), new Vector2(32, 32));
+				_clothingSlots[clothingSlot].Texture = atlasTexture;
+				continue;
+			}
+			
+			// Set the texture in the equipment UI scene to the texture of the clothing item's icon (not the worn sprite)
+			if (_descriptionSystem.TryGetSprite(clothingItem, out var sprite2D))
+				_clothingSlots[clothingSlot].Texture = sprite2D.Texture;
+		}
+	}
 
 	private void OnClothingEquipped(Node<WearsClothingComponent> node, ref ClothingEquippedSignal args)
 	{
-		if (node.Owner != _character)
+		if (_uiOwner == null || node.Owner != _uiOwner.Value.Owner)
 			return;
 		
 		// Set sprite to clothing's icon
@@ -62,7 +109,7 @@ public partial class ClothingSceneSystem : GridContainer
 
 	private void OnClothingUnequipped(Node<WearsClothingComponent> node, ref ClothingUnequippedSignal args)
 	{
-		if (node.Owner != _character)
+		if (_uiOwner == null || node.Owner != _uiOwner.Value.Owner)
 			return;
 		
 		if (!_clothingSlots.TryGetValue(args.Clothing.Comp.ClothingSlot, out var clothingTextureRect))
@@ -77,7 +124,7 @@ public partial class ClothingSceneSystem : GridContainer
 
 	private void OnItemPutInHand(Node<WearsClothingComponent> node, ref ItemPutInHandSignal args)
 	{
-		if (node.Owner != _character)
+		if (_uiOwner == null || node.Owner != _uiOwner.Value.Owner)
 			return;
 		
 		// Set sprite to clothing's icon
@@ -93,7 +140,7 @@ public partial class ClothingSceneSystem : GridContainer
 
 	private void OnItemRemovedFromHand(Node<WearsClothingComponent> node, ref ItemRemovedFromHandSignal args)
 	{
-		if (node.Owner != _character)
+		if (_uiOwner == null || node.Owner != _uiOwner.Value.Owner)
 			return;
 		
 		if (!_clothingSlots.TryGetValue(ClothingSlot.Inhand, out var clothingTextureRect))
@@ -151,48 +198,5 @@ public partial class ClothingSceneSystem : GridContainer
 		var signal = new GetContextActionsSignal(node);
 		_nodeManager.SignalBus.EmitGetContextActionsSignal((clothingItem, interactableComponent), ref signal);
 		_clothingSystem.GetParent().GetNode<CanvasLayer>("CanvasLayer").AddChild(signal.ContextMenu);
-	}
-
-	public void SetDetails(Node<WearsClothingComponent> node)
-	{
-		_nodeSystemManager.InjectNodeSystemDependencies(this);
-
-		_character = node;
-		if (_descriptionSystem.TryGetDisplayName(node, out var name))
-			_title.SetText(name + "'s Equipment");
-		
-		foreach (var (clothingSlot, clothingItem) in node.Comp.ClothingSlots)
-		{
-			var clothingSlotIndex = (int)clothingSlot;
-			// When the particular slot's image is clicked, try to unequip the clothing in that slot.
-			// It's fine if there is an attempt to unequip nothing as that will be handled in the unequip function
-			if (_clothingSlots.TryGetValue(clothingSlot, out var clothingTextureRect))
-			{
-				clothingTextureRect.Item = clothingItem;
-				clothingTextureRect.Slot = clothingSlot;
-				
-				clothingTextureRect.GuiInput += @event =>
-				{
-					/*if (@event.IsActionPressed("primary_interact"))
-						OnPrimaryInteract(node, clothingSlot);*/
-
-					if (@event.IsActionPressed("secondary_interact"))
-						OnSecondayInteract(node, clothingSlot);
-				};
-			}
-
-			// No clothing equipped in this slot, set it to the generic icon and continue
-			if (clothingItem == null)
-			{
-				var atlasTexture = (AtlasTexture) _texture.Duplicate();
-				atlasTexture.Region = new Rect2(new Vector2(0, 32 * clothingSlotIndex), new Vector2(32, 32));
-				_clothingSlots[clothingSlot].Texture = atlasTexture;
-				continue;
-			}
-			
-			// Set the texture in the equipment UI scene to the texture of the clothing item's icon (not the worn sprite)
-			if (_descriptionSystem.TryGetSprite(clothingItem, out var sprite2D))
-				_clothingSlots[clothingSlot].Texture = sprite2D.Texture;
-		}
 	}
 }
