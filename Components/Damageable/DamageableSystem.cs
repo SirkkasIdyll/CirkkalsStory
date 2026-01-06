@@ -1,10 +1,10 @@
 ﻿using System;
-using CS.Components.Ability;
-using CS.Components.Damage;
-using CS.Components.Mob;
-using CS.SlimeFactory;
+using PC.Components.Ability;
+using PC.Components.Damage;
+using PC.Components.Mob;
+using PC.SlimeFactory;
 
-namespace CS.Components.Damageable;
+namespace PC.Components.Damageable;
 
 public partial class DamageableSystem : NodeSystem
 {

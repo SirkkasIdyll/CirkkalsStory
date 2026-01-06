@@ -1,8 +1,8 @@
-﻿using CS.Nodes.UI.Audio;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.Nodes.UI.Audio;
+using PC.SlimeFactory;
 
-namespace CS.Components.Movement;
+namespace PC.Components.Movement;
 
 public partial class MovementComponent : Component
 {

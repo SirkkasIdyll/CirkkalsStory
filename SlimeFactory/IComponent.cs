@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace CS.SlimeFactory;
+namespace PC.SlimeFactory;
 
 public interface IComponent
 {

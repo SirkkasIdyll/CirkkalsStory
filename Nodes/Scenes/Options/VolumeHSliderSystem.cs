@@ -1,7 +1,7 @@
-using CS.Nodes.UI.Audio;
 using Godot;
+using PC.Nodes.UI.Audio;
 
-namespace CS.Nodes.Scenes.Options;
+namespace PC.Nodes.Scenes.Options;
 
 public partial class VolumeHSliderSystem : HSlider, IConfigSystem
 {

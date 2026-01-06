@@ -1,9 +1,9 @@
-using CS.Nodes.UI.Audio;
-using CS.Nodes.UI.ButtonTypes;
-using CS.SlimeFactory;
 using Godot;
+using PC.Nodes.UI.Audio;
+using PC.Nodes.UI.ButtonTypes;
+using PC.SlimeFactory;
 
-namespace CS.Nodes.Scenes.Introduction;
+namespace PC.Nodes.Scenes.Introduction;
 
 public partial class IntroductionScene : Control
 {

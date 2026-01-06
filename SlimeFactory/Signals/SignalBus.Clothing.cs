@@ -1,6 +1,6 @@
-﻿using CS.Components.Clothing;
+﻿using PC.Components.Clothing;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

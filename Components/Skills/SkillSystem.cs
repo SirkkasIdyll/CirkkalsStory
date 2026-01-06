@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.Components.Mob;
-using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
+using PC.Components.Mob;
+using PC.SlimeFactory;
 
-namespace CS.Components.Skills;
+namespace PC.Components.Skills;
 
 public partial class SkillSystem : NodeSystem
 {

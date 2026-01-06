@@ -1,8 +1,8 @@
-﻿using CS.Components.Damageable;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.Components.Damageable;
+using PC.SlimeFactory;
 
-namespace CS.Components.Damage;
+namespace PC.Components.Damage;
 
 public partial class PercentageDamageComponent : Component
 {

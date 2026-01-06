@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using CS.Components.Grid;
-using CS.Components.Interaction;
-using CS.SlimeFactory;
 using Godot;
+using PC.Components.Grid;
+using PC.Components.Interaction;
+using PC.SlimeFactory;
 
-namespace CS.Components.UI;
+namespace PC.Components.UI;
 
 public partial class UserInterfaceSystem : NodeSystem
 {
@@ -82,7 +82,7 @@ public partial class UserInterfaceSystem : NodeSystem
 
         
         // If the request is from an active user with the UI open, toggle the UI closed to feel responsive
-        if (node.Comp.ActiveUserInterfaces[action].ContainsKey(user))
+        if (node.Comp.ActiveUserInterfaces.TryGetValue(action, out var value) && value.ContainsKey(user))
         {
             CloseAttachedUserInterface(node, user, action);
             return null;

@@ -1,8 +1,8 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.SlimeFactory;
 
-namespace CS.Components.Clothing;
+namespace PC.Components.Clothing;
 
 public partial class WearsClothingComponent : Component
 {

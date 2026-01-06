@@ -1,8 +1,8 @@
-﻿using CS.Components.Grid;
-using CS.Components.Interaction;
-using CS.SlimeFactory;
+﻿using PC.Components.Grid;
+using PC.Components.Interaction;
+using PC.SlimeFactory;
 
-namespace CS.Components.Sitting;
+namespace PC.Components.Sitting;
 
 public partial class SittingSystem : NodeSystem
 {

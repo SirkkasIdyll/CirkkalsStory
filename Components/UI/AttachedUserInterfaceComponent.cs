@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using CS.SlimeFactory;
 using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.UI;
+namespace PC.Components.UI;
 
 public partial class AttachedUserInterfaceComponent : Component
 {

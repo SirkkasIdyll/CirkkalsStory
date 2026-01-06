@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CS.Components.Clothing;
-using CS.Components.Inventory;
-using CS.SlimeFactory;
 using GdUnit4;
 using static GdUnit4.Assertions;
 using Godot;
+using PC.Components.Clothing;
+using PC.Components.Inventory;
+using PC.SlimeFactory;
 
-namespace CS.Tests;
+namespace PC.Tests;
 
 [TestSuite][RequireGodotRuntime]
 public class InventoryTest

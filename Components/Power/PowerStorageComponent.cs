@@ -1,6 +1,6 @@
-﻿using CS.SlimeFactory;
+﻿using PC.SlimeFactory;
 
-namespace CS.Components.Power;
+namespace PC.Components.Power;
 
 /// <summary>
 /// Stores an amount of power

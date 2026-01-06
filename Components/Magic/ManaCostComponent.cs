@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Magic;
+namespace PC.Components.Magic;
 
 /// <summary>
 /// How much mana it costs to use a certain spell or skill

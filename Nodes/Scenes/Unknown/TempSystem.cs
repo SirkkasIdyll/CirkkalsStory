@@ -1,9 +1,9 @@
-using CS.Components.Grid;
-using CS.Components.Player;
-using CS.SlimeFactory;
 using Godot;
+using PC.Components.Grid;
+using PC.Components.Player;
+using PC.SlimeFactory;
 
-namespace CS.Nodes.Scenes.Unknown;
+namespace PC.Nodes.Scenes.Unknown;
 
 public partial class TempSystem : Node2D
 {

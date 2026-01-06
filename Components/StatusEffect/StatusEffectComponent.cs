@@ -1,9 +1,9 @@
-﻿using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.StatusEffect;
+namespace PC.Components.StatusEffect;
 
 /// <summary>
 /// A status effect is a condition that affects a creature that can either be permanent for passive buffs/debuffs

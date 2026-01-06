@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Inventory;
+namespace PC.Components.Inventory;
 
 public partial class StorableComponent : Component
 {

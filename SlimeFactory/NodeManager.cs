@@ -3,11 +3,11 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CS.SlimeFactory.Signals;
 using Godot;
+using PC.SlimeFactory.Signals;
 using static GdUnit4.Assertions;
 
-namespace CS.SlimeFactory;
+namespace PC.SlimeFactory;
 
 public partial class NodeManager
 {

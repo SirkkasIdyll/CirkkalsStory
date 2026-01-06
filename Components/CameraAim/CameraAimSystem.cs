@@ -1,9 +1,9 @@
-﻿using CS.Components.Player;
-using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
-using Godot;
+﻿using Godot;
+using PC.Components.Player;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.CameraAim;
+namespace PC.Components.CameraAim;
 
 public partial class CameraAimSystem : NodeSystem
 {

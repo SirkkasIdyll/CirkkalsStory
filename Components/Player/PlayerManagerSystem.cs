@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Player;
+namespace PC.Components.Player;
 
 // TODO: I don't exactly know where to put this besides this, figure out something more sane later
 public partial class PlayerManagerSystem : NodeSystem

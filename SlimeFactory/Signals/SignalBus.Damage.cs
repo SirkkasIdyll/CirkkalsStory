@@ -1,7 +1,7 @@
-﻿using CS.Components.Damageable;
-using Godot;
+﻿using Godot;
+using PC.Components.Damageable;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

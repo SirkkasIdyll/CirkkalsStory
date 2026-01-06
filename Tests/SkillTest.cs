@@ -1,10 +1,10 @@
-﻿using CS.Components.Mob;
-using CS.Components.Skills;
-using CS.SlimeFactory;
-using GdUnit4;
+﻿using GdUnit4;
 using Godot;
+using PC.Components.Mob;
+using PC.Components.Skills;
+using PC.SlimeFactory;
 using static GdUnit4.Assertions;
-namespace CS.Tests;
+namespace PC.Tests;
 
 [TestSuite][RequireGodotRuntime]
 public class SkillTest

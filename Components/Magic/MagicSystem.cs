@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.Components.Description;
-using CS.Components.Mob;
-using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
+using PC.Components.Description;
+using PC.Components.Mob;
+using PC.SlimeFactory;
 
-namespace CS.Components.Magic;
+namespace PC.Components.Magic;
 
 public partial class MagicSystem : NodeSystem
 {

@@ -1,8 +1,8 @@
-﻿using CS.Components.Grid;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.Components.Grid;
+using PC.SlimeFactory;
 
-namespace CS.Components.Pulling;
+namespace PC.Components.Pulling;
 
 public partial class PullableComponent : Component
 {

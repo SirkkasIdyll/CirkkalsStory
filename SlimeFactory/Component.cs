@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text.Json;
 using Godot;
 
-namespace CS.SlimeFactory;
+namespace PC.SlimeFactory;
 
 public abstract partial class Component : Node2D, IComponent
 {

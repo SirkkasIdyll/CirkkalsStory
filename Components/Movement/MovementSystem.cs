@@ -1,11 +1,11 @@
-﻿using CS.Components.Appearance;
-using CS.Components.CameraAim;
-using CS.Components.Player;
-using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
+﻿using PC.Components.CameraAim;
 using Godot;
+using PC.Components.Appearance;
+using PC.Components.Player;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Movement;
+namespace PC.Components.Movement;
 
 public partial class MovementSystem : NodeSystem
 {

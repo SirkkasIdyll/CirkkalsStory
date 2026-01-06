@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Sitting;
+namespace PC.Components.Sitting;
 
 public partial class SeatComponent : Component
 {

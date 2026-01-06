@@ -1,9 +1,9 @@
 ﻿using System;
-using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
 using Godot;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Magic;
+namespace PC.Components.Magic;
 
 public partial class ManaComponent : Component
 {

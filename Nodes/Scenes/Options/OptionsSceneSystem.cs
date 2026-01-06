@@ -1,7 +1,7 @@
-using CS.Nodes.UI.ButtonTypes;
 using Godot;
+using PC.Nodes.UI.ButtonTypes;
 
-namespace CS.Nodes.Scenes.Options;
+namespace PC.Nodes.Scenes.Options;
 
 /// <summary>
 /// Responsible for managing user options on game load and afterward

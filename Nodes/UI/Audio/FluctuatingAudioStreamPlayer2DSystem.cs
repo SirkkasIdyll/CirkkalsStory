@@ -1,7 +1,7 @@
 ﻿using System;
 using Godot;
 
-namespace CS.Nodes.UI.Audio;
+namespace PC.Nodes.UI.Audio;
 
 /// <summary>
 /// Causes the pitch to randomly fluctuate every time the audio stream is played

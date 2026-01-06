@@ -1,10 +1,10 @@
-﻿using CS.Components.Player;
-using CS.Nodes.UI.ContextMenu;
-using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
-using Godot;
+﻿using Godot;
+using PC.Components.Player;
+using PC.Nodes.UI.ContextMenu;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Interaction;
+namespace PC.Components.Interaction;
 
 public partial class InteractableComponent : Component
 {

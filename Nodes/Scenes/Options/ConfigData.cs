@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace CS.Nodes.Scenes.Options;
+namespace PC.Nodes.Scenes.Options;
 
 /// <param name="section">General category to store under</param>
 /// <param name="key">Specific key to reference</param>

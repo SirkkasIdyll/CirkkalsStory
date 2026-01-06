@@ -1,13 +1,13 @@
-﻿using CS.Components.Ability;
-using CS.Components.Damage;
-using CS.Components.Damageable;
-using CS.Components.Mob;
-using CS.SlimeFactory;
-using GdUnit4;
+﻿using GdUnit4;
 using Godot;
+using PC.Components.Ability;
+using PC.Components.Damage;
+using PC.Components.Damageable;
+using PC.Components.Mob;
+using PC.SlimeFactory;
 using static GdUnit4.Assertions;
 
-namespace CS.Tests;
+namespace PC.Tests;
 
 [TestSuite][RequireGodotRuntime]
 public class DamageTest

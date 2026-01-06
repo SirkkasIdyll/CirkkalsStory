@@ -1,6 +1,6 @@
-﻿using CS.SlimeFactory;
+﻿using PC.SlimeFactory;
 
-namespace CS.Components.UI;
+namespace PC.Components.UI;
 
 public partial class OpenAttachedUserInterfaceOnInteractComponent : Component
 {

@@ -1,9 +1,9 @@
-﻿using CS.Nodes.UI.Audio;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.Nodes.UI.Audio;
+using PC.SlimeFactory;
 
-namespace CS.Components.Inventory;
+namespace PC.Components.Inventory;
 
 public partial class StorageComponent : Component
 {

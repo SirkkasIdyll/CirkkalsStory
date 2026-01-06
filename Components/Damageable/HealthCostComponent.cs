@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Damageable;
+namespace PC.Components.Damageable;
 
 /// <summary>
 /// How much health it costs to use a certain spell or skill

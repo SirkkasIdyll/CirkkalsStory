@@ -1,11 +1,11 @@
-using CS.Components.Description;
-using CS.Components.Magic.MagicCircle;
-using CS.SlimeFactory;
 using Godot;
+using PC.Components.Description;
+using PC.Components.Magic.MagicCircle;
+using PC.SlimeFactory;
 
-namespace CS.Nodes.Scenes.MagicCircle;
+namespace PC.Nodes.Scenes.MagicCircle;
 
-public partial class MagicCircleSceneSystem : VBoxContainer
+public partial class MagicCircleSceneSystem : VBoxContainer, IModifiableScene
 {
 	private readonly NodeManager _nodeManager = NodeManager.Instance;
 	private readonly NodeSystemManager _nodeSystemManager = NodeSystemManager.Instance;
@@ -14,8 +14,7 @@ public partial class MagicCircleSceneSystem : VBoxContainer
 	
 	public Vector2 DrawPosition = Vector2.Zero;
 	public Color LineColor = Colors.Crimson;
-
-	private Node? _magicCircle;
+	private Node<MagicCircleComponent>? _uiOwner;
     
 	public override void _Input(InputEvent @event)
 	{
@@ -45,9 +44,12 @@ public partial class MagicCircleSceneSystem : VBoxContainer
 	public override void _Process(double delta)
 	{
 	}
-
-	public void SetDetails(Node<MagicCircleComponent> node)
+	
+	public void ModifyScene(Node node)
 	{
-		_magicCircle = node;
+		if (!_nodeManager.TryGetComponent<MagicCircleComponent>(node, out var magicCircleComponent))
+			return;
+
+		_uiOwner = (node, magicCircleComponent);
 	}
 }

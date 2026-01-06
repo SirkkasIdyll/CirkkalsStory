@@ -1,8 +1,8 @@
-using CS.Nodes.UI.ButtonTypes;
-using CS.Nodes.Scenes.Options;
 using Godot;
+using PC.Nodes.Scenes.Options;
+using PC.Nodes.UI.ButtonTypes;
 
-namespace CS.Nodes.Scenes.EscapeMenu;
+namespace PC.Nodes.Scenes.EscapeMenu;
 
 public partial class EscapeMenuSceneSystem : Control
 {

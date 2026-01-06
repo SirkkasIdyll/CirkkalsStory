@@ -1,6 +1,6 @@
-﻿using CS.Components.Inventory;
+﻿using PC.Components.Inventory;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

@@ -1,9 +1,9 @@
 ﻿using System;
-using CS.Components.Grid;
-using CS.SlimeFactory;
 using Godot;
+using PC.Components.Grid;
+using PC.SlimeFactory;
 
-namespace CS.Components.Power;
+namespace PC.Components.Power;
 
 public partial class PowerSystem : NodeSystem
 {

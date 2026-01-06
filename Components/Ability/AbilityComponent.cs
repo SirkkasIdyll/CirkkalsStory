@@ -1,6 +1,6 @@
-﻿using CS.SlimeFactory;
+﻿using PC.SlimeFactory;
 
-namespace CS.Components.Ability;
+namespace PC.Components.Ability;
 
 public partial class AbilityComponent : Component
 {

@@ -1,10 +1,10 @@
-using CS.Nodes.UI.Audio;
-using CS.Nodes.UI.ButtonTypes;
-using CS.Nodes.Scenes.Options;
-using CS.SlimeFactory;
 using Godot;
+using PC.Nodes.Scenes.Options;
+using PC.Nodes.UI.Audio;
+using PC.Nodes.UI.ButtonTypes;
+using PC.SlimeFactory;
 
-namespace CS.Nodes.Scenes.StartMenu;
+namespace PC.Nodes.Scenes.StartMenu;
 
 public partial class StartMenuSceneSystem : Control
 {

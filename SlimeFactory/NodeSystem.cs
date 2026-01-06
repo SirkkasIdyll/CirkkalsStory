@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace CS.SlimeFactory;
+namespace PC.SlimeFactory;
 
 /// <summary>
 /// All node systems are added to the main scene by the <see cref="NodeSystemManager"/>

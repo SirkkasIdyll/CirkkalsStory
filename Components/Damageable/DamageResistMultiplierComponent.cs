@@ -1,8 +1,8 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.SlimeFactory;
 
-namespace CS.Components.Damageable;
+namespace PC.Components.Damageable;
 
 public partial class DamageResistMultiplierComponent : Component
 {

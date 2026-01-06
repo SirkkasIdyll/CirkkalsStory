@@ -1,6 +1,6 @@
-﻿using CS.SlimeFactory;
+﻿using PC.SlimeFactory;
 
-namespace CS.Components.Magic.MagicCircle;
+namespace PC.Components.Magic.MagicCircle;
 
 public partial class MagicCircleComponent : Component
 {

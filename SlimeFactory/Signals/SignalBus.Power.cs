@@ -1,6 +1,6 @@
-﻿using CS.Components.Power;
+﻿using PC.Components.Power;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

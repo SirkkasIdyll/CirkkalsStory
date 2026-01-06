@@ -1,4 +1,4 @@
-﻿namespace CS.SlimeFactory.Signals;
+﻿namespace PC.SlimeFactory.Signals;
 
 /// <summary>
 /// I'm implementing user signals because I hate how clunky it is having to use

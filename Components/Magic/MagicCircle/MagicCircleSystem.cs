@@ -1,9 +1,9 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Magic.MagicCircle;
+namespace PC.Components.Magic.MagicCircle;
 
 public partial class MagicCircleSystem : NodeSystem
 {
-
+    
 }

@@ -1,9 +1,9 @@
-﻿using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Power;
+namespace PC.Components.Power;
 
 public partial class PowerTransmissionComponent : Component
 {

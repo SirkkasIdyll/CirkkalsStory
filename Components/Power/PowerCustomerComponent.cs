@@ -1,8 +1,8 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.SlimeFactory;
 
-namespace CS.Components.Power;
+namespace PC.Components.Power;
 
 /// <summary>
 /// Receives power from <see cref="PowerDistributorComponent"/>

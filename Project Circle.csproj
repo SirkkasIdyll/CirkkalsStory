@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
-    <RootNamespace>CS</RootNamespace>
+    <RootNamespace>PC</RootNamespace>
     <Nullable>enable</Nullable>
 
     <LangVersion>12.0</LangVersion>

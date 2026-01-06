@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
+﻿using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Inventory;
+namespace PC.Components.Inventory;
 
 /// <summary>
 /// ExtraSmall (Pen, paper, materials) 

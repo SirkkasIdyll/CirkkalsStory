@@ -1,7 +1,7 @@
-﻿using CS.Components.Grid;
-using Godot;
+﻿using Godot;
+using PC.Components.Grid;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

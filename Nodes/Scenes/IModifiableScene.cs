@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
+﻿using PC.SlimeFactory;
 using Godot;
 
-namespace CS.Nodes.Scenes;
+namespace PC.Nodes.Scenes;
 
 /// <summary>
 /// If a UI scene needs to have its details modified,

@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.StatusEffect;
+namespace PC.Components.StatusEffect;
 
 public partial class StatusEffectApplicatorComponent : Component
 {

@@ -1,16 +1,16 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.Components.Clothing;
-using CS.Components.Interaction;
-using CS.Components.Player;
-using CS.Components.UI;
-using CS.Nodes.Scenes.Inventory;
-using CS.Nodes.UI.ContextMenu;
-using CS.Nodes.UI.CustomWindow;
-using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
+using PC.Components.Clothing;
+using PC.Components.Interaction;
+using PC.Components.Player;
+using PC.Components.UI;
+using PC.Nodes.Scenes.Inventory;
+using PC.Nodes.UI.ContextMenu;
+using PC.Nodes.UI.CustomWindow;
+using PC.SlimeFactory;
 
-namespace CS.Components.Inventory;
+namespace PC.Components.Inventory;
 
 public partial class StorageSystem : NodeSystem
 {
