@@ -1,6 +1,6 @@
-﻿using CS.Components.StatusEffect;
+﻿using PC.Components.StatusEffect;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

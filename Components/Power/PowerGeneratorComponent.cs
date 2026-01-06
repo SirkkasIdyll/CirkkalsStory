@@ -1,8 +1,8 @@
-﻿using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Power;
+namespace PC.Components.Power;
 
 /// <summary>
 /// Generates an amount of power every tick

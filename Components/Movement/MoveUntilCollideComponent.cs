@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Movement;
+namespace PC.Components.Movement;
 
 /// <summary>
 /// Moves the parent body until collision, 

@@ -1,10 +1,10 @@
-﻿using CS.Components.Grid;
-using CS.Components.Interaction;
-using CS.Components.Player;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.Components.Grid;
+using PC.Components.Interaction;
+using PC.Components.Player;
+using PC.SlimeFactory;
 
-namespace CS.Components.Rotate;
+namespace PC.Components.Rotate;
 
 public partial class RotateSystem : NodeSystem
 {

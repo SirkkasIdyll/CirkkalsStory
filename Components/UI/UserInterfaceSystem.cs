@@ -1,9 +1,10 @@
-﻿using CS.Components.Grid;
-using CS.Components.Interaction;
-using CS.SlimeFactory;
+﻿using System.Collections.Generic;
 using Godot;
+using PC.Components.Grid;
+using PC.Components.Interaction;
+using PC.SlimeFactory;
 
-namespace CS.Components.UI;
+namespace PC.Components.UI;
 
 public partial class UserInterfaceSystem : NodeSystem
 {
@@ -25,18 +26,21 @@ public partial class UserInterfaceSystem : NodeSystem
         _nodeManager.NodeQuery<AttachedUserInterfaceComponent>(out var dict);
         foreach (var (owner, component) in dict)
         {
-            foreach (var (action, user) in component.UserUsingInterface)
+            foreach (var (action, uiDict) in component.ActiveUserInterfaces)
             {
-                if (owner is not Node2D objectNode || user is not Node2D userNode)
-                    continue;
+                foreach (var (user, control) in uiDict)
+                {
+                    if (owner is not Node2D objectNode || user is not Node2D userNode)
+                        continue;
                 
-                if (!_gridSystem.TryGetDistance(userNode, objectNode, out var distance))
-                    continue;
+                    if (!_gridSystem.TryGetDistance(userNode, objectNode, out var distance))
+                        continue;
             
-                if (distance < component.MaxUseDistance)
-                    continue;
+                    if (distance < component.MaxUseDistance)
+                        continue;
             
-                CloseAttachedUserInterface((owner, component), action);
+                    CloseAttachedUserInterface((owner, component), user, action);
+                }
             }
         }
     }
@@ -53,39 +57,67 @@ public partial class UserInterfaceSystem : NodeSystem
     }
     
     /// <summary>
-    /// Open the attached user interface and prevent opening duplicates
+    /// Open the attached user interface for the given action
+    /// Or closes it if it's already opened by a user
     /// </summary>
     public Control? OpenAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, Node user, string action)
     {
-        // Already a UI open, don't open another one
-        if (node.Comp.UserInterface.ContainsKey(action))
+        // If we aren't allowing simultaneous use, check if open attempt was done by the current active user
+        if (!node.Comp.AllowSimultaneousUse && node.Comp.ActiveUserInterfaces.Count != 0)
         {
-            // If it's the same user who tried it again, have it close the UI
-            if (node.Comp.UserUsingInterface.TryGetValue(action, out var userUsingInterface) && userUsingInterface == user)
-                CloseAttachedUserInterface(node, action);
+            var userMatchesActiveUser = false;
+            foreach (var dict in node.Comp.ActiveUserInterfaces.Values)
+            {
+                if (!dict.ContainsKey(user))
+                    continue;
+                
+                userMatchesActiveUser = true;
+                break;
+            }
             
+            // Checked every open UI and user who is attempting to open this UI is not the currently active user
+            if (!userMatchesActiveUser)
+                return null;
+        }
+
+        
+        // If the request is from an active user with the UI open, toggle the UI closed to feel responsive
+        if (node.Comp.ActiveUserInterfaces.TryGetValue(action, out var value) && value.ContainsKey(user))
+        {
+            CloseAttachedUserInterface(node, user, action);
             return null;
         }
 
-        node.Comp.UserInterface[action] = node.Comp.UserInterfaceScenes[action].Instantiate<Control>();
-        node.Comp.UserUsingInterface[action] = user;
-        node.Comp.UserInterface[action].TreeExited += () => CloseAttachedUserInterface(node, action);
-        CanvasLayer.AddChild(node.Comp.UserInterface[action]);
-        return node.Comp.UserInterface[action];
+        // Open the UI
+        var control = node.Comp.UserInterfaceScenes[action].Instantiate<Control>();
+        control.TreeExited += () => CloseAttachedUserInterface(node, user, action);
+        CanvasLayer.AddChild(control);
+        
+        if (node.Comp.ActiveUserInterfaces.TryGetValue(action, out var uiDict))
+            uiDict.Add(user, control);
+        else
+            node.Comp.ActiveUserInterfaces.Add(action, new Dictionary<Node, Control>() {{user, control}});
+        
+        return control;
     }
 
     /// <summary>
-    /// Closes the attached user interface
+    /// Closes the attached user interface for the given action
     /// </summary>
-    public void CloseAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, string action)
+    public void CloseAttachedUserInterface(Node<AttachedUserInterfaceComponent> node, Node user, string action)
     {
-        if (!node.Comp.UserInterface.ContainsKey(action))
+        if (!node.Comp.ActiveUserInterfaces.TryGetValue(action, out var uiDict))
             return;
         
-        if (!node.Comp.UserInterface[action].IsQueuedForDeletion())
-            node.Comp.UserInterface[action].QueueFree();
+        // Close UI
+        if (!uiDict[user].IsQueuedForDeletion())
+            uiDict[user].QueueFree();
+
+        // Remove user from active user interfaces of this kind
+        uiDict.Remove(user);
         
-        node.Comp.UserInterface.Remove(action);
-        node.Comp.UserUsingInterface.Remove(action);
+        // If no users have this kind of interface open, remove the key entirely
+        if (uiDict.Count == 0)
+            node.Comp.ActiveUserInterfaces.Remove(action);
     }
 }

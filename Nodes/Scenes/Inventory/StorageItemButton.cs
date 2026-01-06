@@ -1,8 +1,8 @@
-﻿using CS.Components.Description;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.Components.Description;
+using PC.SlimeFactory;
 
-namespace CS.Nodes.Scenes.Inventory;
+namespace PC.Nodes.Scenes.Inventory;
 
 public partial class StorageItemButton : Button
 {

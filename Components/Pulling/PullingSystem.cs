@@ -1,12 +1,12 @@
-﻿using CS.Components.Grid;
-using CS.Components.Interaction;
-using CS.Components.Movement;
-using CS.Nodes.UI.ContextMenu;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.Components.Grid;
+using PC.Components.Interaction;
+using PC.Components.Movement;
+using PC.Nodes.UI.ContextMenu;
+using PC.SlimeFactory;
 
-namespace CS.Components.Pulling;
+namespace PC.Components.Pulling;
 
 public partial class PullingSystem : NodeSystem
 {

@@ -1,8 +1,8 @@
-﻿using CS.SlimeFactory;
+﻿using System.Collections.Generic;
 using Godot;
-using Godot.Collections;
+using PC.SlimeFactory;
 
-namespace CS.Components.UI;
+namespace PC.Components.UI;
 
 public partial class AttachedUserInterfaceComponent : Component
 {
@@ -11,14 +11,22 @@ public partial class AttachedUserInterfaceComponent : Component
     /// The PackedScene is the interface to open
     /// </summary>
     [Export]
-    public Dictionary<string, PackedScene> UserInterfaceScenes = [];
+    public Godot.Collections.Dictionary<string, PackedScene> UserInterfaceScenes = [];
     
     /// <summary>
     /// Closes the UI if the user gets farther than this distance to the node
     /// </summary>
     [Export]
     public float MaxUseDistance = 2.25f;
+
+    /// <summary>
+    /// When set to false, prevents more than one user from interacting with the interfaces from this scene at a time
+    /// </summary>
+    [Export]
+    public bool AllowSimultaneousUse = true;
     
-    public Dictionary<string, Control> UserInterface = [];
-    public Dictionary<string, Node> UserUsingInterface = [];
+    /// <summary>
+    /// Tracks the active user interfaces open and who is viewing which specific interface
+    /// </summary>
+    public Dictionary<string, Dictionary<Node, Control>> ActiveUserInterfaces = [];
 }

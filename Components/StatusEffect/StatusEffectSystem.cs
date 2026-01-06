@@ -1,10 +1,10 @@
-﻿using CS.Components.Description;
-using CS.Components.Mob;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.Components.Description;
+using PC.Components.Mob;
+using PC.SlimeFactory;
 
-namespace CS.Components.StatusEffect;
+namespace PC.Components.StatusEffect;
 
 public partial class StatusEffectSystem : NodeSystem
 {

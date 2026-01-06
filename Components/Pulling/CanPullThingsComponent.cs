@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Pulling;
+namespace PC.Components.Pulling;
 
 public partial class CanPullThingsComponent : Component
 {

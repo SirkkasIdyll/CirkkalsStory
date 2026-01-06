@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace CS.SlimeFactory;
+namespace PC.SlimeFactory;
 
 /// <summary>
 /// This exists so we can type-hint it inside <see cref="NodeSystemManager"/>

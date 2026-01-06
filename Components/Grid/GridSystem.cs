@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
 using Godot;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Grid;
+namespace PC.Components.Grid;
 
 /// <summary>
 /// For the sake of simplification, distance will be assumed to be in tiles

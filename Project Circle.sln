@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cirkkals Story", "Cirkkals Story.csproj", "{796245C3-7143-4CE6-9700-E0D0E6B92866}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project Circle", "Project Circle.csproj", "{796245C3-7143-4CE6-9700-E0D0E6B92866}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -14,16 +14,12 @@ This is a small project I'm working on to familiarize myself with the Godot engi
 - Don't use LINQ.
 - Delete unused template functions like _Ready() and _Process().
 
-### File Layout Order
+### File Layout Order (basically #Regions)
 
-1. Exports
-2. NodeManager/NodeSystemManager
-3. Injected NodeSystems
-4. Any other fields/variables
-5. Overrided methods
-6. OnEvent methods
-7. Public members
-8. Private members
+1. UI Exports
+2. NodeManager/NodeSystemManager/NodeSystems
+3. Constants/Properties
+4. Methods (Override → Interface → OnSignal → Public → Private)
 
 ### Naming Practices
 

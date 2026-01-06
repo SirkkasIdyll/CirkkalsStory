@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace CS.Nodes.UI.ButtonTypes;
+namespace PC.Nodes.UI.ButtonTypes;
 
 public partial class EscapeButton : StandardButton
 {

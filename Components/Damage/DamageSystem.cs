@@ -1,12 +1,12 @@
-﻿using CS.Components.Ability;
-using CS.Components.Damageable;
-using CS.Components.Description;
-using CS.Components.Mob;
-using CS.Components.StatusEffect;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.Components.Ability;
+using PC.Components.Damageable;
+using PC.Components.Description;
+using PC.Components.Mob;
+using PC.Components.StatusEffect;
+using PC.SlimeFactory;
 
-namespace CS.Components.Damage;
+namespace PC.Components.Damage;
 
 public partial class DamageSystem : NodeSystem
 {

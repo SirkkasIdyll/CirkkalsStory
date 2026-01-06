@@ -1,8 +1,8 @@
-﻿using CS.Components.Inventory;
-using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
+﻿using PC.Components.Inventory;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Clothing;
+namespace PC.Components.Clothing;
 
 /// <summary>
 /// Before clothing can be equipped,

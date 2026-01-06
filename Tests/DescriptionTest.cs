@@ -1,10 +1,10 @@
-﻿using CS.Components.Description;
-using CS.SlimeFactory;
-using GdUnit4;
+﻿using GdUnit4;
 using static GdUnit4.Assertions;
 using Godot;
+using PC.Components.Description;
+using PC.SlimeFactory;
 
-namespace CS.Tests;
+namespace PC.Tests;
 
 [TestSuite][RequireGodotRuntime]
 public class DescriptionTest

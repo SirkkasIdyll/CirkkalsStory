@@ -1,6 +1,6 @@
 using Godot;
 
-namespace CS.Nodes.UI.Chyron;
+namespace PC.Nodes.UI.Chyron;
 
 public partial class Chyron : Control
 {

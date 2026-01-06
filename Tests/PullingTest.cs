@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CS.Components.Grid;
-using CS.Components.Pulling;
-using CS.SlimeFactory;
 using GdUnit4;
 using static GdUnit4.Assertions;
 using Godot;
+using PC.Components.Grid;
+using PC.Components.Pulling;
+using PC.SlimeFactory;
 
-namespace CS.Tests;
+namespace PC.Tests;
 
 [TestSuite][RequireGodotRuntime]
 public class PullingTest

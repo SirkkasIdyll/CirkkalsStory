@@ -1,6 +1,6 @@
-﻿using CS.Components.Movement;
+﻿using PC.Components.Movement;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

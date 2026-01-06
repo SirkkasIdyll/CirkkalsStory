@@ -1,7 +1,7 @@
-﻿using CS.Components.CameraAim;
-using Godot;
+﻿using Godot;
+using PC.Components.CameraAim;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

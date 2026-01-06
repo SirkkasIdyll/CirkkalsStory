@@ -1,9 +1,9 @@
-﻿using CS.Nodes.UI.Chyron;
-using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
-using Godot;
+﻿using Godot;
+using PC.Nodes.UI.Chyron;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Interaction;
+namespace PC.Components.Interaction;
 
 public partial class CanInteractComponent : Component
 {

@@ -1,12 +1,12 @@
-﻿using CS.Components.CameraAim;
-using CS.Components.Clothing;
-using CS.Components.Inventory;
-using CS.Components.Movement;
-using CS.Components.Player;
-using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.Components.CameraAim;
+using PC.Components.Clothing;
+using PC.Components.Inventory;
+using PC.Components.Movement;
+using PC.Components.Player;
+using PC.SlimeFactory;
 
-namespace CS.Components.Appearance;
+namespace PC.Components.Appearance;
 
 public partial class AppearanceSystem : NodeSystem
 {

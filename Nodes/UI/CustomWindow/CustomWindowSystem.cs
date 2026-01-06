@@ -1,6 +1,6 @@
 using Godot;
 
-namespace CS.Nodes.UI.CustomWindow;
+namespace PC.Nodes.UI.CustomWindow;
 
 public partial class CustomWindowSystem : Control
 {

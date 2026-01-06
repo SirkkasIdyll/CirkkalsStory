@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.Components.Description;
-using CS.Components.Grid;
-using CS.Components.Player;
-using CS.Nodes.UI.Chyron;
-using CS.Nodes.UI.ContextMenu;
-using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
+using PC.Components.Description;
+using PC.Components.Grid;
+using PC.Components.Player;
+using PC.Nodes.UI.Chyron;
+using PC.Nodes.UI.ContextMenu;
+using PC.SlimeFactory;
 
-namespace CS.Components.Interaction;
+namespace PC.Components.Interaction;
 
 public partial class InteractSystem : NodeSystem
 {

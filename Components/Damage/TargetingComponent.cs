@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Damage;
+namespace PC.Components.Damage;
 
 /// <summary>
 /// Determines what targets are valid for the ability and the AOE status of the ability during battles

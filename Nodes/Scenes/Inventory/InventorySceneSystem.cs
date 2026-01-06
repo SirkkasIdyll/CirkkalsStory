@@ -1,12 +1,12 @@
-using CS.Components.Clothing;
-using CS.Components.Description;
-using CS.Components.Inventory;
-using CS.Components.Player;
-using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
+using PC.Components.Clothing;
+using PC.Components.Description;
+using PC.Components.Inventory;
+using PC.Components.Player;
+using PC.SlimeFactory;
 
-namespace CS.Nodes.Scenes.Inventory;
+namespace PC.Nodes.Scenes.Inventory;
 
 /// <summary>
 /// Displays all <see cref="StorageComponent"/> equipped.

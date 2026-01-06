@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
+using PC.SlimeFactory;
 
-namespace CS.Components.Power;
+namespace PC.Components.Power;
 
 public partial class PoweredLightComponent : Component
 {

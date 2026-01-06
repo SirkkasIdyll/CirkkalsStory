@@ -1,7 +1,7 @@
-using CS.Nodes.UI.Audio;
 using Godot;
+using PC.Nodes.UI.Audio;
 
-namespace CS.Nodes.UI.ButtonTypes;
+namespace PC.Nodes.UI.ButtonTypes;
 
 /// <summary>
 /// When you hover over it, your mouse turns into a cursor

@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.Components.Mob;
-using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
+using PC.Components.Mob;
+using PC.SlimeFactory;
 
-namespace CS.Components.Ability;
+namespace PC.Components.Ability;
 
 public partial class AbilitySystem : NodeSystem
 {

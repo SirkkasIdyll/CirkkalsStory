@@ -1,10 +1,10 @@
-﻿using CS.Components.Ability;
-using CS.Components.Mob;
-using CS.SlimeFactory;
-using GdUnit4;
+﻿using GdUnit4;
 using Godot;
+using PC.Components.Ability;
+using PC.Components.Mob;
+using PC.SlimeFactory;
 using static GdUnit4.Assertions;
-namespace CS.Tests;
+namespace PC.Tests;
 
 [TestSuite][RequireGodotRuntime]
 public class AbilityTest

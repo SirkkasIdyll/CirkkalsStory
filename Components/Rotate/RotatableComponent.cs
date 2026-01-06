@@ -1,6 +1,6 @@
-﻿using CS.SlimeFactory;
+﻿using PC.SlimeFactory;
 
-namespace CS.Components.Rotate;
+namespace PC.Components.Rotate;
 
 public partial class RotatableComponent : Component
 {

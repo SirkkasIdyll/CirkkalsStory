@@ -1,8 +1,8 @@
-using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
 using Godot;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS;
+namespace PC;
 
 public partial class MainSceneSystem : Node2D
 {

@@ -5,7 +5,7 @@ using System.Reflection;
 using Godot;
 using Godot.Collections;
 
-namespace CS.SlimeFactory;
+namespace PC.SlimeFactory;
 
 /// <summary>
 /// Responsible for adding <see cref="NodeSystem"/> to the mainScene and readying them

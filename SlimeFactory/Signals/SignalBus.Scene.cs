@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace CS.SlimeFactory.Signals;
+namespace PC.SlimeFactory.Signals;
 
 public partial class SignalBus
 {

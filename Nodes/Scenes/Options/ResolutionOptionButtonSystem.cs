@@ -1,6 +1,6 @@
 ﻿using Godot;
 
-namespace CS.Nodes.Scenes.Options;
+namespace PC.Nodes.Scenes.Options;
 
 public partial class ResolutionOptionButtonSystem : OptionButton, IConfigSystem
 {

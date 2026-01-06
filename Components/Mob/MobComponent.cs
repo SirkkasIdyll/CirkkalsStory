@@ -1,8 +1,8 @@
-﻿using CS.SlimeFactory;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.SlimeFactory;
 
-namespace CS.Components.Mob;
+namespace PC.Components.Mob;
 
 /// <summary>
 /// Mobs are the general term for all combat-capable creatures.

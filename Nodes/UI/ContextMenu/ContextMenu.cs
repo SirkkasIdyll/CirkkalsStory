@@ -1,6 +1,6 @@
 using Godot;
 
-namespace CS.Nodes.UI.ContextMenu;
+namespace PC.Nodes.UI.ContextMenu;
 
 public partial class ContextMenu : PopupMenu
 {

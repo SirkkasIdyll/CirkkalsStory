@@ -1,6 +1,6 @@
-﻿using CS.SlimeFactory;
+﻿using PC.SlimeFactory;
 
-namespace CS.Components.Cooldown;
+namespace PC.Components.Cooldown;
 
 public partial class CooldownComponent : Component
 {

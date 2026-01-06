@@ -1,10 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using CS.Nodes.UI.Tooltip;
-using CS.SlimeFactory;
 using Godot;
 using Godot.Collections;
+using PC.Nodes.UI.Tooltip;
+using PC.SlimeFactory;
 
-namespace CS.Components.Description;
+namespace PC.Components.Description;
 
 public partial class DescriptionSystem : NodeSystem
 {

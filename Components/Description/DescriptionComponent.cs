@@ -1,9 +1,9 @@
-﻿using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
-using Godot;
+﻿using Godot;
 using Godot.Collections;
+using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Description;
+namespace PC.Components.Description;
 
 /// <summary>
 /// Used for things that need to be described such as skills, spells, or monsters

@@ -1,6 +1,6 @@
-using CS.SlimeFactory;
+using PC.SlimeFactory;
 
-namespace CS.Components.Damageable;
+namespace PC.Components.Damageable;
 
 public partial class HitBoxComponent : Component
 {

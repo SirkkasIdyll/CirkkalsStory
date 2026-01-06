@@ -1,7 +1,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace CS.Nodes.UI.DialogBox;
+namespace PC.Nodes.UI.DialogBox;
 
 public partial class DialogBox : Control
 {

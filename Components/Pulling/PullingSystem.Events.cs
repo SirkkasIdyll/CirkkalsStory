@@ -1,7 +1,7 @@
-﻿using CS.SlimeFactory;
-using CS.SlimeFactory.Signals;
+﻿using PC.SlimeFactory;
+using PC.SlimeFactory.Signals;
 
-namespace CS.Components.Pulling;
+namespace PC.Components.Pulling;
 
 public partial class CanPullSignal : CancellableSignalArgs
 {

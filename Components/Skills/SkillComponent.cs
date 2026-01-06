@@ -1,6 +1,6 @@
-﻿using CS.SlimeFactory;
+﻿using PC.SlimeFactory;
 
-namespace CS.Components.Skills;
+namespace PC.Components.Skills;
 
 /// <summary>
 /// It's a skill!

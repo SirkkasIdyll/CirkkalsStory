@@ -1,6 +1,6 @@
 using Godot;
 
-namespace CS.Nodes.UI.Audio;
+namespace PC.Nodes.UI.Audio;
 
 public partial class LoopingAudioStreamPlayer2DSystem : AudioStreamPlayer2D
 {

@@ -1,7 +1,7 @@
 using Godot;
 using Godot.Collections;
 
-namespace CS.Nodes.UI.Tooltip;
+namespace PC.Nodes.UI.Tooltip;
 
 public partial class CustomTooltip : Control
 {
